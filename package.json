@@ -1,0 +1,24 @@
+{
+  "name": "meetwithfriends",
+  "version": "1.0.0",
+  "description": "Calendar management system for friends",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install-all": "npm install --legacy-peer-deps",
+    "build": "npm run build --workspaces",
+    "build:backend": "npm run build --workspace=@meetwithfriends/backend",
+    "build:frontend": "npm run build --workspace=@meetwithfriends/frontend",
+    "build:shared": "npm run build --workspace=@meetwithfriends/shared",
+    "dev": "docker-compose up",
+    "dev:build": "docker-compose up --build",
+    "test": "npm run test --workspaces"
+  },
+  "devDependencies": {
+    "prettier": "3.3.3",
+    "typescript": "5.4.5",
+    "webpack": "5.91.0"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "@meetwithfriends/frontend",
+  "version": "1.0.0",
+  "description": "MeetWithFriends Frontend - Angular v18+ with Signals",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --open --poll 1000",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:watch": "ng test --watch=true",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "18.0.7",
+    "@angular/common": "18.0.7",
+    "@angular/compiler": "18.0.7",
+    "@angular/core": "18.0.7",
+    "@angular/forms": "18.0.7",
+    "@angular/platform-browser": "18.0.7",
+    "@angular/platform-browser-dynamic": "18.0.7",
+    "@angular/router": "18.0.7",
+    "@meetwithfriends/shared": "*",
+    "rxjs": "7.8.1",
+    "tslib": "2.6.2",
+    "zone.js": "0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "18.0.7",
+    "@angular/cli": "18.0.7",
+    "@angular/compiler-cli": "18.0.7",
+    "@types/jasmine": "5.1.4",
+    "@types/node": "20.11.30",
+    "jasmine-core": "5.1.2",
+    "karma": "6.4.3",
+    "karma-chrome-launcher": "3.2.0",
+    "karma-coverage": "2.2.1",
+    "karma-jasmine": "5.1.0",
+    "karma-jasmine-html-reporter": "2.1.0",
+    "typescript": "5.4.5"
+  }
+}

@@ -1,0 +1,48 @@
+{
+    "GLOBAL": {
+        "APP_NAME": "MeetWithFriends"
+    },
+    "NAVBAR": {
+        "SIGN_IN": "Sign In",
+        "GET_STARTED": "Get Started"
+    },
+    "LANDING": {
+        "BADGE": "The easiest way to meet with friends",
+        "TITLE": "Coordinate Meetups <strong>Effortlessly</strong>",
+        "SUBTITLE": "Share your availability with friends, book time slots instantly, and never miss a chance to connect. No more endless back-and-forth messaging.",
+        "START_FREE": "Start for Free",
+        "FEATURES": {
+            "NO_ENDLESS_TEXTS": "No more endless text chains to find a time",
+            "SEE_WHOS_FREE": "See when friends are genuinely free",
+            "TIMEZONE_HANDLING": "Automatic time zone handling",
+            "CALENDAR_INTEGRATION": "Works with your existing calendar"
+        },
+        "CARDS": {
+            "SHARE_AVAILABILITY": {
+                "TITLE": "Share Availability",
+                "DESC": "Let friends know when you're free without the back-and-forth."
+            },
+            "CONNECT_FRIENDS": {
+                "TITLE": "Connect with Friends",
+                "DESC": "Build your circle and see who's available for spontaneous meetups."
+            },
+            "BOOK_INSTANTLY": {
+                "TITLE": "Book Instantly",
+                "DESC": "Reserve time slots with one click. No more scheduling hassle."
+            },
+            "PRIVACY_FIRST": {
+                "TITLE": "Privacy First",
+                "DESC": "Control who sees your availability with granular permissions."
+            }
+        }
+    },
+    "USER_TEST": {
+        "TITLE": "User Creation Test",
+        "CREATE_USER": "Generate Random User",
+        "CREATING": "Creating..."
+    },
+    "BUTTONS": {
+        "LANG_ES": "ES",
+        "LANG_EN": "EN"
+    }
+}

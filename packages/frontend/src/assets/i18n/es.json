@@ -1,0 +1,48 @@
+{
+    "GLOBAL": {
+        "APP_NAME": "MeetWithFriends"
+    },
+    "NAVBAR": {
+        "SIGN_IN": "Iniciar sesión",
+        "GET_STARTED": "Comenzar"
+    },
+    "LANDING": {
+        "BADGE": "La forma más fácil de quedar con amigos",
+        "TITLE": "Coordina quedadas <strong>fácilmente</strong>",
+        "SUBTITLE": "Comparte tu disponibilidad con amigos, reserva franjas al instante y no pierdas ninguna oportunidad de conectar. Olvídate de los mensajes interminables.",
+        "START_FREE": "Empezar gratis",
+        "FEATURES": {
+            "NO_ENDLESS_TEXTS": "Sin cadenas infinitas de mensajes para encontrar hora",
+            "SEE_WHOS_FREE": "Ve cuándo tus amigos están realmente libres",
+            "TIMEZONE_HANDLING": "Gestión automática de zonas horarias",
+            "CALENDAR_INTEGRATION": "Funciona con tu calendario habitual"
+        },
+        "CARDS": {
+            "SHARE_AVAILABILITY": {
+                "TITLE": "Comparte disponibilidad",
+                "DESC": "Deja que tus amigos sepan cuándo estás libre sin idas y vueltas."
+            },
+            "CONNECT_FRIENDS": {
+                "TITLE": "Conecta con amigos",
+                "DESC": "Crea tu círculo y ve quién está disponible para quedadas espontáneas."
+            },
+            "BOOK_INSTANTLY": {
+                "TITLE": "Reserva al instante",
+                "DESC": "Reserva franjas con un clic. Sin complicaciones."
+            },
+            "PRIVACY_FIRST": {
+                "TITLE": "Privacidad ante todo",
+                "DESC": "Controla quién ve tu disponibilidad con permisos granulares."
+            }
+        }
+    },
+    "USER_TEST": {
+        "TITLE": "Prueba de Creación de Usuarios",
+        "CREATE_USER": "Generar Usuario Aleatorio",
+        "CREATING": "Creando..."
+    },
+    "BUTTONS": {
+        "LANG_ES": "ES",
+        "LANG_EN": "EN"
+    }
+}

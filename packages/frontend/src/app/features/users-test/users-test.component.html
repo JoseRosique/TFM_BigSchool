@@ -1,70 +1,62 @@
 <div class="users-container">
-  <h2>Prueba de Creación de Usuarios</h2>
+    <h2>Prueba de Creación de Usuarios</h2>
 
-  <div class="actions">
-    <button
-      (click)="generateRandomUser()"
-      [disabled]="isLoading()"
-      class="btn-primary"
-    >
-      {{ isLoading() ? "Creando..." : "Generar Usuario Aleatorio" }}
-    </button>
+    <div class="actions">
+        <button (click)="generateRandomUser()" [disabled]="isLoading()" class="btn-primary">
+            {{ isLoading() ? "Creando..." : "Generar Usuario Aleatorio" }}
+        </button>
 
-    <button
-      (click)="refreshUsers()"
-      [disabled]="isLoading()"
-      class="btn-secondary"
-    >
-      Refrescar Lista
-    </button>
-  </div>
-
-  @if (error()) {
-    <div class="error-message">
-      {{ error() }}
+        <button (click)="refreshUsers()" [disabled]="isLoading()" class="btn-secondary">
+            Refrescar Lista
+        </button>
     </div>
-  }
 
-  @if (successMessage()) {
-    <div class="success-message">
-      {{ successMessage() }}
-    </div>
-  }
-
-  <div class="users-stats">
-    <p>
-      Total de usuarios: <strong>{{ userCount() }}</strong>
-    </p>
-  </div>
-
-  <div class="users-list">
-    <h3>Lista de Usuarios</h3>
-
-    @if (isLoading()) {
-      <p class="loading">Cargando usuarios...</p>
-    } @else if (users().length === 0) {
-      <p class="empty">No hay usuarios registrados. Crea uno para comenzar.</p>
-    } @else {
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Timezone</th>
-            <th>Fecha de Creación</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of users(); track user.id) {
-            <tr>
-              <td>{{ user.name }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.timezone }}</td>
-              <td>{{ formatDate(user.createdAt) }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    @if (error()) {
+        <div class="error-message">
+            {{ error() }}
+        </div>
     }
-  </div>
+
+    @if (successMessage()) {
+        <div class="success-message">
+            {{ successMessage() }}
+        </div>
+    }
+
+    <div class="users-stats">
+        <p>
+            Total de usuarios: <strong>{{ userCount() }}</strong>
+        </p>
+    </div>
+
+    <div class="users-list">
+        <h3>Lista de Usuarios</h3>
+
+        @if (isLoading()) {
+            <p class="loading">Cargando usuarios...</p>
+        } @else if (users().length === 0) {
+            <p class="empty">No hay usuarios registrados. Crea uno para comenzar.</p>
+        } @else {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Timezone</th>
+                        <th>Fecha de Creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of users(); track user.id) {
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.timezone }}</td>
+                            <td>{{ formatDate(user.createdAt) }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
 </div>

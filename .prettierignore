@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+coverage/
+out/
+.next/
+.cache/
+.vscode/
+.idea/
+*.log
+*.md
+.DS_Store
+.env*
+docker*
+.github/

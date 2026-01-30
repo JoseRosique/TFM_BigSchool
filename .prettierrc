@@ -1,27 +1,27 @@
 {
-  "tabWidth": 4,
-  "singleQuote": true,
+  "tabWidth": 2,
+  "useTabs": false,
   "printWidth": 100,
+  "singleQuote": true,
+  "semi": true,
   "trailingComma": "all",
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "semi": true,
+  "embeddedLanguageFormatting": "auto",
   "overrides": [
     {
       "files": "*.html",
       "options": {
-        "printWidth": 100,
+        "printWidth": 120,
         "singleQuote": false,
         "bracketSameLine": false
       }
     },
     {
-      "files": ["*.ts", "*.js"],
+      "files": "*.component.html",
       "options": {
-        "printWidth": 120,
-        "singleQuote": true,
-        "bracketSpacing": true
+        "printWidth": 120
       }
     }
   ]

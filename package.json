@@ -17,8 +17,21 @@
     "test": "npm run test --workspaces"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "21.1.2",
+    "@angular/cli": "21.1.2",
+    "@angular/compiler-cli": "21.1.2",
+    "@angular/core": "21.1.2",
+    "@angular/common": "21.1.2",
+    "@angular/animations": "21.1.2",
+    "@angular/compiler": "21.1.2",
+    "@angular/forms": "21.1.2",
+    "@angular/platform-browser": "21.1.2",
+    "@angular/platform-browser-dynamic": "21.1.2",
+    "@angular/router": "21.1.2",
+    "rxjs": "7.8.1",
+    "zone.js": "0.16.0",
     "prettier": "3.3.3",
-    "typescript": "5.4.5",
+    "typescript": "5.9.2",
     "webpack": "5.91.0"
   }
 }

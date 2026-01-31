@@ -4,11 +4,58 @@
 <nav class="navbar">
   <div class="navbar__left">
     <span class="material-symbols-outlined navbar__logo" aria-label="MeetWithFriends logo">diversity_3</span>
-    <span class="navbar__brand">MeetWithFriends</span>
+    <span class="navbar__brand">{{ "GLOBAL.APP_NAME" | translate }}</span>
   </div>
   <div class="navbar__right">
-    <button class="btn btn--text" type="button">Sign In</button>
-    <button class="btn btn--primary" type="button">Get Started</button>
+    <button class="btn btn--text" type="button">{{ "NAVBAR.SIGN_IN" | translate }}</button>
+    <button class="btn btn--primary" type="button">{{ "NAVBAR.GET_STARTED" | translate }}</button>
+    <div class="lang-switcher" tabindex="0">
+      <button
+        class="lang-main-btn"
+        (click)="showLangMenu = !showLangMenu"
+        [attr.aria-expanded]="showLangMenu"
+        aria-haspopup="listbox"
+      >
+        <img
+          *ngIf="currentLang === 'en'"
+          src="https://flagcdn.com/us.svg"
+          alt="English"
+          class="lang-flag"
+          width="20"
+          height="14"
+        />
+        <img
+          *ngIf="currentLang === 'es'"
+          src="https://flagcdn.com/es.svg"
+          alt="Español"
+          class="lang-flag"
+          width="20"
+          height="14"
+        />
+        <span class="lang-main-label">{{ currentLang | uppercase }}</span>
+        <span class="material-symbols-outlined lang-arrow">expand_more</span>
+      </button>
+      <div class="lang-menu" *ngIf="showLangMenu" (mouseleave)="showLangMenu = false">
+        <button
+          class="lang-menu-item"
+          [class.active]="currentLang === 'en'"
+          (click)="setLang('en'); showLangMenu = false"
+        >
+          <span class="lang-radio"><span *ngIf="currentLang === 'en'" class="lang-dot"></span></span>
+          <img src="https://flagcdn.com/us.svg" alt="English" class="lang-flag" width="20" height="14" />
+          <span class="lang-label">English - EN</span>
+        </button>
+        <button
+          class="lang-menu-item"
+          [class.active]="currentLang === 'es'"
+          (click)="setLang('es'); showLangMenu = false"
+        >
+          <span class="lang-radio"><span *ngIf="currentLang === 'es'" class="lang-dot"></span></span>
+          <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
+          <span class="lang-label">español - ES</span>
+        </button>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -16,16 +63,15 @@
   <div class="hero__content">
     <div class="hero__badge">
       <span class="material-symbols-outlined hero__badge-icon">check_circle</span>
-      The easiest way to meet with friends
+      {{ "LANDING.BADGE" | translate }}
     </div>
-    <h1 class="hero__title">Coordinate Meetups <span class="hero__title--accent">Effortlessly</span></h1>
+    <h1 class="hero__title" [innerHTML]="'LANDING.TITLE' | translate"></h1>
     <p class="hero__subtitle">
-      Share your availability with friends, book time slots instantly, and never miss a chance to connect. No more
-      endless back-and-forth messaging.
+      {{ "LANDING.SUBTITLE" | translate }}
     </p>
     <div class="hero__actions">
-      <button class="btn btn--primary btn--lg" type="button">Start for Free</button>
-      <button class="btn btn--text btn--lg" type="button">Sign In</button>
+      <button class="btn btn--primary btn--lg" type="button">{{ "LANDING.START_FREE" | translate }}</button>
+      <button class="btn btn--text btn--lg" type="button">{{ "NAVBAR.SIGN_IN" | translate }}</button>
     </div>
   </div>
 </main>
@@ -33,15 +79,20 @@
 <section class="feature-bar">
   <ul class="feature-bar__list">
     <li>
-      <span class="material-symbols-outlined feature-bar__icon">check_circle</span>No more endless text chains to find a
-      time
+      <span class="material-symbols-outlined feature-bar__icon">check_circle</span
+      >{{ "LANDING.FEATURES.NO_ENDLESS_TEXTS" | translate }}
     </li>
     <li>
-      <span class="material-symbols-outlined feature-bar__icon">check_circle</span>See when friends are genuinely free
+      <span class="material-symbols-outlined feature-bar__icon">check_circle</span
+      >{{ "LANDING.FEATURES.SEE_WHOS_FREE" | translate }}
     </li>
-    <li><span class="material-symbols-outlined feature-bar__icon">check_circle</span>Automatic time zone handling</li>
     <li>
-      <span class="material-symbols-outlined feature-bar__icon">check_circle</span>Works with your existing calendar
+      <span class="material-symbols-outlined feature-bar__icon">check_circle</span
+      >{{ "LANDING.FEATURES.TIMEZONE_HANDLING" | translate }}
+    </li>
+    <li>
+      <span class="material-symbols-outlined feature-bar__icon">check_circle</span
+      >{{ "LANDING.FEATURES.CALENDAR_INTEGRATION" | translate }}
     </li>
   </ul>
 </section>
@@ -51,23 +102,23 @@
   <div class="features__grid">
     <div class="feature-card">
       <span class="material-symbols-outlined feature-card__icon">event_available</span>
-      <h3 class="feature-card__title">Share Availability</h3>
-      <p class="feature-card__desc">Let friends know when you're free without the back-and-forth.</p>
+      <h3 class="feature-card__title">{{ "LANDING.CARDS.SHARE_AVAILABILITY.TITLE" | translate }}</h3>
+      <p class="feature-card__desc">{{ "LANDING.CARDS.SHARE_AVAILABILITY.DESC" | translate }}</p>
     </div>
     <div class="feature-card">
       <span class="material-symbols-outlined feature-card__icon">group</span>
-      <h3 class="feature-card__title">Connect with Friends</h3>
-      <p class="feature-card__desc">Build your circle and see who's available for spontaneous meetups.</p>
+      <h3 class="feature-card__title">{{ "LANDING.CARDS.CONNECT_FRIENDS.TITLE" | translate }}</h3>
+      <p class="feature-card__desc">{{ "LANDING.CARDS.CONNECT_FRIENDS.DESC" | translate }}</p>
     </div>
     <div class="feature-card">
       <span class="material-symbols-outlined feature-card__icon">bolt</span>
-      <h3 class="feature-card__title">Book Instantly</h3>
-      <p class="feature-card__desc">Reserve time slots with one click. No more scheduling hassle.</p>
+      <h3 class="feature-card__title">{{ "LANDING.CARDS.BOOK_INSTANTLY.TITLE" | translate }}</h3>
+      <p class="feature-card__desc">{{ "LANDING.CARDS.BOOK_INSTANTLY.DESC" | translate }}</p>
     </div>
     <div class="feature-card">
       <span class="material-symbols-outlined feature-card__icon">lock</span>
-      <h3 class="feature-card__title">Privacy First</h3>
-      <p class="feature-card__desc">Control who sees your availability with granular permissions.</p>
+      <h3 class="feature-card__title">{{ "LANDING.CARDS.PRIVACY_FIRST.TITLE" | translate }}</h3>
+      <p class="feature-card__desc">{{ "LANDING.CARDS.PRIVACY_FIRST.DESC" | translate }}</p>
     </div>
   </div>
 </section>

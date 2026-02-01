@@ -1,18 +1,20 @@
 import { Component, signal, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
 import { RegisterDTO } from '@meetwithfriends/shared';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-signup-card',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, FormsModule],
   styleUrls: ['./signup-card.component.scss'],
   templateUrl: './signup-card.component.html',
 })
 export class SignupCardComponent {
-  private translate = inject(TranslateService);
-  private authService = inject(AuthService);
+  private readonly translate = inject(TranslateService);
+  private readonly authService = inject(AuthService);
   // Signals for form state
   name = signal('');
   email = signal('');
@@ -52,11 +54,16 @@ export class SignupCardComponent {
     this.errors.set(this.validate());
   }
 
-  async submit() {
+  submit(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
     this.touched.set({ name: true, email: true, password: true, confirmPassword: true });
     const errors = this.validate();
     this.errors.set(errors);
-    if (Object.keys(errors).length > 0) return;
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
     this.loading.set(true);
     const input: RegisterDTO.Request = {
       name: this.name(),
@@ -69,13 +76,11 @@ export class SignupCardComponent {
         this.loading.set(false);
         this.success.set(true);
       },
-      error: (err: { error?: { message?: string } }) => {
+      error: (err: HttpErrorResponse) => {
+        console.error('[SignupCardComponent] Registration error:', err);
         this.loading.set(false);
-        if (err?.error?.message) {
-          this.errors.set({ general: err.error.message });
-        } else {
-          this.errors.set({ general: this.translate.instant('SIGNUP.ERROR.UNKNOWN') });
-        }
+        const errorMsg = err.error?.message || this.translate.instant('SIGNUP.ERROR.UNKNOWN');
+        this.errors.set({ general: errorMsg });
       },
     });
   }

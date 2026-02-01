@@ -32,6 +32,7 @@ export class LoginUserUseCase {
       userId: user.id,
       email: user.email,
       accessToken: token,
+      language: user.language,
     };
   }
 }

@@ -1,12 +1,13 @@
-const webpack = require("webpack");
-const nodeExternals = require("webpack-node-externals");
+const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = function (options, webpack) {
   return {
     ...options,
+    devtool: 'source-map',
     externals: [
       nodeExternals({
-        allowlist: ["webpack/hot/poll?100"],
+        allowlist: ['webpack/hot/poll?100'],
       }),
     ],
     module: {
@@ -15,7 +16,7 @@ module.exports = function (options, webpack) {
         ...options.module.rules,
         {
           test: /\.(html|cs)$/,
-          type: "asset/source",
+          type: 'asset/source',
         },
       ],
     },
@@ -24,12 +25,12 @@ module.exports = function (options, webpack) {
       new webpack.IgnorePlugin({
         checkResource(resource) {
           const lazyImports = [
-            "mock-aws-s3",
-            "aws-sdk",
-            "nock",
-            "@nestjs/microservices",
-            "@nestjs/microservices/microservices-module",
-            "@nestjs/websockets/socket-module",
+            'mock-aws-s3',
+            'aws-sdk',
+            'nock',
+            '@nestjs/microservices',
+            '@nestjs/microservices/microservices-module',
+            '@nestjs/websockets/socket-module',
           ];
           if (!lazyImports.includes(resource)) {
             return false;

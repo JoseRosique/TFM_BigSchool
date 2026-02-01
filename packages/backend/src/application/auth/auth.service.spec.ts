@@ -43,6 +43,7 @@ describe('AuthService', () => {
       email: input.email,
       name: input.name,
       timezone: input.timezone,
+      language: 'es',
     };
     (registerUserUseCase.execute as jest.Mock).mockResolvedValue(output);
     const result = await service.register(input);
@@ -59,6 +60,7 @@ describe('AuthService', () => {
       userId: '1',
       email: input.email,
       accessToken: 'jwt-token',
+      language: 'es',
     };
     (loginUserUseCase.execute as jest.Mock).mockResolvedValue(output);
     const result = await service.login(input);

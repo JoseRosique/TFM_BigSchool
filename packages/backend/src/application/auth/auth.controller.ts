@@ -1,11 +1,27 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Request,
+  Inject,
+  Patch,
+  NotFoundException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RegisterDTO, LoginDTO } from '@meetwithfriends/shared';
+import { RegisterDTO, LoginDTO, User } from '@meetwithfriends/shared';
+import { UserRepository, USER_REPOSITORY } from './user.repository';
+import { UpdateLanguageDto } from './dto/update-language.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    @Inject(USER_REPOSITORY)
+    private userRepository: UserRepository,
+  ) {}
 
   @Post('register')
   async register(@Body() input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
@@ -19,9 +35,13 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Request() req: any) {
-    // TODO: Retornar usuario autenticado
-    return req.user;
+  async getProfile(@Request() req: any): Promise<Omit<User, 'passwordHash'>> {
+    const user = await this.userRepository.findById(req.user.userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const { passwordHash, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   @Post('logout')
@@ -29,5 +49,20 @@ export class AuthController {
   logout(): { message: string } {
     // TODO: Invalidar sesión/token si es necesario
     return { message: 'Logged out successfully' };
+  }
+
+  @Patch('language')
+  @UseGuards(JwtAuthGuard)
+  async updateLanguage(
+    @Request() req: any,
+    @Body() dto: UpdateLanguageDto,
+  ): Promise<{ language: string }> {
+    const user = await this.userRepository.findById(req.user.userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.language = dto.language;
+    await this.userRepository.save(user);
+    return { language: user.language };
   }
 }

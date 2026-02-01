@@ -1,5 +1,5 @@
 <div class="signup-card" role="dialog" aria-modal="true">
-  <form class="signup-form" (ngSubmit)="submit()" autocomplete="off" novalidate>
+  <form class="signup-form" (ngSubmit)="submit($event)" autocomplete="off" novalidate>
     <h2 class="signup-title">{{ "LOGIN.TITLE" | translate }}</h2>
     <p class="signup-subtitle">{{ "LOGIN.SUBTITLE" | translate }}</p>
 

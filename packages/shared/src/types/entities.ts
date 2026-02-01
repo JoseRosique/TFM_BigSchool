@@ -46,6 +46,7 @@ export interface User {
   email: string;
   name: string;
   timezone: string; // IANA timezone (e.g., 'Europe/Madrid')
+  language: string; // ISO 639-1 (e.g., 'es', 'en')
   createdAt: Date;
   updatedAt: Date;
 }
@@ -100,6 +101,7 @@ export namespace RegisterDTO {
     password: string;
     name: string;
     timezone: string;
+    language?: string;
   }
 
   export interface Response {
@@ -107,6 +109,7 @@ export namespace RegisterDTO {
     email: string;
     name: string;
     timezone: string;
+    language: string;
   }
 }
 
@@ -120,6 +123,7 @@ export namespace LoginDTO {
     userId: string;
     email: string;
     accessToken: string;
+    language: string;
   }
 }
 

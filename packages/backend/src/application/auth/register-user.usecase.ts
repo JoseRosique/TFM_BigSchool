@@ -26,6 +26,7 @@ export class RegisterUserUseCase {
     user.passwordHash = passwordHash;
     user.name = input.name;
     user.timezone = input.timezone || 'UTC';
+    user.language = input.language || 'en';
     const saved = await this.userRepository.save(user);
     // 5. Retornar DTO seguro
     return {
@@ -33,6 +34,7 @@ export class RegisterUserUseCase {
       email: saved.email,
       name: saved.name,
       timezone: saved.timezone,
+      language: saved.language,
     };
   }
 }

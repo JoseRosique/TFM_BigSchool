@@ -2,6 +2,13 @@
   "GLOBAL": {
     "APP_NAME": "MeetWithFriends"
   },
+  "HEADER": {
+    "WELCOME": "Hey, {{name}}!",
+    "LOGOUT": "Logout",
+    "NOTIFICATIONS": "Notifications",
+    "USER_PROFILE": "User profile",
+    "GO_TO_DASHBOARD": "Go to dashboard"
+  },
   "NAVBAR": {
     "SIGN_IN": "Sign In",
     "GET_STARTED": "Get Started"

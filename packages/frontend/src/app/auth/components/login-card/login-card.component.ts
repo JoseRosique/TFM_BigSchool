@@ -1,18 +1,24 @@
 import { Component, signal, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
+import { LanguageService } from '../../../shared/services/language.service';
 import { LoginDTO } from '@meetwithfriends/shared';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-card',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslateModule, FormsModule],
   styleUrls: ['./login-card.component.scss'],
   templateUrl: './login-card.component.html',
 })
 export class LoginCardComponent {
-  private translate = inject(TranslateService);
-  private authService = inject(AuthService);
+  private readonly translate = inject(TranslateService);
+  private readonly authService = inject(AuthService);
+  private readonly languageService = inject(LanguageService);
+  private readonly router = inject(Router);
 
   email = signal('');
   password = signal('');
@@ -34,27 +40,34 @@ export class LoginCardComponent {
     this.errors.set(this.validate());
   }
 
-  async submit() {
+  submit(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
     this.errors.set(this.validate());
-    if (Object.keys(this.errors()).length > 0) return;
+    if (Object.keys(this.errors()).length > 0) {
+      return;
+    }
     this.loading.set(true);
     const input: LoginDTO.Request = {
       email: this.email(),
       password: this.password(),
     };
     this.authService.login(input).subscribe({
-      next: (res: { accessToken: string }) => {
+      next: (res: LoginDTO.Response) => {
         this.loading.set(false);
         this.success.set(true);
         this.authService.setAccessToken(res.accessToken);
-      },
-      error: (err: { error?: { message?: string } }) => {
-        this.loading.set(false);
-        if (err?.error?.message) {
-          this.errors.set({ general: err.error.message });
-        } else {
-          this.errors.set({ general: this.translate.instant('LOGIN.ERROR.UNKNOWN') });
+        if (res.language) {
+          this.languageService.setLang(res.language);
         }
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('[LoginCardComponent] Login error:', err);
+        this.loading.set(false);
+        const errorMsg = err.error?.message || this.translate.instant('LOGIN.ERROR.UNKNOWN');
+        this.errors.set({ general: errorMsg });
       },
     });
   }

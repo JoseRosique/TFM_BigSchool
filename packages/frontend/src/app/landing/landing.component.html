@@ -7,8 +7,10 @@
     <span class="navbar__brand">{{ "GLOBAL.APP_NAME" | translate }}</span>
   </div>
   <div class="navbar__right">
-    <button class="btn btn--text" type="button">{{ "NAVBAR.SIGN_IN" | translate }}</button>
-    <button class="btn btn--primary" type="button">{{ "NAVBAR.GET_STARTED" | translate }}</button>
+    <button class="btn btn--text" type="button" (click)="goToLogin()">{{ "NAVBAR.SIGN_IN" | translate }}</button>
+    <button class="btn btn--primary" type="button" (click)="goToSignup()">
+      {{ "NAVBAR.GET_STARTED" | translate }}
+    </button>
     <div class="lang-switcher" tabindex="0">
       <button
         class="lang-main-btn"
@@ -70,8 +72,13 @@
       {{ "LANDING.SUBTITLE" | translate }}
     </p>
     <div class="hero__actions">
-      <button class="btn btn--primary btn--lg" type="button">{{ "LANDING.START_FREE" | translate }}</button>
-      <button class="btn btn--text btn--lg" type="button">{{ "NAVBAR.SIGN_IN" | translate }}</button>
+      <button class="btn btn--primary btn--lg" type="button" (click)="goToSignup()">
+        {{ "LANDING.START_FREE" | translate }}
+      </button>
+
+      <button class="btn btn--text btn--lg" type="button" (click)="goToLogin()">
+        {{ "NAVBAR.SIGN_IN" | translate }}
+      </button>
     </div>
   </div>
 </main>

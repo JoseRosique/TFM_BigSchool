@@ -1,48 +1,119 @@
 {
-    "GLOBAL": {
-        "APP_NAME": "MeetWithFriends"
+  "GLOBAL": {
+    "APP_NAME": "MeetWithFriends"
+  },
+  "NAVBAR": {
+    "SIGN_IN": "Iniciar sesión",
+    "GET_STARTED": "Comenzar"
+  },
+  "LANDING": {
+    "BADGE": "La forma más fácil de quedar con amigos",
+    "TITLE": "Coordina quedadas <strong>fácilmente</strong>",
+    "SUBTITLE": "Comparte tu disponibilidad con amigos, reserva franjas al instante y no pierdas ninguna oportunidad de conectar. Olvídate de los mensajes interminables.",
+    "START_FREE": "Empezar gratis",
+    "FEATURES": {
+      "NO_ENDLESS_TEXTS": "Sin cadenas infinitas de mensajes para encontrar hora",
+      "SEE_WHOS_FREE": "Ve cuándo tus amigos están realmente libres",
+      "TIMEZONE_HANDLING": "Gestión automática de zonas horarias",
+      "CALENDAR_INTEGRATION": "Funciona con tu calendario habitual"
     },
-    "NAVBAR": {
-        "SIGN_IN": "Iniciar sesión",
-        "GET_STARTED": "Comenzar"
-    },
-    "LANDING": {
-        "BADGE": "La forma más fácil de quedar con amigos",
-        "TITLE": "Coordina quedadas <strong>fácilmente</strong>",
-        "SUBTITLE": "Comparte tu disponibilidad con amigos, reserva franjas al instante y no pierdas ninguna oportunidad de conectar. Olvídate de los mensajes interminables.",
-        "START_FREE": "Empezar gratis",
-        "FEATURES": {
-            "NO_ENDLESS_TEXTS": "Sin cadenas infinitas de mensajes para encontrar hora",
-            "SEE_WHOS_FREE": "Ve cuándo tus amigos están realmente libres",
-            "TIMEZONE_HANDLING": "Gestión automática de zonas horarias",
-            "CALENDAR_INTEGRATION": "Funciona con tu calendario habitual"
-        },
-        "CARDS": {
-            "SHARE_AVAILABILITY": {
-                "TITLE": "Comparte disponibilidad",
-                "DESC": "Deja que tus amigos sepan cuándo estás libre sin idas y vueltas."
-            },
-            "CONNECT_FRIENDS": {
-                "TITLE": "Conecta con amigos",
-                "DESC": "Crea tu círculo y ve quién está disponible para quedadas espontáneas."
-            },
-            "BOOK_INSTANTLY": {
-                "TITLE": "Reserva al instante",
-                "DESC": "Reserva franjas con un clic. Sin complicaciones."
-            },
-            "PRIVACY_FIRST": {
-                "TITLE": "Privacidad ante todo",
-                "DESC": "Controla quién ve tu disponibilidad con permisos granulares."
-            }
-        }
-    },
-    "USER_TEST": {
-        "TITLE": "Prueba de Creación de Usuarios",
-        "CREATE_USER": "Generar Usuario Aleatorio",
-        "CREATING": "Creando..."
-    },
-    "BUTTONS": {
-        "LANG_ES": "ES",
-        "LANG_EN": "EN"
+    "CARDS": {
+      "SHARE_AVAILABILITY": {
+        "TITLE": "Comparte disponibilidad",
+        "DESC": "Deja que tus amigos sepan cuándo estás libre sin idas y vueltas."
+      },
+      "CONNECT_FRIENDS": {
+        "TITLE": "Conecta con amigos",
+        "DESC": "Crea tu círculo y ve quién está disponible para quedadas espontáneas."
+      },
+      "BOOK_INSTANTLY": {
+        "TITLE": "Reserva al instante",
+        "DESC": "Reserva franjas con un clic. Sin complicaciones."
+      },
+      "PRIVACY_FIRST": {
+        "TITLE": "Privacidad ante todo",
+        "DESC": "Controla quién ve tu disponibilidad con permisos granulares."
+      }
     }
+  },
+  "USER_TEST": {
+    "TITLE": "Prueba de Creación de Usuarios",
+    "CREATE_USER": "Generar Usuario Aleatorio",
+    "CREATING": "Creando..."
+  },
+  "BUTTONS": {
+    "LANG_ES": "ES",
+    "LANG_EN": "EN"
+  },
+  "SIGNUP": {
+    "TITLE": "Crea tu cuenta",
+    "SUBTITLE": "Conecta con amigos, crea planes y comparte momentos únicos.",
+    "FORM": {
+      "NAME": {
+        "LABEL": "Nombre",
+        "PLACEHOLDER": "Tu nombre o apodo"
+      },
+      "EMAIL": {
+        "LABEL": "Email",
+        "PLACEHOLDER": "ejemplo@email.com"
+      },
+      "PASSWORD": {
+        "LABEL": "Contraseña",
+        "PLACEHOLDER": "Mínimo 8 caracteres"
+      },
+      "CONFIRM_PASSWORD": {
+        "LABEL": "Repite la contraseña",
+        "PLACEHOLDER": "Vuelve a escribir la contraseña"
+      },
+      "BIRTHDATE": {
+        "LABEL": "Fecha de nacimiento",
+        "OPTIONAL": "opcional"
+      },
+      "SUBMIT": "Crear cuenta",
+      "SUBMITTING": "Creando cuenta..."
+    },
+    "VALIDATION": {
+      "NAME": "Por favor, introduce tu nombre.",
+      "EMAIL": "Introduce un email válido.",
+      "PASSWORD": "La contraseña debe tener al menos 8 caracteres.",
+      "CONFIRM_PASSWORD": "Las contraseñas no coinciden."
+    },
+    "DIVIDER": "o",
+    "SOCIAL": {
+      "GOOGLE": "Registrarse con Google",
+      "APPLE": "Registrarse con Apple",
+      "NOT_IMPLEMENTED": "Registro con {{provider}} no implementado aún."
+    },
+    "SUCCESS": "¡Cuenta creada con éxito! 🎉"
+  },
+  "LOGIN": {
+    "TITLE": "Inicia sesión en tu cuenta",
+    "SUBTITLE": "¡Bienvenido de nuevo! Ingresa tus credenciales.",
+    "FORM": {
+      "EMAIL": {
+        "LABEL": "Email",
+        "PLACEHOLDER": "ejemplo@email.com"
+      },
+      "PASSWORD": {
+        "LABEL": "Contraseña",
+        "PLACEHOLDER": "Tu contraseña"
+      },
+      "SUBMIT": "Iniciar sesión",
+      "SUBMITTING": "Iniciando sesión..."
+    },
+    "VALIDATION": {
+      "EMAIL": "Introduce un email válido.",
+      "PASSWORD": "La contraseña es obligatoria."
+    },
+    "ERROR": {
+      "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo."
+    },
+    "SOCIAL": {
+      "GOOGLE": "Iniciar sesión con Google",
+      "APPLE": "Iniciar sesión con Apple",
+      "NOT_IMPLEMENTED": "Inicio de sesión con {{provider}} no implementado aún."
+    },
+    "SUCCESS": "¡Sesión iniciada con éxito!",
+    "DIVIDER": "o"
+  }
 }

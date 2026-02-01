@@ -1,0 +1,210 @@
+@use 'sass:color';
+
+.signup-card {
+  max-width: 100%;
+  margin: 3.5rem auto;
+  background: #fff;
+  border-radius: 1.3rem;
+  box-shadow: 0 8px 32px 0 rgba(34, 60, 80, 0.13);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.18s;
+  position: relative;
+  @media (max-width: 600px) {
+    margin: 0;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 2rem 0.5rem 1.5rem 0.5rem;
+  }
+}
+.signup-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+.signup-subtitle {
+  font-size: 1.08rem;
+  color: #475569;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.signup-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f3f6fa;
+  border-radius: 0.6rem;
+  border: 1.5px solid #e0e7ef;
+  padding: 0.2rem 0.9rem 0.2rem 0.5rem;
+  transition:
+    border 0.15s,
+    box-shadow 0.15s;
+  position: relative;
+}
+.input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px 0 rgba(37, 99, 235, 0.08);
+}
+.input-wrapper.error {
+  border-color: #ef4444;
+}
+.input-icon {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  margin-right: 0.5rem;
+}
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='date'] {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1.08rem;
+  padding: 0.7rem 0.2rem;
+  outline: none;
+  color: #222;
+  font-family: inherit;
+}
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+}
+.input-check {
+  color: #22c55e;
+  font-size: 1.1rem;
+  margin-left: 0.3rem;
+}
+.input-error {
+  color: #ef4444;
+  font-size: 0.97rem;
+  margin-top: 0.1rem;
+  margin-left: 0.2rem;
+}
+.optional {
+  color: #94a3b8;
+  font-size: 0.95em;
+}
+.btn {
+  font-family: inherit;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.7rem;
+  padding: 0.85rem 1.5rem;
+  font-size: 1.08rem;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    box-shadow 0.18s,
+    transform 0.1s;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  user-select: none;
+  position: relative;
+}
+.btn--primary {
+  background: linear-gradient(90deg, #2563eb 60%, #38bdf8 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px 0 rgba(56, 189, 248, 0.08);
+}
+.btn--primary:hover,
+.btn--primary:focus {
+  background: linear-gradient(90deg, #1d4ed8 60%, #0ea5e9 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+}
+.btn--block {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+.btn--google {
+  background: #fff;
+  color: #222;
+  border: 1.5px solid #e0e7ef;
+  margin-bottom: 0.2rem;
+}
+.btn--google:hover,
+.btn--google:focus {
+  background: #f3f6fa;
+  border-color: #2563eb;
+}
+.btn--apple {
+  background: #222;
+  color: #fff;
+  border: 1.5px solid #222;
+}
+.btn--apple:hover,
+.btn--apple:focus {
+  background: #111;
+  border-color: #2563eb;
+}
+.btn-icon {
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 0.7rem;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #b6c2d6;
+  font-size: 1.05rem;
+  margin: 0.7rem 0 0.2rem 0;
+}
+.divider span {
+  background: #fff;
+  padding: 0 0.7rem;
+  z-index: 1;
+}
+.divider:before,
+.divider:after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid #e0e7ef;
+  margin: 0 0.2rem;
+}
+.signup-success {
+  color: #22c55e;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 1.1rem;
+  font-size: 1.13rem;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 600px) {
+  .signup-card {
+    max-width: 100vw;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 2rem 0.5rem 1.5rem 0.5rem;
+  }
+  .signup-title {
+    font-size: 1.6rem;
+  }
+  .signup-form {
+    gap: 0.8rem;
+  }
+  .btn {
+    font-size: 1rem;
+    padding: 0.8rem 1.1rem;
+  }
+}

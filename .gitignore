@@ -22,4 +22,5 @@ build/
 .angular
 docker*
 .github/
-auth/
+playwright-report/
+jest.config.js

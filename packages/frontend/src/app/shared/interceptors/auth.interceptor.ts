@@ -7,14 +7,18 @@ import { AuthService } from '../services/auth.service';
  * Añade JWT token a todas las requests
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (req.url.includes('/assets/i18n/')) {
+    return next(req);
+  }
+
   const authService = inject(AuthService);
   const token = authService.getAccessToken();
 
   if (token) {
     req = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 

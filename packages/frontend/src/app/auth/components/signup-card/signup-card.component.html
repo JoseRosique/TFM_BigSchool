@@ -1,0 +1,150 @@
+<div class="signup-card" role="dialog" aria-modal="true">
+  <form class="signup-form" (ngSubmit)="submit()" autocomplete="off" novalidate>
+    <h2 class="signup-title">{{ "SIGNUP.TITLE" | translate }}</h2>
+    <p class="signup-subtitle">{{ "SIGNUP.SUBTITLE" | translate }}</p>
+
+    <div class="form-group">
+      <label for="name">{{ "SIGNUP.FORM.NAME.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['name']">
+        <span class="material-symbols-outlined input-icon">person</span>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="{{ 'SIGNUP.FORM.NAME.PLACEHOLDER' | translate }}"
+          [value]="name()"
+          (input)="name.set($event.target.value); onInput()"
+          (blur)="onBlur('name')"
+          [attr.aria-invalid]="!!errors()['name']"
+          [attr.aria-describedby]="errors()['name'] ? 'name-error' : null"
+          required
+        />
+        <span *ngIf="touched()['name'] && !errors()['name'] && name()" class="input-check">✔️</span>
+      </div>
+      <div *ngIf="touched()['name'] && errors()['name']" class="input-error" id="name-error">
+        {{ errors()["name"] }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">{{ "SIGNUP.FORM.EMAIL.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['email']">
+        <span class="material-symbols-outlined input-icon">mail</span>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="{{ 'SIGNUP.FORM.EMAIL.PLACEHOLDER' | translate }}"
+          [value]="email()"
+          (input)="email.set($event.target.value); onInput()"
+          (blur)="onBlur('email')"
+          [attr.aria-invalid]="!!errors()['email']"
+          [attr.aria-describedby]="errors()['email'] ? 'email-error' : null"
+          required
+        />
+        <span *ngIf="touched()['email'] && !errors()['email'] && email()" class="input-check">✔️</span>
+      </div>
+      <div *ngIf="touched()['email'] && errors()['email']" class="input-error" id="email-error">
+        {{ errors()["email"] }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">{{ "SIGNUP.FORM.PASSWORD.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['password']">
+        <span class="material-symbols-outlined input-icon">lock</span>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="{{ 'SIGNUP.FORM.PASSWORD.PLACEHOLDER' | translate }}"
+          [value]="password()"
+          (input)="password.set($event.target.value); onInput()"
+          (blur)="onBlur('password')"
+          [attr.aria-invalid]="!!errors()['password']"
+          [attr.aria-describedby]="errors()['password'] ? 'password-error' : null"
+          required
+        />
+        <span *ngIf="touched()['password'] && !errors()['password'] && password()" class="input-check">✔️</span>
+      </div>
+      <div *ngIf="touched()['password'] && errors()['password']" class="input-error" id="password-error">
+        {{ errors()["password"] }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">{{ "SIGNUP.FORM.CONFIRM_PASSWORD.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['confirmPassword']">
+        <span class="material-symbols-outlined input-icon">lock</span>
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          placeholder="{{ 'SIGNUP.FORM.CONFIRM_PASSWORD.PLACEHOLDER' | translate }}"
+          [value]="confirmPassword()"
+          (input)="confirmPassword.set($event.target.value); onInput()"
+          (blur)="onBlur('confirmPassword')"
+          [attr.aria-invalid]="!!errors()['confirmPassword']"
+          [attr.aria-describedby]="errors()['confirmPassword'] ? 'confirmPassword-error' : null"
+          required
+        />
+        <span
+          *ngIf="touched()['confirmPassword'] && !errors()['confirmPassword'] && confirmPassword()"
+          class="input-check"
+          >✔️</span
+        >
+      </div>
+      <div
+        *ngIf="touched()['confirmPassword'] && errors()['confirmPassword']"
+        class="input-error"
+        id="confirmPassword-error"
+      >
+        {{ errors()["confirmPassword"] }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="birthdate"
+        >{{ "SIGNUP.FORM.BIRTHDATE.LABEL" | translate }}
+        <span class="optional">({{ "SIGNUP.FORM.BIRTHDATE.OPTIONAL" | translate }})</span></label
+      >
+      <div class="input-wrapper">
+        <span class="material-symbols-outlined input-icon">calendar_month</span>
+        <input
+          id="birthdate"
+          name="birthdate"
+          type="date"
+          [value]="birthdate()"
+          (input)="birthdate.set($event.target.value)"
+        />
+      </div>
+    </div>
+
+    <button class="btn btn--primary btn--block" type="submit" [disabled]="loading()">
+      {{ loading() ? ("SIGNUP.FORM.SUBMITTING" | translate) : ("SIGNUP.FORM.SUBMIT" | translate) }}
+    </button>
+
+    <div class="divider">
+      <span>{{ "SIGNUP.DIVIDER" | translate }}</span>
+    </div>
+
+    <button class="btn btn--google btn--block" type="button" (click)="socialSignup('Google')">
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+        alt="Google"
+        class="btn-icon"
+      />
+      {{ "SIGNUP.SOCIAL.GOOGLE" | translate }}
+    </button>
+    <button class="btn btn--apple btn--block" type="button" (click)="socialSignup('Apple')">
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
+        alt="Apple"
+        class="btn-icon"
+      />
+      {{ "SIGNUP.SOCIAL.APPLE" | translate }}
+    </button>
+
+    <div *ngIf="success()" class="signup-success" role="status">{{ "SIGNUP.SUCCESS" | translate }}</div>
+  </form>
+</div>

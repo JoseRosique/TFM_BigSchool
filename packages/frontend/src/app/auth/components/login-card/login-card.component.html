@@ -1,0 +1,73 @@
+<div class="signup-card" role="dialog" aria-modal="true">
+  <form class="signup-form" (ngSubmit)="submit()" autocomplete="off" novalidate>
+    <h2 class="signup-title">{{ "LOGIN.TITLE" | translate }}</h2>
+    <p class="signup-subtitle">{{ "LOGIN.SUBTITLE" | translate }}</p>
+
+    <div class="form-group">
+      <label for="email">{{ "LOGIN.FORM.EMAIL.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['email']">
+        <span class="material-symbols-outlined input-icon">mail</span>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="{{ 'LOGIN.FORM.EMAIL.PLACEHOLDER' | translate }}"
+          [value]="email()"
+          (input)="email.set($event.target.value); onInput()"
+          [attr.aria-invalid]="!!errors()['email']"
+          required
+        />
+      </div>
+      <div *ngIf="errors()['email']" class="input-error">
+        {{ errors()["email"] }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">{{ "LOGIN.FORM.PASSWORD.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['password']">
+        <span class="material-symbols-outlined input-icon">lock</span>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="{{ 'LOGIN.FORM.PASSWORD.PLACEHOLDER' | translate }}"
+          [value]="password()"
+          (input)="password.set($event.target.value); onInput()"
+          [attr.aria-invalid]="!!errors()['password']"
+          required
+        />
+      </div>
+      <div *ngIf="errors()['password']" class="input-error">
+        {{ errors()["password"] }}
+      </div>
+    </div>
+
+    <button class="btn btn--primary btn--block" type="submit" [disabled]="loading()">
+      {{ loading() ? ("LOGIN.FORM.SUBMITTING" | translate) : ("LOGIN.FORM.SUBMIT" | translate) }}
+    </button>
+
+    <div class="divider">
+      <span>{{ "LOGIN.DIVIDER" | translate }}</span>
+    </div>
+
+    <button class="btn btn--google btn--block" type="button" (click)="socialLogin('Google')">
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+        alt="Google"
+        class="btn-icon"
+      />
+      {{ "LOGIN.SOCIAL.GOOGLE" | translate }}
+    </button>
+    <button class="btn btn--apple btn--block" type="button" (click)="socialLogin('Apple')">
+      <img
+        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
+        alt="Apple"
+        class="btn-icon"
+      />
+      {{ "LOGIN.SOCIAL.APPLE" | translate }}
+    </button>
+
+    <div *ngIf="errors()['general']" class="input-error input-error--general">{{ errors()["general"] }}</div>
+    <div *ngIf="success()" class="signup-success" role="status">{{ "LOGIN.SUCCESS" | translate }}</div>
+  </form>
+</div>

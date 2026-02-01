@@ -9,19 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-signup-page',
   standalone: true,
   imports: [CommonModule, SignupCardComponent, TranslateModule],
-  template: `
-    <div class="signup-page-bg">
-      <nav class="navbar">
-        <div class="navbar__left">
-          <button class="navbar__logo-btn" type="button" (click)="goHome()" aria-label="Go to home">
-            <span class="material-symbols-outlined navbar__logo">diversity_3</span>
-            <span class="navbar__brand">{{ 'GLOBAL.APP_NAME' | translate }}</span>
-          </button>
-        </div>
-      </nav>
-      <app-signup-card></app-signup-card>
-    </div>
-  `,
+  templateUrl: './signup-page.component.html',
   styleUrls: ['./signup-page.component.scss'],
 })
 export class SignupPageComponent implements OnInit {

@@ -19,11 +19,15 @@
           [attr.aria-describedby]="errors()['name'] ? 'name-error' : null"
           required
         />
-        <span *ngIf="touched()['name'] && !errors()['name'] && name()" class="input-check">✔️</span>
+        @if (touched()["name"] && !errors()["name"] && name()) {
+          <span class="input-check">✔️</span>
+        }
       </div>
-      <div *ngIf="touched()['name'] && errors()['name']" class="input-error" id="name-error">
-        {{ errors()["name"] }}
-      </div>
+      @if (touched()["name"] && errors()["name"]) {
+        <div class="input-error" id="name-error">
+          {{ errors()["name"] }}
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -42,11 +46,15 @@
           [attr.aria-describedby]="errors()['email'] ? 'email-error' : null"
           required
         />
-        <span *ngIf="touched()['email'] && !errors()['email'] && email()" class="input-check">✔️</span>
+        @if (touched()["email"] && !errors()["email"] && email()) {
+          <span class="input-check">✔️</span>
+        }
       </div>
-      <div *ngIf="touched()['email'] && errors()['email']" class="input-error" id="email-error">
-        {{ errors()["email"] }}
-      </div>
+      @if (touched()["email"] && errors()["email"]) {
+        <div class="input-error" id="email-error">
+          {{ errors()["email"] }}
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -65,11 +73,15 @@
           [attr.aria-describedby]="errors()['password'] ? 'password-error' : null"
           required
         />
-        <span *ngIf="touched()['password'] && !errors()['password'] && password()" class="input-check">✔️</span>
+        @if (touched()["password"] && !errors()["password"] && password()) {
+          <span class="input-check">✔️</span>
+        }
       </div>
-      <div *ngIf="touched()['password'] && errors()['password']" class="input-error" id="password-error">
-        {{ errors()["password"] }}
-      </div>
+      @if (touched()["password"] && errors()["password"]) {
+        <div class="input-error" id="password-error">
+          {{ errors()["password"] }}
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -88,19 +100,15 @@
           [attr.aria-describedby]="errors()['confirmPassword'] ? 'confirmPassword-error' : null"
           required
         />
-        <span
-          *ngIf="touched()['confirmPassword'] && !errors()['confirmPassword'] && confirmPassword()"
-          class="input-check"
-          >✔️</span
-        >
+        @if (touched()["confirmPassword"] && !errors()["confirmPassword"] && confirmPassword()) {
+          <span class="input-check">✔️</span>
+        }
       </div>
-      <div
-        *ngIf="touched()['confirmPassword'] && errors()['confirmPassword']"
-        class="input-error"
-        id="confirmPassword-error"
-      >
-        {{ errors()["confirmPassword"] }}
-      </div>
+      @if (touched()["confirmPassword"] && errors()["confirmPassword"]) {
+        <div class="input-error" id="confirmPassword-error">
+          {{ errors()["confirmPassword"] }}
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -145,6 +153,8 @@
       {{ "SIGNUP.SOCIAL.APPLE" | translate }}
     </button>
 
-    <div *ngIf="success()" class="signup-success" role="status">{{ "SIGNUP.SUCCESS" | translate }}</div>
+    @if (success()) {
+      <div class="signup-success" role="status">{{ "SIGNUP.SUCCESS" | translate }}</div>
+    }
   </form>
 </div>

@@ -1,13 +1,12 @@
 import { Component, signal, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../shared/services/auth.service';
 import { LoginDTO } from '@meetwithfriends/shared';
 
 @Component({
   selector: 'app-login-card',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslateModule],
   styleUrls: ['./login-card.component.scss'],
   templateUrl: './login-card.component.html',
 })

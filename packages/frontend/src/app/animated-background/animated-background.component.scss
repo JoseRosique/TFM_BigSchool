@@ -9,16 +9,14 @@
   height: 100vh;
   z-index: -1;
   overflow: hidden;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #ffffff 0%, #fff6f3 40%, #ffe8e1 100%);
 }
 
 .background-container {
   position: absolute;
   width: 100%;
   height: 100%;
-  //   filter: blur(80px); Valor original
-  filter: blur(0px);
-  opacity: 0.8;
+  background-color: tan;
 }
 
 .calendar-grid {
@@ -28,10 +26,18 @@
   width: 100%;
   height: 100%;
   z-index: 0;
-  opacity: 0.4;
-  //   background-image: radial-gradient(#6c5ce7 1px, transparent 1px); Valor original
-  background: greenyellow;
-  background-size: 40px 40px;
+  opacity: 0.28;
+  background-image: radial-gradient(
+      circle at 15% 25%,
+      rgba(255, 107, 107, 0.22) 0%,
+      transparent 55%
+    ),
+    radial-gradient(circle at 85% 75%, rgba(255, 140, 122, 0.22) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, rgba(255, 209, 200, 0.24) 0%, transparent 55%),
+    radial-gradient(circle at 10% 85%, rgba(255, 191, 183, 0.24) 0%, transparent 50%),
+    radial-gradient(circle at 90% 15%, rgba(255, 214, 214, 0.22) 0%, transparent 53%);
+  background-size: 100% 100%;
+  animation: subtleShift 25s ease-in-out infinite;
 }
 
 .blob {
@@ -47,8 +53,7 @@
   left: -10%;
   width: 50vw;
   height: 50vw;
-  // background: var(--color-primary, #a29bfe); Valor original
-  background: greenyellow;
+  background: var(--color-primary, #ff6b6b);
   animation-duration: 15s;
   animation-name: morph-1;
 }
@@ -58,8 +63,7 @@
   right: -10%;
   width: 60vw;
   height: 60vw;
-  // background: var(--color-secondary, #fab1a0); Valor original
-  background: greenyellow;
+  background: var(--color-secondary, #ff8c7a);
   animation-duration: 18s;
   animation-name: morph-2;
   animation-delay: -5s;
@@ -70,8 +74,7 @@
   left: 40%;
   width: 40vw;
   height: 40vw;
-  // background: var(--color-accent, #74b9ff); Valor original
-  background: greenyellow;
+  background: var(--color-accent, #ffd1c8);
   animation-duration: 12s;
   animation-name: morph-3;
   opacity: 0.7;
@@ -79,10 +82,11 @@
 
 .floating-icon {
   position: absolute;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(5px);
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 242, 0.92));
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(255, 107, 107, 0.2);
+  border: 1.5px solid rgba(255, 191, 183, 0.4);
   z-index: 1;
   animation: drift 15s infinite linear;
 
@@ -136,6 +140,16 @@
   100% {
     transform: translate(0, 0) scale(1);
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+}
+
+@keyframes subtleShift {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.2;
   }
 }
 

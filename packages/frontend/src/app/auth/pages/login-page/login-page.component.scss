@@ -1,7 +1,92 @@
 .login-page-bg {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #ff7878 0%, #ff9a79 40%, #ff9474 100%);
+}
+
+// Navbar styles for auth pages
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2.5rem 1.5rem 2rem;
+  background: transparent;
+  position: relative;
+  z-index: 10;
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar__logo-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover,
+  &:focus {
+    outline: none;
+
+    .navbar__logo {
+      box-shadow: 0 6px 28px rgba(255, 107, 107, 0.45);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.navbar__logo {
+  font-size: 2.2rem;
+  color: #ffeaea;
+  background: linear-gradient(135deg, #ff7878 0%, #ff9a79 40%, #ff9474 100%);
+  border-radius: 0.6rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 0.25rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.25);
+}
+
+.navbar__brand {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #3b2f2f;
+}
+
+// Flex grow to fill available space and center card
+.login-page-bg > app-login-card {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+  background: linear-gradient(135deg, #ff7878 0%, #ff9a79 40%, #ff9474 100%);
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    padding: 1.1rem 1rem;
+    gap: 0.7rem;
+  }
+
+  .navbar__logo {
+    font-size: 1.8rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .navbar__brand {
+    font-size: 1.1rem;
+  }
 }

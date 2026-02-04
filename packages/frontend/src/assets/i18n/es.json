@@ -52,6 +52,14 @@
     "LANG_ES": "ES",
     "LANG_EN": "EN"
   },
+  "SIDEBAR": {
+    "HOME": "Inicio",
+    "CALENDAR": "Calendario",
+    "FRIENDS": "Amigos",
+    "GROUPS": "Grupos",
+    "COLLAPSE": "Contraer menú",
+    "EXPAND": "Expandir menú"
+  },
   "SIGNUP": {
     "TITLE": "Crea tu cuenta",
     "SUBTITLE": "Conecta con amigos, crea planes y comparte momentos únicos.",

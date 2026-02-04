@@ -35,4 +35,22 @@ export const APP_ROUTES: Routes = [
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
+  {
+    path: 'calendar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/calendar/calendar.component').then((m) => m.CalendarComponent),
+  },
+  {
+    path: 'friends',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/friends/friends.component').then((m) => m.FriendsComponent),
+  },
+  {
+    path: 'groups',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/groups/groups.component').then((m) => m.GroupsComponent),
+  },
 ];

@@ -40,53 +40,47 @@
           [attr.aria-expanded]="showLangMenu"
           aria-haspopup="menu"
         >
-          <img
-            *ngIf="currentLang === 'en'"
-            src="https://flagcdn.com/us.svg"
-            alt="English"
-            class="lang-flag"
-            width="20"
-            height="14"
-          />
-          <img
-            *ngIf="currentLang === 'es'"
-            src="https://flagcdn.com/es.svg"
-            alt="Español"
-            class="lang-flag"
-            width="20"
-            height="14"
-          />
+          @if (currentLang === "en") {
+            <img src="https://flagcdn.com/gb.svg" alt="English" class="lang-flag" width="20" height="14" />
+          }
+          @if (currentLang === "es") {
+            <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
+          }
           <span class="lang-main-label">{{ currentLang | uppercase }}</span>
           <span class="material-symbols-outlined lang-arrow">expand_more</span>
         </button>
-        <div
-          class="lang-menu"
-          *ngIf="showLangMenu"
-          (mouseleave)="closeLangMenu()"
-          (keydown.escape)="closeLangMenu()"
-          role="menu"
-        >
-          <button
-            class="lang-menu-item"
-            role="menuitem"
-            [class.active]="currentLang === 'en'"
-            (click)="setLang('en'); closeLangMenu()"
-          >
-            <span class="lang-radio"><span *ngIf="currentLang === 'en'" class="lang-dot"></span></span>
-            <img src="https://flagcdn.com/us.svg" alt="English" class="lang-flag" width="20" height="14" />
-            <span class="lang-label">English - EN</span>
-          </button>
-          <button
-            class="lang-menu-item"
-            role="menuitem"
-            [class.active]="currentLang === 'es'"
-            (click)="setLang('es'); closeLangMenu()"
-          >
-            <span class="lang-radio"><span *ngIf="currentLang === 'es'" class="lang-dot"></span></span>
-            <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
-            <span class="lang-label">español - ES</span>
-          </button>
-        </div>
+        @if (showLangMenu) {
+          <div class="lang-menu" (mouseleave)="closeLangMenu()" (keydown.escape)="closeLangMenu()" role="menu">
+            <button
+              class="lang-menu-item"
+              role="menuitem"
+              [class.active]="currentLang === 'en'"
+              (click)="setLang('en'); closeLangMenu()"
+            >
+              <span class="lang-radio">
+                @if (currentLang === "en") {
+                  <span class="lang-dot"></span>
+                }
+              </span>
+              <img src="https://flagcdn.com/gb.svg" alt="English" class="lang-flag" width="20" height="14" />
+              <span class="lang-label">English - EN</span>
+            </button>
+            <button
+              class="lang-menu-item"
+              role="menuitem"
+              [class.active]="currentLang === 'es'"
+              (click)="setLang('es'); closeLangMenu()"
+            >
+              <span class="lang-radio">
+                @if (currentLang === "es") {
+                  <span class="lang-dot"></span>
+                }
+              </span>
+              <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
+              <span class="lang-label">español - ES</span>
+            </button>
+          </div>
+        }
       </div>
 
       <!-- Profile Dropdown -->

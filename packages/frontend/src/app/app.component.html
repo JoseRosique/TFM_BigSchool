@@ -1,0 +1,13 @@
+@if (shouldShowHeader()) {
+  <div class="app-shell">
+    <app-header></app-header>
+    <div class="app-shell__body">
+      <app-sidebar></app-sidebar>
+      <main class="app-shell__content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}

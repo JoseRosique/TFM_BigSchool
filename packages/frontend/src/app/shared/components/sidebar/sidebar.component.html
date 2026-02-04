@@ -1,0 +1,62 @@
+<aside class="sidebar" [class.sidebar--collapsed]="isCollapsed()">
+  <div class="sidebar__header">
+    <button
+      class="sidebar__toggle"
+      type="button"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="getToggleLabelKey() | translate"
+    >
+      <span class="material-symbols-outlined sidebar__toggle-icon">menu</span>
+    </button>
+  </div>
+  <nav class="sidebar__nav">
+    <a
+      class="sidebar__item"
+      routerLink="/dashboard"
+      routerLinkActive="sidebar__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [attr.aria-label]="'SIDEBAR.HOME' | translate"
+    >
+      <span class="material-symbols-outlined sidebar__icon">home</span>
+      @if (!isCollapsed()) {
+        <span class="sidebar__label">{{ "SIDEBAR.HOME" | translate }}</span>
+      }
+    </a>
+    <a
+      class="sidebar__item"
+      routerLink="/calendar"
+      routerLinkActive="sidebar__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [attr.aria-label]="'SIDEBAR.CALENDAR' | translate"
+    >
+      <span class="material-symbols-outlined sidebar__icon">calendar_month</span>
+      @if (!isCollapsed()) {
+        <span class="sidebar__label">{{ "SIDEBAR.CALENDAR" | translate }}</span>
+      }
+    </a>
+    <a
+      class="sidebar__item"
+      routerLink="/friends"
+      routerLinkActive="sidebar__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [attr.aria-label]="'SIDEBAR.FRIENDS' | translate"
+    >
+      <span class="material-symbols-outlined sidebar__icon">group</span>
+      @if (!isCollapsed()) {
+        <span class="sidebar__label">{{ "SIDEBAR.FRIENDS" | translate }}</span>
+      }
+    </a>
+    <a
+      class="sidebar__item"
+      routerLink="/groups"
+      routerLinkActive="sidebar__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [attr.aria-label]="'SIDEBAR.GROUPS' | translate"
+    >
+      <span class="material-symbols-outlined sidebar__icon">groups</span>
+      @if (!isCollapsed()) {
+        <span class="sidebar__label">{{ "SIDEBAR.GROUPS" | translate }}</span>
+      }
+    </a>
+  </nav>
+</aside>

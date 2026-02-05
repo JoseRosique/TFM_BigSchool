@@ -142,12 +142,18 @@
           </div>
           <div class="security-item">
             <div class="security-info">
-              <h3 class="security-title">{{ "PROFILE.TWO_FACTOR" | translate }}</h3>
+              <h3 class="security-title" id="two-factor-label">{{ "PROFILE.TWO_FACTOR" | translate }}</h3>
               <p class="security-desc">{{ "PROFILE.TWO_FACTOR_DESC" | translate }}</p>
             </div>
-            <button type="button" class="btn" [class.btn--secondary]="twoFactorEnabled()" (click)="toggleTwoFactor()">
-              {{ (twoFactorEnabled() ? "PROFILE.DISABLE" : "PROFILE.ENABLE") | translate }}
-            </button>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="profile-two-factor"
+                formControlName="twoFactorEnabled"
+                aria-labelledby="two-factor-label"
+              />
+              <span class="toggle-slider"></span>
+            </label>
           </div>
         </div>
       </section>

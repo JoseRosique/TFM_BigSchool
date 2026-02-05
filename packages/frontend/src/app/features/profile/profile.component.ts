@@ -30,7 +30,6 @@ export class ProfileComponent implements OnInit {
   user = signal<User | null>(null);
   profileForm!: FormGroup;
   isSaving = signal(false);
-  twoFactorEnabled = signal(false);
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -50,7 +49,6 @@ export class ProfileComponent implements OnInit {
       next: (profile) => {
         this.user.set(profile);
         this.initializeForm();
-        this.twoFactorEnabled.set((profile as any).twoFactorEnabled || false);
       },
       error: () => {
         this.router.navigate(['/dashboard']);
@@ -67,6 +65,7 @@ export class ProfileComponent implements OnInit {
       timezone: [u?.timezone || 'UTC'],
       emailNotifications: [u ? (u as any).emailNotifications : true],
       pushNotifications: [u ? (u as any).pushNotifications : true],
+      twoFactorEnabled: [u ? (u as any).twoFactorEnabled : false],
     });
   }
 
@@ -83,24 +82,6 @@ export class ProfileComponent implements OnInit {
       },
       error: () => {
         this.isSaving.set(false);
-        this.toastService.error('PROFILE.SAVE_ERROR');
-      },
-    });
-  }
-
-  toggleTwoFactor(): void {
-    const previous = this.twoFactorEnabled();
-    const nextValue = !previous;
-    this.twoFactorEnabled.set(nextValue);
-
-    this.authService.updateProfile({ twoFactorEnabled: nextValue }).subscribe({
-      next: (updatedUser) => {
-        this.user.set(updatedUser);
-        this.twoFactorEnabled.set(!!(updatedUser as any).twoFactorEnabled);
-        this.toastService.success('PROFILE.SAVE_SUCCESS');
-      },
-      error: () => {
-        this.twoFactorEnabled.set(previous);
         this.toastService.error('PROFILE.SAVE_ERROR');
       },
     });

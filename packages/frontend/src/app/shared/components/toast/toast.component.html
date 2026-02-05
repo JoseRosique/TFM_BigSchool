@@ -1,0 +1,31 @@
+<div class="toast-container" aria-live="polite" aria-atomic="true">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class]="'toast--' + toast.type" role="alert">
+      <span class="material-symbols-outlined toast__icon">
+        @switch (toast.type) {
+          @case ("success") {
+            check_circle
+          }
+          @case ("error") {
+            error
+          }
+          @case ("warning") {
+            warning
+          }
+          @default {
+            info
+          }
+        }
+      </span>
+      <span class="toast__message">{{ toast.message | translate }}</span>
+      <button
+        class="toast__close"
+        type="button"
+        (click)="toastService.remove(toast.id)"
+        [attr.aria-label]="'Close notification'"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  }
+</div>

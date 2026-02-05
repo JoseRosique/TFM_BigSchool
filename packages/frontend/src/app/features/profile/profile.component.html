@@ -1,0 +1,172 @@
+<div class="profile-container">
+  <section class="profile-header">
+    <h1 class="profile-title">{{ "PROFILE.TITLE" | translate }}</h1>
+    <p class="profile-subtitle">{{ "PROFILE.SUBTITLE" | translate }}</p>
+  </section>
+
+  @if (user()) {
+    <form [formGroup]="profileForm" class="profile-content">
+      <!-- Profile Photo Section -->
+      <section class="profile-card profile-photo">
+        <div class="profile-card__header">
+          <span class="material-symbols-outlined profile-card__icon">account_circle</span>
+          <h2 class="profile-card__title">{{ "PROFILE.PHOTO" | translate }}</h2>
+        </div>
+        <div class="profile-photo__content">
+          <div class="profile-avatar">
+            <span class="material-symbols-outlined">account_circle</span>
+          </div>
+          <div class="profile-info">
+            <h3 class="profile-name">{{ user()!.name }}</h3>
+            <p class="profile-badge">{{ "PROFILE.PRO_MEMBER" | translate }}</p>
+          </div>
+          <button type="button" class="btn btn--secondary">
+            {{ "PROFILE.CHANGE_PHOTO" | translate }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Personal Information Section -->
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <span class="material-symbols-outlined profile-card__icon">mail</span>
+          <h2 class="profile-card__title">{{ "PROFILE.PERSONAL_INFO" | translate }}</h2>
+        </div>
+        <div class="profile-card__content">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="profile-name">{{ "PROFILE.FULL_NAME" | translate }}</label>
+              <input
+                type="text"
+                id="profile-name"
+                class="form-input"
+                formControlName="name"
+                [attr.placeholder]="'PROFILE.PLACEHOLDERS.NAME' | translate"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-email">{{ "PROFILE.EMAIL_ADDRESS" | translate }}</label>
+              <input
+                type="email"
+                id="profile-email"
+                class="form-input"
+                formControlName="email"
+                [attr.placeholder]="'PROFILE.PLACEHOLDERS.EMAIL' | translate"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="profile-location">{{ "PROFILE.LOCATION" | translate }}</label>
+              <input
+                type="text"
+                id="profile-location"
+                class="form-input"
+                formControlName="location"
+                [attr.placeholder]="'PROFILE.PLACEHOLDERS.LOCATION' | translate"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profile-timezone">{{ "PROFILE.TIMEZONE" | translate }}</label>
+              <select class="form-input" id="profile-timezone" formControlName="timezone">
+                @for (tz of timezones; track tz.value) {
+                  <option [value]="tz.value">{{ tz.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notification Preferences Section -->
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <span class="material-symbols-outlined profile-card__icon">notifications</span>
+          <h2 class="profile-card__title">{{ "PROFILE.NOTIFICATION_PREFS" | translate }}</h2>
+        </div>
+        <div class="profile-card__content">
+          <div class="preference-item">
+            <div class="preference-info">
+              <h3 class="preference-title" id="email-notifications-label">
+                {{ "PROFILE.EMAIL_NOTIFICATIONS" | translate }}
+              </h3>
+              <p class="preference-desc">{{ "PROFILE.EMAIL_NOTIFICATIONS_DESC" | translate }}</p>
+            </div>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="profile-email-notifications"
+                formControlName="emailNotifications"
+                aria-labelledby="email-notifications-label"
+              />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="preference-item">
+            <div class="preference-info">
+              <h3 class="preference-title" id="push-notifications-label">
+                {{ "PROFILE.PUSH_NOTIFICATIONS" | translate }}
+              </h3>
+              <p class="preference-desc">{{ "PROFILE.PUSH_NOTIFICATIONS_DESC" | translate }}</p>
+            </div>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="profile-push-notifications"
+                formControlName="pushNotifications"
+                aria-labelledby="push-notifications-label"
+              />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security Section -->
+      <section class="profile-card">
+        <div class="profile-card__header">
+          <span class="material-symbols-outlined profile-card__icon">security</span>
+          <h2 class="profile-card__title">{{ "PROFILE.SECURITY" | translate }}</h2>
+        </div>
+        <div class="profile-card__content">
+          <div class="security-item">
+            <div class="security-info">
+              <h3 class="security-title">{{ "PROFILE.PASSWORD" | translate }}</h3>
+              <p class="security-desc">
+                {{ "PROFILE.PASSWORD_CHANGED" | translate: { timeAgo: passwordChangedAgo() } }}
+              </p>
+            </div>
+            <button type="button" class="btn btn--secondary">
+              {{ "PROFILE.CHANGE_PASSWORD" | translate }}
+            </button>
+          </div>
+          <div class="security-item">
+            <div class="security-info">
+              <h3 class="security-title">{{ "PROFILE.TWO_FACTOR" | translate }}</h3>
+              <p class="security-desc">{{ "PROFILE.TWO_FACTOR_DESC" | translate }}</p>
+            </div>
+            <button type="button" class="btn" [class.btn--secondary]="twoFactorEnabled()" (click)="toggleTwoFactor()">
+              {{ (twoFactorEnabled() ? "PROFILE.DISABLE" : "PROFILE.ENABLE") | translate }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="profile-actions">
+        <button type="button" class="btn btn--text btn--danger" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          {{ "PROFILE.SIGN_OUT" | translate }}
+        </button>
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="!profileForm.valid || isSaving()"
+          (click)="saveChanges()"
+        >
+          {{ "PROFILE.SAVE_CHANGES" | translate }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

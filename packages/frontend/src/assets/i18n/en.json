@@ -1,13 +1,19 @@
 {
   "GLOBAL": {
-    "APP_NAME": "MeetWithFriends"
+    "APP_NAME": "MeetWithFriends",
+    "LOGO_ARIA": "MeetWithFriends logo"
   },
   "HEADER": {
     "WELCOME": "Hey, {{name}}!",
+    "MY_PROFILE": "My Profile",
     "LOGOUT": "Logout",
     "NOTIFICATIONS": "Notifications",
     "USER_PROFILE": "User profile",
-    "GO_TO_DASHBOARD": "Go to dashboard"
+    "GO_TO_DASHBOARD": "Go to dashboard",
+    "LANG_EN_LABEL": "English - EN",
+    "LANG_ES_LABEL": "Spanish - ES",
+    "LANG_EN_ALT": "English",
+    "LANG_ES_ALT": "Spanish"
   },
   "NAVBAR": {
     "SIGN_IN": "Sign In",
@@ -18,6 +24,7 @@
     "TITLE": "Coordinate Meetups <strong>Effortlessly</strong>",
     "SUBTITLE": "Share your availability with friends, book time slots instantly, and never miss a chance to connect. No more endless back-and-forth messaging.",
     "START_FREE": "Start for Free",
+    "FEATURES_TITLE": "Everything you need to stay connected",
     "FEATURES": {
       "NO_ENDLESS_TEXTS": "No more endless text chains to find a time",
       "SEE_WHOS_FREE": "See when friends are genuinely free",
@@ -46,7 +53,18 @@
   "USER_TEST": {
     "TITLE": "User Creation Test",
     "CREATE_USER": "Generate Random User",
-    "CREATING": "Creating..."
+    "CREATING": "Creating...",
+    "REFRESH": "Refresh List",
+    "TOTAL_USERS": "Total users",
+    "USER_LIST": "User List",
+    "LOADING": "Loading users...",
+    "EMPTY": "No registered users. Create one to get started.",
+    "TABLE": {
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "TIMEZONE": "Timezone",
+      "CREATED_AT": "Created At"
+    }
   },
   "BUTTONS": {
     "LANG_ES": "ES",
@@ -130,5 +148,39 @@
     },
     "SUCCESS": "Signed in successfully!",
     "DIVIDER": "or"
+  },
+  "PROFILE": {
+    "TITLE": "Profile Settings",
+    "SUBTITLE": "Manage your account information and preferences.",
+    "PHOTO": "Profile Photo",
+    "CHANGE_PHOTO": "Change Photo",
+    "PRO_MEMBER": "Pro Member",
+    "PERSONAL_INFO": "Personal Information",
+    "FULL_NAME": "Full Name",
+    "EMAIL_ADDRESS": "Email Address",
+    "LOCATION": "Location",
+    "TIMEZONE": "Timezone",
+    "PLACEHOLDERS": {
+      "NAME": "Jane Doe",
+      "EMAIL": "jane@example.com",
+      "LOCATION": "London"
+    },
+    "NOTIFICATION_PREFS": "Notification Preferences",
+    "EMAIL_NOTIFICATIONS": "Email Notifications",
+    "EMAIL_NOTIFICATIONS_DESC": "Receive meeting requests and updates via email",
+    "PUSH_NOTIFICATIONS": "Push Notifications",
+    "PUSH_NOTIFICATIONS_DESC": "Get instant alerts for new requests",
+    "SECURITY": "Security",
+    "PASSWORD": "Password",
+    "PASSWORD_CHANGED": "Last changed {{timeAgo}}",
+    "CHANGE_PASSWORD": "Change Password",
+    "TWO_FACTOR": "Two-Factor Authentication",
+    "TWO_FACTOR_DESC": "Add an extra layer of security",
+    "ENABLE": "Enable",
+    "DISABLE": "Disable",
+    "SIGN_OUT": "Sign Out",
+    "SAVE_CHANGES": "Save Changes",
+    "SAVE_SUCCESS": "Changes saved!",
+    "SAVE_ERROR": "Error saving changes"
   }
 }

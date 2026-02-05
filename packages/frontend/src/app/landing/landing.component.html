@@ -3,7 +3,9 @@
 
 <nav class="navbar">
   <div class="navbar__left">
-    <span class="material-symbols-outlined navbar__logo" aria-label="MeetWithFriends logo">diversity_3</span>
+    <span class="material-symbols-outlined navbar__logo" [attr.aria-label]="'GLOBAL.LOGO_ARIA' | translate"
+      >diversity_3</span
+    >
     <span class="navbar__brand">{{ "GLOBAL.APP_NAME" | translate }}</span>
   </div>
   <div class="navbar__right">
@@ -19,10 +21,22 @@
         aria-haspopup="listbox"
       >
         @if (currentLang === "en") {
-          <img src="https://flagcdn.com/gb.svg" alt="English" class="lang-flag" width="20" height="14" />
+          <img
+            src="https://flagcdn.com/gb.svg"
+            [attr.alt]="'HEADER.LANG_EN_ALT' | translate"
+            class="lang-flag"
+            width="20"
+            height="14"
+          />
         }
         @if (currentLang === "es") {
-          <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
+          <img
+            src="https://flagcdn.com/es.svg"
+            [attr.alt]="'HEADER.LANG_ES_ALT' | translate"
+            class="lang-flag"
+            width="20"
+            height="14"
+          />
         }
         <span class="lang-main-label">{{ currentLang | uppercase }}</span>
         <span class="material-symbols-outlined lang-arrow">expand_more</span>
@@ -39,8 +53,14 @@
                 <span class="lang-dot"></span>
               }
             </span>
-            <img src="https://flagcdn.com/gb.svg" alt="English" class="lang-flag" width="20" height="14" />
-            <span class="lang-label">English - EN</span>
+            <img
+              src="https://flagcdn.com/gb.svg"
+              [attr.alt]="'HEADER.LANG_EN_ALT' | translate"
+              class="lang-flag"
+              width="20"
+              height="14"
+            />
+            <span class="lang-label">{{ "HEADER.LANG_EN_LABEL" | translate }}</span>
           </button>
           <button
             class="lang-menu-item"
@@ -52,8 +72,14 @@
                 <span class="lang-dot"></span>
               }
             </span>
-            <img src="https://flagcdn.com/es.svg" alt="Español" class="lang-flag" width="20" height="14" />
-            <span class="lang-label">español - ES</span>
+            <img
+              src="https://flagcdn.com/es.svg"
+              [attr.alt]="'HEADER.LANG_ES_ALT' | translate"
+              class="lang-flag"
+              width="20"
+              height="14"
+            />
+            <span class="lang-label">{{ "HEADER.LANG_ES_LABEL" | translate }}</span>
           </button>
         </div>
       }
@@ -105,7 +131,7 @@
 </section>
 
 <section class="features">
-  <h2 class="visually-hidden">Everything you need to stay connected</h2>
+  <h2 class="visually-hidden">{{ "LANDING.FEATURES_TITLE" | translate }}</h2>
   <div class="features__grid">
     <div class="feature-card">
       <span class="material-symbols-outlined feature-card__icon">event_available</span>

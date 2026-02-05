@@ -27,6 +27,7 @@ export class RegisterUserUseCase {
     user.name = input.name;
     user.timezone = input.timezone || 'UTC';
     user.language = input.language || 'en';
+    user.passwordChangedAt = new Date();
     const saved = await this.userRepository.save(user);
     // 5. Retornar DTO seguro
     return {

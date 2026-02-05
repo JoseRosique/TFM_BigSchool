@@ -20,11 +20,26 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  location?: string;
+
   @Column({ type: 'varchar', length: 50, default: 'UTC' })
   timezone!: string;
 
   @Column({ type: 'varchar', length: 10, default: 'es' })
   language!: string;
+
+  @Column({ type: 'boolean', default: true })
+  emailNotifications!: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  pushNotifications!: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  twoFactorEnabled!: boolean;
+
+  @Column({ type: 'timestamp', nullable: true, name: 'password_changed_at' })
+  passwordChangedAt?: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

@@ -3,6 +3,12 @@ export interface User {
   email: string;
   name: string;
   timezone: string;
+  location?: string;
+  language?: string;
+  emailNotifications?: boolean;
+  pushNotifications?: boolean;
+  twoFactorEnabled?: boolean;
+  passwordChangedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

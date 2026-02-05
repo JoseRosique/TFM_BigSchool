@@ -1,13 +1,19 @@
 {
   "GLOBAL": {
-    "APP_NAME": "MeetWithFriends"
+    "APP_NAME": "MeetWithFriends",
+    "LOGO_ARIA": "Logo de MeetWithFriends"
   },
   "HEADER": {
     "WELCOME": "¡Hola, {{name}}!",
+    "MY_PROFILE": "Mi Perfil",
     "LOGOUT": "Cerrar sesión",
     "NOTIFICATIONS": "Notificaciones",
     "USER_PROFILE": "Perfil de usuario",
-    "GO_TO_DASHBOARD": "Ir al panel de control"
+    "GO_TO_DASHBOARD": "Ir al panel de control",
+    "LANG_EN_LABEL": "Inglés - EN",
+    "LANG_ES_LABEL": "Español - ES",
+    "LANG_EN_ALT": "Inglés",
+    "LANG_ES_ALT": "Español"
   },
   "NAVBAR": {
     "SIGN_IN": "Iniciar sesión",
@@ -18,6 +24,7 @@
     "TITLE": "Coordina quedadas <strong>fácilmente</strong>",
     "SUBTITLE": "Comparte tu disponibilidad con amigos, reserva franjas al instante y no pierdas ninguna oportunidad de conectar. Olvídate de los mensajes interminables.",
     "START_FREE": "Empezar gratis",
+    "FEATURES_TITLE": "Todo lo que necesitas para mantenerte conectado",
     "FEATURES": {
       "NO_ENDLESS_TEXTS": "Sin cadenas infinitas de mensajes para encontrar hora",
       "SEE_WHOS_FREE": "Ve cuándo tus amigos están realmente libres",
@@ -46,7 +53,18 @@
   "USER_TEST": {
     "TITLE": "Prueba de Creación de Usuarios",
     "CREATE_USER": "Generar Usuario Aleatorio",
-    "CREATING": "Creando..."
+    "CREATING": "Creando...",
+    "REFRESH": "Refrescar Lista",
+    "TOTAL_USERS": "Total de usuarios",
+    "USER_LIST": "Lista de Usuarios",
+    "LOADING": "Cargando usuarios...",
+    "EMPTY": "No hay usuarios registrados. Crea uno para comenzar.",
+    "TABLE": {
+      "NAME": "Nombre",
+      "EMAIL": "Email",
+      "TIMEZONE": "Zona Horaria",
+      "CREATED_AT": "Fecha de Creación"
+    }
   },
   "BUTTONS": {
     "LANG_ES": "ES",
@@ -130,5 +148,39 @@
     },
     "SUCCESS": "¡Sesión iniciada con éxito!",
     "DIVIDER": "o"
+  },
+  "PROFILE": {
+    "TITLE": "Configuración de Perfil",
+    "SUBTITLE": "Gestiona tu información de cuenta y preferencias.",
+    "PHOTO": "Foto de Perfil",
+    "CHANGE_PHOTO": "Cambiar Foto",
+    "PRO_MEMBER": "Miembro Pro",
+    "PERSONAL_INFO": "Información Personal",
+    "FULL_NAME": "Nombre Completo",
+    "EMAIL_ADDRESS": "Correo Electrónico",
+    "LOCATION": "Ubicación",
+    "TIMEZONE": "Zona Horaria",
+    "PLACEHOLDERS": {
+      "NAME": "Juana Pérez",
+      "EMAIL": "juana@ejemplo.com",
+      "LOCATION": "Madrid"
+    },
+    "NOTIFICATION_PREFS": "Preferencias de Notificaciones",
+    "EMAIL_NOTIFICATIONS": "Notificaciones por Email",
+    "EMAIL_NOTIFICATIONS_DESC": "Recibe solicitudes de reunión y actualizaciones por correo",
+    "PUSH_NOTIFICATIONS": "Notificaciones Push",
+    "PUSH_NOTIFICATIONS_DESC": "Obtén alertas instantáneas de nuevas solicitudes",
+    "SECURITY": "Seguridad",
+    "PASSWORD": "Contraseña",
+    "PASSWORD_CHANGED": "Último cambio hace {{timeAgo}}",
+    "CHANGE_PASSWORD": "Cambiar Contraseña",
+    "TWO_FACTOR": "Autenticación de Dos Factores",
+    "TWO_FACTOR_DESC": "Añade una capa extra de seguridad",
+    "ENABLE": "Activar",
+    "DISABLE": "Desactivar",
+    "SIGN_OUT": "Cerrar Sesión",
+    "SAVE_CHANGES": "Guardar Cambios",
+    "SAVE_SUCCESS": "¡Cambios guardados!",
+    "SAVE_ERROR": "Error al guardar los cambios"
   }
 }

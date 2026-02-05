@@ -46,7 +46,12 @@ export interface User {
   email: string;
   name: string;
   timezone: string; // IANA timezone (e.g., 'Europe/Madrid')
+  location?: string; // City/location preference
   language: string; // ISO 639-1 (e.g., 'es', 'en')
+  emailNotifications?: boolean;
+  pushNotifications?: boolean;
+  twoFactorEnabled?: boolean;
+  passwordChangedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

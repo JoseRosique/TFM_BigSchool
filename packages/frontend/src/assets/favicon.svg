@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#FF6B6B"/>
+  
+  <!-- Calendar -->
+  <g transform="translate(16, 14)">
+    <!-- Calendar frame -->
+    <rect x="0" y="2" width="32" height="28" rx="2" fill="#ffffff" stroke="#ffffff" stroke-width="1"/>
+    
+    <!-- Calendar header -->
+    <rect x="0" y="2" width="32" height="5" fill="#FF6B6B" rx="2"/>
+    
+    <!-- Calendar lines -->
+    <line x1="8" y1="10" x2="8" y2="6" stroke="#FF6B6B" stroke-width="1"/>
+    <line x1="24" y1="10" x2="24" y2="6" stroke="#FF6B6B" stroke-width="1"/>
+    
+    <!-- Grid lines for calendar days -->
+    <line x1="0" y1="16" x2="32" y2="16" stroke="#f0f0f0" stroke-width="0.5"/>
+    <line x1="0" y1="20" x2="32" y2="20" stroke="#f0f0f0" stroke-width="0.5"/>
+    <line x1="0" y1="24" x2="32" y2="24" stroke="#f0f0f0" stroke-width="0.5"/>
+    <line x1="16" y1="10" x2="16" y2="30" stroke="#f0f0f0" stroke-width="0.5"/>
+  </g>
+  
+  <!-- User icon -->
+  <g transform="translate(30, 28)">
+    <!-- User head -->
+    <circle cx="0" cy="-6" r="4" fill="#ffffff"/>
+    <!-- User body -->
+    <path d="M -6 -2 Q -6 2 0 3 Q 6 2 6 -2" fill="#ffffff"/>
+  </g>
+</svg>

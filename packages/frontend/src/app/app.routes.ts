@@ -8,11 +8,6 @@ export const APP_ROUTES: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'users-test',
-    loadComponent: () =>
-      import('./features/users-test/users-test.component').then((m) => m.UsersTestComponent),
-  },
-  {
     path: 'auth',
     children: [
       {
@@ -52,5 +47,11 @@ export const APP_ROUTES: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/groups/groups.component').then((m) => m.GroupsComponent),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
 ];

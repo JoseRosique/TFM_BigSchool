@@ -39,6 +39,10 @@ export class AuthService {
     return this.http.patch<{ language: string }>(`${this.apiUrl}/language`, { language });
   }
 
+  updateProfile(input: any): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/profile`, input);
+  }
+
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }

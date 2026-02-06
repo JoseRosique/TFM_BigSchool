@@ -153,7 +153,8 @@
     "TITLE": "Configuración de Perfil",
     "SUBTITLE": "Gestiona tu información de cuenta y preferencias.",
     "PHOTO": "Foto de Perfil",
-    "CHANGE_PHOTO": "Cambiar Foto",
+    "SELECT_AVATAR": "Seleccionar Avatar",
+    "AVATAR_UPDATED": "¡Avatar actualizado correctamente!",
     "PRO_MEMBER": "Miembro Pro",
     "PERSONAL_INFO": "Información Personal",
     "FULL_NAME": "Nombre Completo",
@@ -182,5 +183,13 @@
     "SAVE_CHANGES": "Guardar Cambios",
     "SAVE_SUCCESS": "¡Cambios guardados!",
     "SAVE_ERROR": "Error al guardar los cambios"
+  },
+  "AVATAR": {
+    "SELECT_AVATAR": "Seleccionar un Avatar",
+    "CLOSE": "Cerrar",
+    "SAVE": "Guardar",
+    "CANCEL": "Cancelar",
+    "AVATAR_IMAGE": "Imagen de avatar",
+    "SELECT": "Seleccionar avatar"
   }
 }

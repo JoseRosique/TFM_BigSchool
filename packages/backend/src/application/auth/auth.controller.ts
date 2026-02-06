@@ -15,6 +15,8 @@ import { RegisterDTO, LoginDTO, User } from '@meetwithfriends/shared';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Controller('auth')
 export class AuthController {
@@ -43,6 +45,33 @@ export class AuthController {
     }
     const { passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
+  }
+
+  @Get('avatars')
+  @UseGuards(JwtAuthGuard)
+  getAvailableAvatars(): { avatars: string[] } {
+    // Ruta desde la raíz del monorepo al directorio de avatares
+    const workspaceRoot = path.join(process.cwd(), '..');
+    const avatarsPath = path.join(workspaceRoot, 'frontend/src/assets/avatars');
+
+    try {
+      const files = fs.readdirSync(avatarsPath);
+      const avatars = files
+        .filter((file) => file.startsWith('avatar-') && /\.(svg|jpg|jpeg|png)$/i.test(file))
+        .sort((a, b) => {
+          const numA = parseInt(a.match(/avatar-(\d+)/)?.[1] || '0');
+          const numB = parseInt(b.match(/avatar-(\d+)/)?.[1] || '0');
+          return numA - numB;
+        })
+        .map((file) => `/assets/avatars/${file}`);
+
+      return { avatars };
+    } catch (error) {
+      console.error('Error reading avatars directory:', error);
+      console.error('Attempted path:', avatarsPath);
+      // Fallback a un arreglo vacío o avatares por defecto
+      return { avatars: [] };
+    }
   }
 
   @Post('logout')
@@ -83,6 +112,7 @@ export class AuthController {
     if (dto.emailNotifications !== undefined) user.emailNotifications = dto.emailNotifications;
     if (dto.pushNotifications !== undefined) user.pushNotifications = dto.pushNotifications;
     if (dto.twoFactorEnabled !== undefined) user.twoFactorEnabled = dto.twoFactorEnabled;
+    if (dto.avatarUrl !== undefined) user.avatarUrl = dto.avatarUrl;
     const updatedUser = await this.userRepository.save(user);
     const { passwordHash, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;

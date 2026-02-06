@@ -36,4 +36,8 @@ export class UpdateProfileDto {
   @IsBoolean()
   @IsOptional()
   twoFactorEnabled?: boolean;
+
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
 }

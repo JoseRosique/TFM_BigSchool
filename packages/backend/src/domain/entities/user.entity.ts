@@ -38,6 +38,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   twoFactorEnabled!: boolean;
 
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'avatar_url' })
+  avatarUrl?: string;
+
   @Column({ type: 'timestamp', nullable: true, name: 'password_changed_at' })
   passwordChangedAt?: Date;
 

@@ -12,11 +12,18 @@ import { AuthService } from '../../shared/services/auth.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { User } from '@meetwithfriends/shared';
 import { Router } from '@angular/router';
+import { AvatarSelectorModalComponent } from '../../shared/components/avatar-selector-modal/avatar-selector-modal.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    AvatarSelectorModalComponent,
+  ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
@@ -30,6 +37,7 @@ export class ProfileComponent implements OnInit {
   user = signal<User | null>(null);
   profileForm!: FormGroup;
   isSaving = signal(false);
+  showAvatarModal = signal(false);
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -99,6 +107,35 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['/auth/login']);
       },
     });
+  }
+
+  openAvatarModal(): void {
+    this.showAvatarModal.set(true);
+  }
+
+  closeAvatarModal(): void {
+    this.showAvatarModal.set(false);
+  }
+
+  saveAvatar(avatarUrl: string): void {
+    if (avatarUrl === this.getUserAvatar()) {
+      this.closeAvatarModal();
+      return;
+    }
+    this.authService.updateProfile({ avatarUrl }).subscribe({
+      next: (updatedUser) => {
+        this.user.set(updatedUser);
+        this.closeAvatarModal();
+        this.toastService.success('PROFILE.AVATAR_UPDATED');
+      },
+      error: () => {
+        this.toastService.error('PROFILE.SAVE_ERROR');
+      },
+    });
+  }
+
+  getUserAvatar(): string {
+    return this.user()?.avatarUrl || '/assets/avatars/avatar-1.svg';
   }
 
   passwordChangedAgo(): string {

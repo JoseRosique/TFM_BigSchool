@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { RegisterDTO, LoginDTO, User } from '@meetwithfriends/shared';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -32,7 +32,12 @@ export class AuthService {
   }
 
   getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`);
+    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
+      tap((user) => {
+        this.currentUser.set(user);
+        this.currentUser$.next(user);
+      }),
+    );
   }
 
   updateLanguage(language: string): Observable<{ language: string }> {
@@ -40,7 +45,12 @@ export class AuthService {
   }
 
   updateProfile(input: any): Observable<User> {
-    return this.http.patch<User>(`${this.apiUrl}/profile`, input);
+    return this.http.patch<User>(`${this.apiUrl}/profile`, input).pipe(
+      tap((user) => {
+        this.currentUser.set(user);
+        this.currentUser$.next(user);
+      }),
+    );
   }
 
   getAccessToken(): string | null {

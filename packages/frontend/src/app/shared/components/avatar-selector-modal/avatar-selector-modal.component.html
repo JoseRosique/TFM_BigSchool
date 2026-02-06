@@ -1,0 +1,40 @@
+<div class="modal-overlay" (click)="cancel()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ "AVATAR.SELECT_AVATAR" | translate }}</h2>
+      <button type="button" class="modal-close" (click)="cancel()" [attr.aria-label]="'AVATAR.CLOSE' | translate">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="avatar-grid">
+        @for (avatar of avatars(); track avatar) {
+          <button
+            type="button"
+            class="avatar-option"
+            [class.avatar-option--selected]="isSelected(avatar)"
+            (click)="selectAvatar(avatar)"
+            [attr.aria-label]="'AVATAR.SELECT' | translate"
+          >
+            <img [src]="avatar" [alt]="'AVATAR.AVATAR_IMAGE' | translate" />
+            @if (isSelected(avatar)) {
+              <span class="avatar-option__badge" aria-hidden="true">
+                <span class="material-symbols-outlined">diversity_3</span>
+              </span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn--secondary" (click)="cancel()">
+        {{ "AVATAR.CANCEL" | translate }}
+      </button>
+      <button type="button" class="btn btn--primary" (click)="save()" [disabled]="!selectedAvatar()">
+        {{ "AVATAR.SAVE" | translate }}
+      </button>
+    </div>
+  </div>
+</div>

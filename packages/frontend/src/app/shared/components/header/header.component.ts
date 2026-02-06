@@ -33,12 +33,14 @@ export class HeaderComponent implements OnInit {
   @ViewChild('profileContainer') profileContainer!: ElementRef;
 
   userName = signal<string>('Usuario');
+  userAvatar = signal<string>('/assets/avatars/avatar-1.svg');
   isDropdownOpen = signal<boolean>(false);
   currentLang: string = 'es';
   showLangMenu = false;
 
   ngOnInit(): void {
     this.loadUserProfile();
+    this.subscribeToUserChanges();
     this.currentLang = this.languageService.getCurrentLang();
   }
 
@@ -56,17 +58,32 @@ export class HeaderComponent implements OnInit {
     this.authService.getProfile().subscribe({
       next: (user) => {
         this.userName.set(user.name || user.email);
+        this.userAvatar.set(user.avatarUrl || '/assets/avatars/avatar-1.svg');
       },
       error: (error) => {
         console.error('[HeaderComponent] Error loading profile:', error);
         // Fallback to default
         this.userName.set('Usuario');
+        this.userAvatar.set('/assets/avatars/avatar-1.svg');
       },
+    });
+  }
+
+  private subscribeToUserChanges(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      if (user) {
+        this.userName.set(user.name || user.email);
+        this.userAvatar.set(user.avatarUrl || '/assets/avatars/avatar-1.svg');
+      }
     });
   }
 
   toggleDropdown(): void {
     this.isDropdownOpen.update((value) => !value);
+    // Cerrar language menu cuando se abre el dropdown del perfil
+    if (this.isDropdownOpen()) {
+      this.closeLangMenu();
+    }
   }
 
   closeDropdown(): void {
@@ -97,6 +114,10 @@ export class HeaderComponent implements OnInit {
 
   toggleLangMenu(): void {
     this.showLangMenu = !this.showLangMenu;
+    // Cerrar dropdown del perfil cuando se abre el language menu
+    if (this.showLangMenu) {
+      this.closeDropdown();
+    }
   }
 
   closeLangMenu(): void {

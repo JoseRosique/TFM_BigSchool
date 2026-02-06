@@ -14,14 +14,14 @@
         </div>
         <div class="profile-photo__content">
           <div class="profile-avatar">
-            <span class="material-symbols-outlined">account_circle</span>
+            <img [src]="getUserAvatar()" [alt]="user()!.name" />
           </div>
           <div class="profile-info">
             <h3 class="profile-name">{{ user()!.name }}</h3>
             <p class="profile-badge">{{ "PROFILE.PRO_MEMBER" | translate }}</p>
           </div>
-          <button type="button" class="btn btn--secondary">
-            {{ "PROFILE.CHANGE_PHOTO" | translate }}
+          <button type="button" class="btn btn--secondary" (click)="openAvatarModal()">
+            {{ "PROFILE.SELECT_AVATAR" | translate }}
           </button>
         </div>
       </section>
@@ -174,5 +174,13 @@
         </button>
       </div>
     </form>
+
+    @if (showAvatarModal()) {
+      <app-avatar-selector-modal
+        [currentAvatar]="getUserAvatar()"
+        (onClose)="closeAvatarModal()"
+        (onSave)="saveAvatar($event)"
+      ></app-avatar-selector-modal>
+    }
   }
 </div>

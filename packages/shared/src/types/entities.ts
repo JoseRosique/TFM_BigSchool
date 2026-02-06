@@ -51,6 +51,7 @@ export interface User {
   emailNotifications?: boolean;
   pushNotifications?: boolean;
   twoFactorEnabled?: boolean;
+  avatarUrl?: string;
   passwordChangedAt?: Date;
   createdAt: Date;
   updatedAt: Date;

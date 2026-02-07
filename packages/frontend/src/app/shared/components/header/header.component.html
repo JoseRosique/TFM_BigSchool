@@ -31,6 +31,14 @@
         </svg>
       </button>
 
+      <button class="icon-button" (click)="toggleTheme()">
+        @if (currentTheme() === "dark") {
+          <span class="material-symbols-outlined theme-icon">dark_mode</span>
+        } @else {
+          <span class="material-symbols-outlined theme-icon">light_mode</span>
+        }
+      </button>
+
       <!-- Language Switcher -->
       <div class="lang-switcher">
         <button

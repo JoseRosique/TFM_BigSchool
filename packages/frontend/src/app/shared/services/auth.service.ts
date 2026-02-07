@@ -63,6 +63,8 @@ export class AuthService {
 
   clearAccessToken(): void {
     localStorage.removeItem('accessToken');
+    this.currentUser.set(null);
+    this.currentUser$.next(null);
   }
 
   isAuthenticated(): boolean {

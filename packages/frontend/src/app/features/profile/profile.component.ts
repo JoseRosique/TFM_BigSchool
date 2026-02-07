@@ -53,6 +53,13 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserProfile(): void {
+    const currentUser = this.authService.currentUser$.value;
+    if (currentUser) {
+      this.user.set(currentUser);
+      this.initializeForm();
+      return;
+    }
+
     this.authService.getProfile().subscribe({
       next: (profile) => {
         this.user.set(profile);

@@ -12,6 +12,7 @@ import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { LanguageService } from '../../services/language.service';
+import { ThemeService } from '../../services/theme.service';
 
 /**
  * Global Header Component
@@ -29,17 +30,18 @@ export class HeaderComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
   private readonly languageService = inject(LanguageService);
+  private readonly themeService = inject(ThemeService);
 
   @ViewChild('profileContainer') profileContainer!: ElementRef;
 
   userName = signal<string>('Usuario');
   userAvatar = signal<string>('/assets/avatars/avatar-1.svg');
+  currentTheme = this.themeService.theme;
   isDropdownOpen = signal<boolean>(false);
   currentLang: string = 'es';
   showLangMenu = false;
 
   ngOnInit(): void {
-    this.loadUserProfile();
     this.subscribeToUserChanges();
     this.currentLang = this.languageService.getCurrentLang();
   }
@@ -54,26 +56,14 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  private loadUserProfile(): void {
-    this.authService.getProfile().subscribe({
-      next: (user) => {
-        this.userName.set(user.name || user.email);
-        this.userAvatar.set(user.avatarUrl || '/assets/avatars/avatar-1.svg');
-      },
-      error: (error) => {
-        console.error('[HeaderComponent] Error loading profile:', error);
-        // Fallback to default
-        this.userName.set('Usuario');
-        this.userAvatar.set('/assets/avatars/avatar-1.svg');
-      },
-    });
-  }
-
   private subscribeToUserChanges(): void {
     this.authService.currentUser$.subscribe((user) => {
       if (user) {
         this.userName.set(user.name || user.email);
         this.userAvatar.set(user.avatarUrl || '/assets/avatars/avatar-1.svg');
+      } else {
+        this.userName.set('Usuario');
+        this.userAvatar.set('/assets/avatars/avatar-1.svg');
       }
     });
   }
@@ -86,6 +76,17 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  toggleTheme(): void {
+    const current = this.currentTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    this.themeService.setTheme(next);
+    this.authService.updateProfile({ theme: next }).subscribe({
+      error: () => {
+        this.themeService.setTheme(current);
+      },
+    });
+  }
+
   closeDropdown(): void {
     this.isDropdownOpen.set(false);
   }
@@ -96,8 +97,16 @@ export class HeaderComponent implements OnInit {
 
   logout(): void {
     this.closeDropdown();
-    this.authService.clearAccessToken();
-    this.router.navigate(['/auth/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.authService.clearAccessToken();
+        this.router.navigate(['/auth/login']);
+      },
+      error: () => {
+        this.authService.clearAccessToken();
+        this.router.navigate(['/auth/login']);
+      },
+    });
   }
 
   onNotificationsClick(): void {

@@ -11,13 +11,13 @@
 .profile-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #3b2f2f;
+  color: var(--app-text);
   margin-bottom: 0.5rem;
 }
 
 .profile-subtitle {
   font-size: 1rem;
-  color: #999;
+  color: var(--app-muted);
 }
 
 .profile-content {
@@ -28,8 +28,8 @@
 
 /* Profile Card Styles */
 .profile-card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
   border-radius: 0.75rem;
   padding: 2rem;
 }
@@ -40,7 +40,7 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .profile-card__icon {
@@ -51,7 +51,7 @@
 .profile-card__title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #3b2f2f;
+  color: var(--app-text);
 }
 
 .profile-card__content {
@@ -62,7 +62,7 @@
 
 /* Profile Photo Section */
 .profile-photo {
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--app-border);
 }
 
 .profile-photo__content {
@@ -75,7 +75,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: #f5f5f5;
+  background: var(--app-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,11 +87,13 @@
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
+    filter: none;
+    mix-blend-mode: normal;
   }
 
   .material-symbols-outlined {
     font-size: 64px;
-    color: #ddd;
+    color: var(--app-muted);
   }
 }
 
@@ -102,13 +104,13 @@
 .profile-name {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #3b2f2f;
+  color: var(--app-text);
   margin-bottom: 0.25rem;
 }
 
 .profile-badge {
   font-size: 0.875rem;
-  color: #999;
+  color: var(--app-muted);
   margin-bottom: 1rem;
 }
 
@@ -131,16 +133,15 @@
 .form-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #3b2f2f;
+  color: var(--app-text);
   margin-bottom: 0.5rem;
 }
 
 .form-input {
   padding: 0.75rem 1rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--app-border);
   border-radius: 0.5rem;
   font-size: 1rem;
-  color: #3b2f2f;
   transition: border-color 0.2s;
 
   &:focus {
@@ -150,7 +151,7 @@
   }
 
   &:disabled {
-    background: #f5f5f5;
+    background: var(--app-border);
     cursor: not-allowed;
   }
 }
@@ -161,7 +162,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--app-border);
 
   &:last-child {
     border-bottom: none;
@@ -176,13 +177,13 @@
 .preference-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #3b2f2f;
+  color: var(--app-text);
   margin-bottom: 0.25rem;
 }
 
 .preference-desc {
   font-size: 0.875rem;
-  color: #999;
+  color: var(--app-muted);
 }
 
 /* Toggle Switch */
@@ -245,7 +246,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--app-border);
 
   &:last-child {
     border-bottom: none;
@@ -260,13 +261,13 @@
 .security-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #3b2f2f;
+  color: var(--app-text);
   margin-bottom: 0.25rem;
 }
 
 .security-desc {
   font-size: 0.875rem;
-  color: #999;
+  color: var(--app-muted);
 }
 
 /* Buttons */
@@ -305,18 +306,18 @@
 
 .btn--secondary {
   background: transparent;
-  border: 1px solid #e0e0e0;
-  color: #3b2f2f;
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
 
   &:hover:not(:disabled) {
-    background: #f5f5f5;
-    border-color: #d0d0d0;
+    background: var(--app-border);
+    border-color: var(--app-border);
   }
 }
 
 .btn--text {
   background: transparent;
-  color: #3b2f2f;
+  color: var(--app-text);
 
   &:hover:not(:disabled) {
     opacity: 0.7;
@@ -334,7 +335,7 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--app-border);
 }
 
 /* Profile Actions */

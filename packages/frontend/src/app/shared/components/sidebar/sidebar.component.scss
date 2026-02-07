@@ -1,6 +1,6 @@
 .sidebar {
   width: 240px;
-  background: #ffffff;
+  background: var(--app-bg);
   padding: 1rem 0.75rem;
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  color: #3b2f2f;
+  color: var(--app-text);
   font-weight: 600;
   transition: background-color 0.2s ease;
 
@@ -57,7 +57,7 @@
   gap: 0.75rem;
   padding: 0.75rem 0.9rem;
   border-radius: 999px;
-  color: #3b2f2f;
+  color: var(--app-text);
   text-decoration: none;
   font-weight: 600;
   transition:
@@ -99,7 +99,7 @@
   .sidebar {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--app-border);
   }
 
   .sidebar--collapsed {

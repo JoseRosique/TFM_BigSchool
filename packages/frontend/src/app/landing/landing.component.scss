@@ -49,7 +49,7 @@
   top: 110%;
   right: 0;
   min-width: 180px;
-  background: #ffffff;
+  background: var(--app-surface);
   border: 2px solid rgba(255, 191, 183, 0.3);
   border-radius: 0.7rem;
   box-shadow: 0 8px 32px rgba(255, 107, 107, 0.18);
@@ -76,7 +76,7 @@
   gap: 0.7rem;
   background: none;
   border: none;
-  color: #3b2f2f;
+  color: var(--app-text);
   font-size: 1.04rem;
   font-weight: 500;
   padding: 0.45rem 1.1rem 0.45rem 0.7rem;
@@ -108,7 +108,7 @@
   border: 2px solid #ffd1c8;
   border-radius: 50%;
   margin-right: 0.2rem;
-  background: #fff;
+  background: var(--app-surface);
 }
 .lang-menu-item.active .lang-radio {
   border-color: #ff6b6b;
@@ -136,7 +136,7 @@
 .main-content {
   position: relative;
   z-index: 1;
-  color: #3b2f2f;
+  color: var(--app-text);
 }
 
 .hero__title {
@@ -196,7 +196,7 @@
     font-size: 1.35rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    color: #3b2f2f;
+    color: var(--app-text);
   }
   &__right {
     display: flex;
@@ -224,7 +224,7 @@
   line-height: 1.2;
   user-select: none;
   position: relative;
-  color: #3b2f2f;
+  color: var(--app-text);
 }
 .btn--text {
   background: rgba(255, 255, 255, 0.08);
@@ -333,7 +333,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  color: #6a5555;
+  color: var(--app-muted);
   font-weight: 600;
 }
 .feature-bar__icon {
@@ -382,10 +382,10 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.6rem;
-  color: #3b2f2f;
+  color: var(--app-text);
 }
 .feature-card__desc {
-  color: #6a5555;
+  color: var(--app-muted);
   font-size: 1.02rem;
   font-weight: 400;
   line-height: 1.5;

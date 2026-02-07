@@ -112,6 +112,7 @@ export class AuthController {
     if (dto.emailNotifications !== undefined) user.emailNotifications = dto.emailNotifications;
     if (dto.pushNotifications !== undefined) user.pushNotifications = dto.pushNotifications;
     if (dto.twoFactorEnabled !== undefined) user.twoFactorEnabled = dto.twoFactorEnabled;
+    if (dto.theme !== undefined) user.theme = dto.theme;
     if (dto.avatarUrl !== undefined) user.avatarUrl = dto.avatarUrl;
     const updatedUser = await this.userRepository.save(user);
     const { passwordHash, ...userWithoutPassword } = updatedUser;

@@ -61,7 +61,16 @@ export class LoginCardComponent {
         if (res.language) {
           this.languageService.setLang(res.language);
         }
-        this.router.navigate(['/dashboard']);
+        this.authService.getProfile().subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard']);
+          },
+          error: () => {
+            this.authService.clearAccessToken();
+            const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
+            this.errors.set({ general: errorMsg });
+          },
+        });
       },
       error: (err: HttpErrorResponse) => {
         console.error('[LoginCardComponent] Login error:', err);

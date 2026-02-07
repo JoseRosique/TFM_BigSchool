@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { ToastContainerComponent } from './shared/components/toast/toast.component';
 import { filter } from 'rxjs';
+import { AuthService } from './shared/services/auth.service';
+import { ThemeService } from './shared/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +15,16 @@ import { filter } from 'rxjs';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly themeService = inject(ThemeService);
+
+  ngOnInit(): void {
+    if (this.authService.isAuthenticated() && !this.authService.currentUser$.value) {
+      this.authService.getProfile().subscribe();
+    }
+  }
   shouldShowHeader = () => {
     const currentUrl = this.router.url;
     const basePath = currentUrl.split('?')[0].split('#')[0];

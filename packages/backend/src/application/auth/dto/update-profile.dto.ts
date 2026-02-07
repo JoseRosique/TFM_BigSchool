@@ -39,5 +39,10 @@ export class UpdateProfileDto {
 
   @IsString()
   @IsOptional()
+  @IsIn(['light', 'dark'])
+  theme?: 'light' | 'dark';
+
+  @IsString()
+  @IsOptional()
   avatarUrl?: string;
 }

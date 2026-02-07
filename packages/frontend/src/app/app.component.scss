@@ -7,19 +7,21 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: var(--app-bg);
+  color: var(--app-text);
 }
 
 .app-shell__body {
   flex: 1 1 auto;
   display: flex;
   min-height: 0;
-  background: #ffffff;
+  background: var(--app-bg);
 }
 
 .app-shell__content {
   flex: 1 1 auto;
   padding: 2rem;
+  background: var(--app-bg);
 }
 
 @media (max-width: 900px) {

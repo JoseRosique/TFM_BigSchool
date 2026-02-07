@@ -3,10 +3,10 @@
 .signup-card {
   max-width: 100%;
   margin: 3.5rem auto;
-  background: linear-gradient(145deg, #ffffff 0%, #fff6f3 100%);
+  background: var(--app-surface);
   border-radius: 1.3rem;
   box-shadow: 0 10px 35px rgba(255, 107, 107, 0.16);
-  border: 2px solid rgba(255, 191, 183, 0.25);
+  border: 2px solid var(--app-border);
   padding: 2.5rem 2rem 2rem 2rem;
   display: flex;
   flex-direction: column;
@@ -34,7 +34,7 @@
 }
 .signup-subtitle {
   font-size: 1.08rem;
-  color: #695550;
+  color: var(--app-muted);
   margin-bottom: 1.5rem;
   text-align: center;
   font-weight: 500;
@@ -53,9 +53,9 @@
 .input-wrapper {
   display: flex;
   align-items: center;
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: 0.6rem;
-  border: 1.5px solid rgba(255, 191, 183, 0.3);
+  border: 1.5px solid var(--app-border);
   padding: 0.2rem 0.9rem 0.2rem 0.5rem;
   transition:
     border 0.15s,
@@ -66,7 +66,7 @@
 .input-wrapper:focus-within {
   border-color: #ff6b6b;
   box-shadow: 0 2px 8px 0 rgba(255, 107, 107, 0.15);
-  background: #fff;
+  background: var(--app-surface);
 }
 .input-wrapper.error {
   border-color: #ef4444;
@@ -86,14 +86,14 @@ input[type='date'] {
   font-size: 1.08rem;
   padding: 0.7rem 0.2rem;
   outline: none;
-  color: #2a2420;
+  color: var(--app-text);
   font-family: inherit;
 }
 
 input[type='text']::placeholder,
 input[type='email']::placeholder,
 input[type='password']::placeholder {
-  color: #9d8b84;
+  color: var(--app-muted);
 }
 
 input[type='date']::-webkit-calendar-picker-indicator {
@@ -112,7 +112,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
   margin-left: 0.2rem;
 }
 .optional {
-  color: #9d8b84;
+  color: var(--app-muted);
   font-size: 0.95em;
 }
 .btn {
@@ -153,9 +153,9 @@ input[type='date']::-webkit-calendar-picker-indicator {
   margin-top: 0.2rem;
 }
 .btn--google {
-  background: #ffffff;
-  color: #2a2420;
-  border: 1.5px solid rgba(255, 191, 183, 0.3);
+  background: var(--app-surface);
+  color: var(--app-text);
+  border: 1.5px solid var(--app-border);
   margin-bottom: 0.2rem;
 }
 .btn--google:hover,
@@ -165,9 +165,9 @@ input[type='date']::-webkit-calendar-picker-indicator {
   box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
 }
 .btn--apple {
-  background: #3b2f2f;
-  color: #ffffff;
-  border: 1.5px solid #3b2f2f;
+  background: var(--app-text);
+  color: var(--app-bg);
+  border: 1.5px solid var(--app-text);
 }
 .btn--apple:hover,
 .btn--apple:focus {
@@ -184,12 +184,12 @@ input[type='date']::-webkit-calendar-picker-indicator {
   display: flex;
   align-items: center;
   text-align: center;
-  color: #9d8b84;
+  color: var(--app-muted);
   font-size: 1.05rem;
   margin: 0.7rem 0 0.2rem 0;
 }
 .divider span {
-  background: #fff;
+  background: var(--app-surface);
   padding: 0 0.7rem;
   z-index: 1;
 }
@@ -197,7 +197,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
 .divider:after {
   content: '';
   flex: 1;
-  border-bottom: 1.5px solid rgba(255, 191, 183, 0.3);
+  border-bottom: 1.5px solid var(--app-border);
   margin: 0 0.2rem;
 }
 .signup-success {

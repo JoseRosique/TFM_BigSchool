@@ -48,6 +48,7 @@ export interface User {
   timezone: string; // IANA timezone (e.g., 'Europe/Madrid')
   location?: string; // City/location preference
   language: string; // ISO 639-1 (e.g., 'es', 'en')
+  theme?: 'light' | 'dark';
   emailNotifications?: boolean;
   pushNotifications?: boolean;
   twoFactorEnabled?: boolean;

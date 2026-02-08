@@ -132,11 +132,15 @@
           <div class="security-item">
             <div class="security-info">
               <h3 class="security-title">{{ "PROFILE.PASSWORD" | translate }}</h3>
-              <p class="security-desc">
-                {{ "PROFILE.PASSWORD_CHANGED" | translate: { timeAgo: passwordChangedAgo() } }}
-              </p>
+              @if (hasPasswordChanged()) {
+                <p class="security-desc">
+                  {{ "PROFILE.PASSWORD_CHANGED" | translate: { timeAgo: passwordChangedAgo() } }}
+                </p>
+              } @else {
+                <p class="security-desc">{{ "PROFILE.PASSWORD_NEVER_CHANGED" | translate }}</p>
+              }
             </div>
-            <button type="button" class="btn btn--secondary">
+            <button type="button" class="btn btn--secondary" (click)="openPasswordModal()">
               {{ "PROFILE.CHANGE_PASSWORD" | translate }}
             </button>
           </div>
@@ -181,6 +185,120 @@
         (onClose)="closeAvatarModal()"
         (onSave)="saveAvatar($event)"
       ></app-avatar-selector-modal>
+    }
+
+    @if (showPasswordModal()) {
+      <div class="password-modal-overlay" (click)="closePasswordModal()">
+        <div
+          class="password-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="password-modal-title"
+          (click)="$event.stopPropagation()"
+          (keydown.escape)="closePasswordModal()"
+          (keydown)="handlePasswordModalKeydown($event)"
+          tabindex="-1"
+          #passwordModalRef
+        >
+          <div class="password-modal__header">
+            <h3 class="password-modal__title" id="password-modal-title">
+              {{ "PROFILE.CHANGE_PASSWORD" | translate }}
+            </h3>
+            <button
+              type="button"
+              class="password-modal__close"
+              (click)="closePasswordModal()"
+              [attr.aria-label]="'PROFILE.CLOSE' | translate"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <form class="password-modal__body" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+            <div class="form-group">
+              <label class="form-label" for="current-password">
+                {{ "PROFILE.CURRENT_PASSWORD" | translate }}
+              </label>
+              <input
+                type="password"
+                id="current-password"
+                class="form-input"
+                formControlName="currentPassword"
+                autocomplete="current-password"
+              />
+              @if (
+                passwordForm.get("currentPassword")?.touched &&
+                passwordForm.get("currentPassword")?.hasError("required")
+              ) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_REQUIRED" | translate }}</div>
+              }
+              @if (
+                passwordForm.get("currentPassword")?.touched && passwordForm.get("currentPassword")?.hasError("invalid")
+              ) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_INVALID_CURRENT" | translate }}</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="new-password">
+                {{ "PROFILE.NEW_PASSWORD" | translate }}
+              </label>
+              <input
+                type="password"
+                id="new-password"
+                class="form-input"
+                formControlName="newPassword"
+                autocomplete="new-password"
+              />
+              @if (passwordForm.get("newPassword")?.touched && passwordForm.get("newPassword")?.hasError("required")) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_REQUIRED" | translate }}</div>
+              }
+              @if (
+                passwordForm.get("newPassword")?.touched &&
+                (passwordForm.get("newPassword")?.hasError("minlength") ||
+                  passwordForm.get("newPassword")?.hasError("pattern") ||
+                  passwordForm.get("newPassword")?.hasError("weak"))
+              ) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_WEAK" | translate }}</div>
+              }
+              @if (passwordForm.get("newPassword")?.touched && passwordForm.get("newPassword")?.hasError("reuse")) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_REUSE" | translate }}</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="confirm-password">
+                {{ "PROFILE.CONFIRM_PASSWORD" | translate }}
+              </label>
+              <input
+                type="password"
+                id="confirm-password"
+                class="form-input"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+              />
+              @if (
+                passwordForm.get("confirmPassword")?.touched &&
+                passwordForm.get("confirmPassword")?.hasError("required")
+              ) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_REQUIRED" | translate }}</div>
+              }
+              @if (passwordForm.get("confirmPassword")?.touched && passwordForm.hasError("passwordMismatch")) {
+                <div class="input-error">{{ "PROFILE.PASSWORD_MISMATCH" | translate }}</div>
+              }
+            </div>
+
+            <div class="password-modal__footer">
+              <button type="button" class="btn btn--secondary" (click)="closePasswordModal()">
+                {{ "PROFILE.CANCEL" | translate }}
+              </button>
+              <button type="submit" class="btn btn--primary" [disabled]="!passwordForm.valid || isChangingPassword()">
+                {{ "PROFILE.SAVE_PASSWORD" | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     }
   }
 </div>

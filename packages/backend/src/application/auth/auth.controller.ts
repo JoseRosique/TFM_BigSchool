@@ -8,13 +8,16 @@ import {
   Inject,
   Patch,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RegisterDTO, LoginDTO, User } from '@meetwithfriends/shared';
+import { RegisterDTO, LoginDTO, User, ChangePasswordDTO } from '@meetwithfriends/shared';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangePasswordUseCase } from './change-password.usecase';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -22,6 +25,7 @@ import * as path from 'path';
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private changePasswordUseCase: ChangePasswordUseCase,
     @Inject(USER_REPOSITORY)
     private userRepository: UserRepository,
   ) {}
@@ -117,5 +121,17 @@ export class AuthController {
     const updatedUser = await this.userRepository.save(user);
     const { passwordHash, ...userWithoutPassword } = updatedUser;
     return userWithoutPassword;
+  }
+
+  @Patch('password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @Request() req: any,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<ChangePasswordDTO.Response> {
+    if (dto.newPassword !== dto.confirmPassword) {
+      throw new BadRequestException('PASSWORD_MISMATCH');
+    }
+    return this.changePasswordUseCase.execute(req.user.userId, dto);
   }
 }

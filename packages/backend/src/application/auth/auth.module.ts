@@ -16,6 +16,7 @@ import { User } from '../../domain/entities/user.entity';
 import { TypeOrmUserRepository } from '../../infrastructure/repositories/typeorm-user.repository';
 import { RegisterUserUseCase } from './register-user.usecase';
 import { LoginUserUseCase } from './login-user.usecase';
+import { ChangePasswordUseCase } from './change-password.usecase';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { TestUtilsController } from './test-utils.controller';
 
@@ -34,6 +35,7 @@ import { TestUtilsController } from './test-utils.controller';
     LocalStrategy,
     RegisterUserUseCase,
     LoginUserUseCase,
+    ChangePasswordUseCase,
     {
       provide: USER_REPOSITORY,
       useClass: TypeOrmUserRepository,

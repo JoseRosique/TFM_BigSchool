@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -36,8 +36,14 @@ export class ProfileComponent implements OnInit {
 
   user = signal<User | null>(null);
   profileForm!: FormGroup;
+  passwordForm!: FormGroup;
   isSaving = signal(false);
+  isChangingPassword = signal(false);
   showAvatarModal = signal(false);
+  showPasswordModal = signal(false);
+  @ViewChild('passwordModalRef') passwordModalRef?: ElementRef<HTMLDivElement>;
+
+  private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -66,7 +72,8 @@ export class ProfileComponent implements OnInit {
         this.initializeForm();
       },
       error: () => {
-        this.router.navigate(['/dashboard']);
+        this.authService.clearAccessToken();
+        this.router.navigate(['/auth/login']);
       },
     });
   }
@@ -98,6 +105,154 @@ export class ProfileComponent implements OnInit {
       error: () => {
         this.isSaving.set(false);
         this.toastService.error('PROFILE.SAVE_ERROR');
+      },
+    });
+  }
+
+  openPasswordModal(): void {
+    this.initPasswordForm();
+    this.showPasswordModal.set(true);
+    setTimeout(() => {
+      const focusable = this.getPasswordModalFocusable();
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      } else {
+        this.passwordModalRef?.nativeElement.focus();
+      }
+    }, 0);
+  }
+
+  closePasswordModal(): void {
+    this.showPasswordModal.set(false);
+    this.passwordForm.reset();
+  }
+
+  handlePasswordModalKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+
+    const focusable = this.getPasswordModalFocusable();
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (event.shiftKey && active === first) {
+      last.focus();
+      event.preventDefault();
+      return;
+    }
+
+    if (!event.shiftKey && active === last) {
+      first.focus();
+      event.preventDefault();
+    }
+  }
+
+  private getPasswordModalFocusable(): HTMLElement[] {
+    const modal = this.passwordModalRef?.nativeElement;
+    if (!modal) return [];
+
+    const selectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ];
+
+    return Array.from(modal.querySelectorAll<HTMLElement>(selectors.join(',')));
+  }
+
+  private initPasswordForm(): void {
+    this.passwordForm = this.fb.group(
+      {
+        currentPassword: ['', Validators.required],
+        newPassword: [
+          '',
+          [Validators.required, Validators.minLength(8), Validators.pattern(this.passwordPattern)],
+        ],
+        confirmPassword: ['', Validators.required],
+      },
+      { validators: this.passwordsMatchValidator },
+    );
+  }
+
+  private passwordsMatchValidator(group: FormGroup) {
+    const newPassword = group.get('newPassword')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    if (!newPassword || !confirmPassword) return null;
+    return newPassword === confirmPassword ? null : { passwordMismatch: true };
+  }
+
+  changePassword(): void {
+    if (!this.passwordForm.valid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    this.isChangingPassword.set(true);
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
+
+    this.authService.changePassword({ currentPassword, newPassword, confirmPassword }).subscribe({
+      next: (response) => {
+        this.authService.setAccessToken(response.accessToken);
+        this.authService.getProfile().subscribe({
+          next: (user) => this.user.set(user),
+          error: (error) => {
+            console.error('Failed to refresh profile after password change', error);
+          },
+        });
+        this.isChangingPassword.set(false);
+        this.toastService.success('PROFILE.PASSWORD_UPDATED');
+        this.closePasswordModal();
+      },
+      error: (error) => {
+        this.isChangingPassword.set(false);
+        const message = Array.isArray(error?.error?.message)
+          ? error.error.message[0]
+          : error?.error?.message;
+
+        if (message === 'PASSWORD_INVALID_CURRENT') {
+          this.passwordForm.get('currentPassword')?.setErrors({ invalid: true });
+          this.passwordForm.get('currentPassword')?.markAsTouched();
+          return;
+        }
+
+        if (message === 'PASSWORD_REUSE') {
+          this.passwordForm.get('newPassword')?.setErrors({ reuse: true });
+          this.passwordForm.get('newPassword')?.markAsTouched();
+          return;
+        }
+
+        if (message === 'PASSWORD_MISMATCH') {
+          this.passwordForm.setErrors({ passwordMismatch: true });
+          this.passwordForm.get('confirmPassword')?.markAsTouched();
+          return;
+        }
+
+        if (message === 'PASSWORD_WEAK') {
+          this.passwordForm.get('newPassword')?.setErrors({ weak: true });
+          this.passwordForm.get('newPassword')?.markAsTouched();
+          return;
+        }
+
+        if (message === 'PASSWORD_REQUIRED') {
+          if (!this.passwordForm.get('currentPassword')?.value) {
+            this.passwordForm.get('currentPassword')?.setErrors({ required: true });
+          }
+          if (!this.passwordForm.get('newPassword')?.value) {
+            this.passwordForm.get('newPassword')?.setErrors({ required: true });
+          }
+          if (!this.passwordForm.get('confirmPassword')?.value) {
+            this.passwordForm.get('confirmPassword')?.setErrors({ required: true });
+          }
+          this.passwordForm.markAllAsTouched();
+          return;
+        }
+
+        this.toastService.error('PROFILE.PASSWORD_UPDATE_ERROR');
       },
     });
   }
@@ -143,6 +298,10 @@ export class ProfileComponent implements OnInit {
 
   getUserAvatar(): string {
     return this.user()?.avatarUrl || '/assets/avatars/avatar-1.svg';
+  }
+
+  hasPasswordChanged(): boolean {
+    return !!(this.user() as any)?.passwordChangedAt;
   }
 
   passwordChangedAgo(): string {

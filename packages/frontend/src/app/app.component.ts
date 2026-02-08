@@ -19,10 +19,16 @@ export class AppComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly themeService = inject(ThemeService);
+  readonly guardLoading = this.authService.guardLoading;
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated() && !this.authService.currentUser$.value) {
-      this.authService.getProfile().subscribe();
+      this.authService.getProfile().subscribe({
+        error: () => {
+          this.authService.clearAccessToken();
+          this.router.navigate(['/auth/login']);
+        },
+      });
     }
   }
   shouldShowHeader = () => {

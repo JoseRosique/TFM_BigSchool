@@ -3,6 +3,39 @@
   min-height: 100vh;
 }
 
+.route-guard-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  z-index: 2000;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #f44336,
+    var(--color-primary),
+    #ff6b6b,
+    #e65100,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: guard-loading 4s ease-in-out infinite;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .app-shell {
   min-height: 100vh;
   display: flex;
@@ -22,6 +55,15 @@
   flex: 1 1 auto;
   padding: 2rem;
   background: var(--app-bg);
+}
+
+@keyframes guard-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (max-width: 900px) {

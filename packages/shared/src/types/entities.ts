@@ -134,6 +134,18 @@ export namespace LoginDTO {
   }
 }
 
+export namespace ChangePasswordDTO {
+  export interface Request {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }
+
+  export interface Response {
+    accessToken: string;
+  }
+}
+
 export namespace OpenSlotDTO {
   export interface Request {
     start: string; // ISO datetime

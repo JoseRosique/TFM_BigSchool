@@ -25,8 +25,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid token: missing iat');
     }
     const issuedAt = payload.iat;
-    const changedAtMs = user.passwordChangedAt ? user.passwordChangedAt.getTime() : 0;
-    if (changedAtMs && issuedAt * 1000 < changedAtMs) {
+    const changedAtSec = user.passwordChangedAt
+      ? Math.floor(user.passwordChangedAt.getTime() / 1000)
+      : 0;
+    if (changedAtSec && changedAtSec > issuedAt) {
       throw new UnauthorizedException('Token expired');
     }
     return { userId: user.id, email: user.email };

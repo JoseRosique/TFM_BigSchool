@@ -117,6 +117,7 @@ export namespace RegisterDTO {
     name: string;
     timezone: string;
     language: string;
+    accessToken: string;
   }
 }
 

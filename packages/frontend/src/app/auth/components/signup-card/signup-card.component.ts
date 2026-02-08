@@ -2,8 +2,12 @@ import { Component, signal, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
+import { LanguageService } from '../../../shared/services/language.service';
+import { ThemeService } from '../../../shared/services/theme.service';
+import { ToastService } from '../../../shared/services/toast.service';
 import { RegisterDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup-card',
@@ -15,6 +19,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class SignupCardComponent {
   private readonly translate = inject(TranslateService);
   private readonly authService = inject(AuthService);
+  private readonly languageService = inject(LanguageService);
+  private readonly themeService = inject(ThemeService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
   // Signals for form state
   name = signal('');
   email = signal('');
@@ -70,11 +78,26 @@ export class SignupCardComponent {
       email: this.email(),
       password: this.password(),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      language: this.languageService.getCurrentLang(),
     };
     this.authService.register(input).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading.set(false);
         this.success.set(true);
+        this.authService.setAccessToken(response.accessToken);
+        this.languageService.setLang(response.language || input.language || 'es');
+        this.themeService.setTheme('dark');
+        this.toastService.success('SIGNUP.SUCCESS');
+        this.authService.getProfile().subscribe({
+          next: () => {
+            this.router.navigate(['/dashboard']);
+          },
+          error: () => {
+            this.authService.clearAccessToken();
+            const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
+            this.errors.set({ general: errorMsg });
+          },
+        });
       },
       error: (err: HttpErrorResponse) => {
         console.error('[SignupCardComponent] Registration error:', err);

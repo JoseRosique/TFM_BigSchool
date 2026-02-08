@@ -3,12 +3,14 @@ import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { User } from '../../domain/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { RegisterDTO } from '@meetwithfriends/shared';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RegisterUserUseCase {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async execute(input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
@@ -27,8 +29,11 @@ export class RegisterUserUseCase {
     user.name = input.name;
     user.timezone = input.timezone || 'UTC';
     user.language = input.language || 'en';
+    user.theme = 'dark';
     user.passwordChangedAt = new Date();
     const saved = await this.userRepository.save(user);
+    const payload = { sub: saved.id, email: saved.email };
+    const accessToken = this.jwtService.sign(payload);
     // 5. Retornar DTO seguro
     return {
       id: saved.id,
@@ -36,6 +41,7 @@ export class RegisterUserUseCase {
       name: saved.name,
       timezone: saved.timezone,
       language: saved.language,
+      accessToken,
     };
   }
 }

@@ -29,7 +29,7 @@ export class User {
   @Column({ type: 'varchar', length: 10, default: 'es' })
   language!: string;
 
-  @Column({ type: 'varchar', length: 10, default: 'light' })
+  @Column({ type: 'varchar', length: 10, default: 'dark' })
   theme!: 'light' | 'dark';
 
   @Column({ type: 'boolean', default: true })

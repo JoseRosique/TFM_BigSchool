@@ -44,6 +44,7 @@ describe('AuthService', () => {
       name: input.name,
       timezone: input.timezone,
       language: 'es',
+      accessToken: 'jwt-token',
     };
     (registerUserUseCase.execute as jest.Mock).mockResolvedValue(output);
     const result = await service.register(input);

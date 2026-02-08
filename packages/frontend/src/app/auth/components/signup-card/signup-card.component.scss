@@ -3,10 +3,10 @@
 .signup-card {
   max-width: 100%;
   margin: 3.5rem auto;
-  background: var(--app-surface);
+  background: var(--color-bg-surface);
   border-radius: 1.3rem;
-  box-shadow: 0 10px 35px rgba(255, 107, 107, 0.16);
-  border: 2px solid var(--app-border);
+  box-shadow: 0 10px 35px var(--color-shadow-brand);
+  border: 2px solid var(--color-border);
   padding: 2.5rem 2rem 2rem 2rem;
   display: flex;
   flex-direction: column;
@@ -27,14 +27,14 @@
 .signup-title {
   font-size: 2.1rem;
   font-weight: 900;
-  color: #ff6b6b;
+  color: var(--color-primary);
   margin-bottom: 0.3rem;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(42, 36, 32, 0.15);
+  text-shadow: 0 2px 4px var(--color-overlay-dark-15);
 }
 .signup-subtitle {
   font-size: 1.08rem;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   margin-bottom: 1.5rem;
   text-align: center;
   font-weight: 500;
@@ -53,9 +53,9 @@
 .input-wrapper {
   display: flex;
   align-items: center;
-  background: var(--app-surface);
+  background: var(--color-bg-surface);
   border-radius: 0.6rem;
-  border: 1.5px solid var(--app-border);
+  border: 1.5px solid var(--color-border);
   padding: 0.2rem 0.9rem 0.2rem 0.5rem;
   transition:
     border 0.15s,
@@ -64,16 +64,16 @@
   position: relative;
 }
 .input-wrapper:focus-within {
-  border-color: #ff6b6b;
-  box-shadow: 0 2px 8px 0 rgba(255, 107, 107, 0.15);
-  background: var(--app-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px 0 var(--color-shadow-brand-soft);
+  background: var(--color-bg-surface);
 }
 .input-wrapper.error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 .input-icon {
   font-size: 1.25rem;
-  color: #ff8c7a;
+  color: var(--color-secondary);
   margin-right: 0.5rem;
 }
 input[type='text'],
@@ -86,14 +86,14 @@ input[type='date'] {
   font-size: 1.08rem;
   padding: 0.7rem 0.2rem;
   outline: none;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   font-family: inherit;
 }
 
 input[type='text']::placeholder,
 input[type='email']::placeholder,
 input[type='password']::placeholder {
-  color: var(--app-muted);
+  color: var(--color-text-muted);
 }
 
 input[type='date']::-webkit-calendar-picker-indicator {
@@ -101,18 +101,18 @@ input[type='date']::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 .input-check {
-  color: #ff6b6b;
+  color: var(--color-primary);
   font-size: 1.1rem;
   margin-left: 0.3rem;
 }
 .input-error {
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 0.97rem;
   margin-top: 0.1rem;
   margin-left: 0.2rem;
 }
 .optional {
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.95em;
 }
 .btn {
@@ -137,15 +137,19 @@ input[type='date']::-webkit-calendar-picker-indicator {
   position: relative;
 }
 .btn--primary {
-  background: linear-gradient(135deg, #ff8c7a 0%, #ff6b6b 100%);
-  color: #ffffff;
-  box-shadow: 0 6px 24px rgba(255, 107, 107, 0.35);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: 0 6px 24px var(--color-shadow-brand-strong);
 }
 .btn--primary:hover,
 .btn--primary:focus {
-  background: linear-gradient(135deg, #ff7a7a 0%, #ff5e5e 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 28px rgba(255, 107, 107, 0.45);
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary-hover) 0%,
+    var(--color-primary-hover) 100%
+  );
+  color: var(--color-text-inverse);
+  box-shadow: 0 8px 28px var(--color-shadow-brand-stronger);
   transform: translateY(-2px) scale(1.03);
 }
 .btn--block {
@@ -153,27 +157,27 @@ input[type='date']::-webkit-calendar-picker-indicator {
   margin-top: 0.2rem;
 }
 .btn--google {
-  background: var(--app-surface);
-  color: var(--app-text);
-  border: 1.5px solid var(--app-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  border: 1.5px solid var(--color-border);
   margin-bottom: 0.2rem;
 }
 .btn--google:hover,
 .btn--google:focus {
-  background: #fff6f3;
-  border-color: #ff6b6b;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+  background: var(--color-accent-soft-2);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px var(--color-shadow-brand-soft);
 }
 .btn--apple {
-  background: var(--app-text);
-  color: var(--app-bg);
-  border: 1.5px solid var(--app-text);
+  background: var(--color-text-primary);
+  color: var(--color-bg-app);
+  border: 1.5px solid var(--color-text-primary);
 }
 .btn--apple:hover,
 .btn--apple:focus {
-  background: #2a2420;
-  border-color: #ff6b6b;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.15);
+  background: var(--color-neutral-900);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px var(--color-shadow-brand-soft);
 }
 .btn-icon {
   width: 1.3rem;
@@ -184,12 +188,12 @@ input[type='date']::-webkit-calendar-picker-indicator {
   display: flex;
   align-items: center;
   text-align: center;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 1.05rem;
   margin: 0.7rem 0 0.2rem 0;
 }
 .divider span {
-  background: var(--app-surface);
+  background: var(--color-bg-surface);
   padding: 0 0.7rem;
   z-index: 1;
 }
@@ -197,11 +201,11 @@ input[type='date']::-webkit-calendar-picker-indicator {
 .divider:after {
   content: '';
   flex: 1;
-  border-bottom: 1.5px solid var(--app-border);
+  border-bottom: 1.5px solid var(--color-border);
   margin: 0 0.2rem;
 }
 .signup-success {
-  color: #ff6b6b;
+  color: var(--color-primary);
   font-weight: 700;
   text-align: center;
   margin-top: 1.1rem;

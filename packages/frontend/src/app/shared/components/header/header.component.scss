@@ -1,6 +1,6 @@
 .header {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary-strong) 100%);
+  box-shadow: 0 2px 8px var(--color-shadow-sm);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -37,27 +37,27 @@
 
   &:hover {
     opacity: 0.9;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--color-overlay-light-10);
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline: 2px solid var(--color-overlay-light-80);
     outline-offset: 2px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-overlay-light-15);
   }
 }
 
 .logo {
   width: 32px;
   height: 32px;
-  color: white;
+  color: var(--color-text-inverse);
   font-size: 28px;
 }
 
 .app-name {
   font-size: 1.25rem;
   font-weight: 700;
-  color: white;
+  color: var(--color-text-inverse);
   white-space: nowrap;
 }
 
@@ -73,7 +73,7 @@
 .welcome-message {
   font-size: 1rem;
   font-weight: 500;
-  color: white;
+  color: var(--color-text-inverse);
   text-align: right;
 }
 
@@ -94,21 +94,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--color-text-inverse);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-overlay-light-15);
   }
 
   &:active {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: var(--color-overlay-light-25);
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline: 2px solid var(--color-overlay-light-80);
     outline-offset: 2px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-overlay-light-15);
   }
 }
 
@@ -136,17 +136,17 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: white;
+  color: var(--color-text-inverse);
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-overlay-light-15);
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline: 2px solid var(--color-overlay-light-80);
     outline-offset: 2px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: var(--color-overlay-light-15);
   }
 }
 
@@ -154,7 +154,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--color-overlay-light-20);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +163,7 @@
   svg {
     width: 24px;
     height: 24px;
-    color: white;
+    color: var(--color-text-inverse);
   }
 
   img {
@@ -191,9 +191,9 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background: var(--app-surface);
+  background: var(--color-bg-surface);
   border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px var(--color-shadow-md);
   min-width: 200px;
   opacity: 0;
   visibility: hidden;
@@ -217,7 +217,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   font-size: 0.95rem;
   transition: background-color 0.2s;
   text-align: left;
@@ -231,24 +231,24 @@
   }
 
   &:hover {
-    background-color: var(--app-border);
+    background-color: var(--color-border);
   }
 
   &:active {
-    background-color: var(--app-border);
+    background-color: var(--color-border);
   }
 
   &:focus-visible {
-    outline: 2px solid #ff6b6b;
+    outline: 2px solid var(--color-primary);
     outline-offset: -2px;
-    background-color: var(--app-border);
+    background-color: var(--color-border);
   }
 }
 
 .dropdown-icon {
   width: 20px;
   height: 20px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
 }
 
 /* Language Switcher */
@@ -259,10 +259,10 @@
 
 .lang-main-btn {
   align-items: center;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--color-overlay-light-15);
   border-radius: 0.5rem;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  border: 1.5px solid var(--color-overlay-light-30);
+  color: var(--color-text-inverse);
   cursor: pointer;
   display: flex;
   font-size: 1.05rem;
@@ -279,9 +279,9 @@
 
   &:focus,
   &:hover {
-    border: 1.5px solid rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1.5px solid var(--color-overlay-light-50);
+    background: var(--color-overlay-light-20);
+    box-shadow: 0 4px 16px var(--color-shadow-sm);
   }
 }
 
@@ -293,13 +293,13 @@
 
 .lang-arrow {
   font-size: 1.2rem;
-  color: white;
+  color: var(--color-text-inverse);
   margin-left: 0.1rem;
 }
 
 .lang-flag {
   border-radius: 2.5px;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 4px 0 var(--color-shadow-md);
   margin-right: 0.2rem;
 }
 
@@ -308,10 +308,10 @@
   top: 110%;
   right: 0;
   min-width: 180px;
-  background: var(--app-surface);
-  border: 2px solid rgba(255, 191, 183, 0.3);
+  background: var(--color-bg-surface);
+  border: 2px solid var(--color-overlay-accent-30);
   border-radius: 0.7rem;
-  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.18);
+  box-shadow: 0 8px 32px var(--color-shadow-brand);
   padding: 0.5rem 0.2rem;
   z-index: 100;
   display: flex;
@@ -337,7 +337,7 @@
   gap: 0.7rem;
   background: none;
   border: none;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   font-size: 1.04rem;
   font-weight: 500;
   padding: 0.45rem 1.1rem 0.45rem 0.7rem;
@@ -350,12 +350,12 @@
 
   &.active,
   &:focus {
-    background: linear-gradient(135deg, #fff1ec 0%, #ffffff 100%);
-    color: #ff6b6b;
+    background: linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-neutral-0) 100%);
+    color: var(--color-primary);
   }
 
   &:hover:not(.active) {
-    background: #fff1ec;
+    background: var(--color-accent-soft);
   }
 }
 
@@ -370,21 +370,21 @@
   justify-content: center;
   width: 1.1rem;
   height: 1.1rem;
-  border: 2px solid #ffd1c8;
+  border: 2px solid var(--color-accent);
   border-radius: 50%;
   margin-right: 0.2rem;
-  background: #fff;
+  background: var(--color-neutral-0);
 }
 
 .lang-menu-item.active .lang-radio {
-  border-color: #ff6b6b;
+  border-color: var(--color-primary);
 }
 
 .lang-dot {
   display: block;
   width: 0.55rem;
   height: 0.55rem;
-  background: #ff6b6b;
+  background: var(--color-primary);
   border-radius: 50%;
 }
 

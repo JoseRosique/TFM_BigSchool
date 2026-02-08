@@ -12,16 +12,16 @@
   z-index: 2000;
   background: linear-gradient(
     90deg,
-    transparent,
-    #f44336,
+    var(--color-transparent),
+    var(--color-error),
     var(--color-primary),
-    #ff6b6b,
-    #e65100,
-    transparent
+    var(--color-primary),
+    var(--color-warning-dark),
+    var(--color-transparent)
   );
   background-size: 200% 100%;
   animation: guard-loading 4s ease-in-out infinite;
-  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 5px var(--color-shadow-lg);
 }
 
 .visually-hidden {
@@ -40,21 +40,21 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--app-bg);
-  color: var(--app-text);
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
 }
 
 .app-shell__body {
   flex: 1 1 auto;
   display: flex;
   min-height: 0;
-  background: var(--app-bg);
+  background: var(--color-bg-app);
 }
 
 .app-shell__content {
   flex: 1 1 auto;
   padding: 2rem;
-  background: var(--app-bg);
+  background: var(--color-bg-app);
 }
 
 @keyframes guard-loading {

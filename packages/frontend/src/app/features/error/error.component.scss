@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: var(--app-bg);
-  color: var(--app-text);
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
 }
 
 .status-card {
@@ -14,9 +14,9 @@
   text-align: center;
   padding: 2.5rem 2rem;
   border-radius: 1rem;
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 40px var(--color-shadow-md);
 }
 
 .status-title {
@@ -26,7 +26,7 @@
 }
 
 .status-message {
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   margin-bottom: 2rem;
   line-height: 1.5;
 }
@@ -41,6 +41,6 @@
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary-strong) 100%);
+  color: var(--color-text-inverse);
 }

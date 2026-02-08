@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--color-overlay-dark-50);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,11 +14,11 @@
 }
 
 .modal-container {
-  background: var(--app-surface);
+  background: var(--color-bg-surface);
   border-radius: 1rem;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.3),
-    0 10px 30px rgba(0, 0, 0, 0.2);
+    0 20px 60px var(--color-shadow-lg),
+    0 10px 30px var(--color-overlay-dark-20);
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
@@ -40,7 +40,7 @@
 
 .modal-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,7 +50,7 @@
 .modal-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -62,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   transition: color 0.2s;
 
   .material-symbols-outlined {
@@ -70,11 +70,11 @@
   }
 
   &:hover {
-    color: var(--app-text);
+    color: var(--color-text-primary);
   }
 
   &:focus-visible {
-    outline: 2px solid #ff6b6b;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     border-radius: 0.25rem;
   }
@@ -114,16 +114,16 @@
 
   &:hover {
     transform: scale(1.05);
-    border-color: #ff6b6b;
+    border-color: var(--color-primary);
   }
 
   &:focus-visible {
-    outline: 3px solid #ff6b6b;
+    outline: 3px solid var(--color-primary);
     outline-offset: 2px;
   }
 
   &--selected {
-    border-color: #ff6b6b;
+    border-color: var(--color-primary);
     transform: scale(1.05);
   }
 
@@ -133,24 +133,24 @@
     right: 2px;
     width: 30px;
     height: 30px;
-    background: #ff6b6b;
+    background: var(--color-primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 6px var(--color-overlay-dark-12);
     pointer-events: none;
 
     .material-symbols-outlined {
       font-size: 12px;
-      color: #fff;
+      color: var(--color-text-inverse);
     }
   }
 }
 
 .modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
@@ -170,31 +170,31 @@
   gap: 0.5rem;
 
   &:focus-visible {
-    outline: 2px solid #ff6b6b;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
 
   &--primary {
-    background: #ff6b6b;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
 
     &:hover:not(:disabled) {
-      background: #ff5252;
+      background: var(--color-primary-hover);
     }
 
     &:disabled {
-      background: var(--app-border);
-      color: var(--app-muted);
+      background: var(--color-border);
+      color: var(--color-text-muted);
       cursor: not-allowed;
     }
   }
 
   &--secondary {
-    background: var(--app-border);
-    color: var(--app-text);
+    background: var(--color-border);
+    color: var(--color-text-primary);
 
     &:hover {
-      background: var(--app-border);
+      background: var(--color-border);
     }
   }
 }

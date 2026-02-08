@@ -7,16 +7,26 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #fff6f3 40%, #ffe8e1 100%);
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  background: linear-gradient(
+    135deg,
+    var(--color-neutral-0) 0%,
+    var(--color-accent-soft-2) 40%,
+    var(--color-accent-soft-6) 100%
+  );
 }
 
 .background-container {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: tan;
+  background-color: var(--color-warm-base);
+  z-index: 0;
 }
 
 .calendar-grid {
@@ -25,17 +35,19 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  opacity: 0.28;
+  z-index: 1;
+  opacity: 0.32;
+  transform: translateZ(0);
+  will-change: opacity, transform;
   background-image: radial-gradient(
       circle at 15% 25%,
-      rgba(255, 107, 107, 0.22) 0%,
+      var(--color-overlay-primary-22) 0%,
       transparent 55%
     ),
-    radial-gradient(circle at 85% 75%, rgba(255, 140, 122, 0.22) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(255, 209, 200, 0.24) 0%, transparent 55%),
-    radial-gradient(circle at 10% 85%, rgba(255, 191, 183, 0.24) 0%, transparent 50%),
-    radial-gradient(circle at 90% 15%, rgba(255, 214, 214, 0.22) 0%, transparent 53%);
+    radial-gradient(circle at 85% 75%, var(--color-overlay-secondary-22) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, var(--color-overlay-warm-24) 0%, transparent 55%),
+    radial-gradient(circle at 10% 85%, var(--color-overlay-accent-24) 0%, transparent 50%),
+    radial-gradient(circle at 90% 15%, var(--color-overlay-warm-22) 0%, transparent 53%);
   background-size: 100% 100%;
   animation: subtleShift 25s ease-in-out infinite;
 }
@@ -53,7 +65,7 @@
   left: -10%;
   width: 50vw;
   height: 50vw;
-  background: var(--color-primary, #ff6b6b);
+  background: var(--color-primary);
   animation-duration: 15s;
   animation-name: morph-1;
 }
@@ -63,7 +75,7 @@
   right: -10%;
   width: 60vw;
   height: 60vw;
-  background: var(--color-secondary, #ff8c7a);
+  background: var(--color-secondary);
   animation-duration: 18s;
   animation-name: morph-2;
   animation-delay: -5s;
@@ -74,7 +86,7 @@
   left: 40%;
   width: 40vw;
   height: 40vw;
-  background: var(--color-accent, #ffd1c8);
+  background: var(--color-accent);
   animation-duration: 12s;
   animation-name: morph-3;
   opacity: 0.7;
@@ -82,12 +94,16 @@
 
 .floating-icon {
   position: absolute;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 242, 0.92));
+  background: linear-gradient(
+    135deg,
+    var(--color-overlay-light-95),
+    var(--color-overlay-warm-light-92)
+  );
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(255, 107, 107, 0.2);
-  border: 1.5px solid rgba(255, 191, 183, 0.4);
-  z-index: 1;
+  box-shadow: 0 10px 40px var(--color-shadow-brand-20);
+  border: 1.5px solid var(--color-overlay-accent-40);
+  z-index: 2;
   animation: drift 15s infinite linear;
 
   &.icon-1 {

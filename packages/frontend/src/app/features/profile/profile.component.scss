@@ -11,13 +11,13 @@
 .profile-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
 
 .profile-subtitle {
   font-size: 1rem;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
 }
 
 .profile-content {
@@ -28,8 +28,8 @@
 
 /* Profile Card Styles */
 .profile-card {
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
   padding: 2rem;
 }
@@ -40,18 +40,18 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .profile-card__icon {
   font-size: 28px;
-  color: #ff6b6b;
+  color: var(--color-primary);
 }
 
 .profile-card__title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--app-text);
+  color: var(--color-text-primary);
 }
 
 .profile-card__content {
@@ -62,7 +62,7 @@
 
 /* Profile Photo Section */
 .profile-photo {
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
 }
 
 .profile-photo__content {
@@ -75,7 +75,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: var(--app-border);
+  background: var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,7 +93,7 @@
 
   .material-symbols-outlined {
     font-size: 64px;
-    color: var(--app-muted);
+    color: var(--color-text-muted);
   }
 }
 
@@ -104,13 +104,13 @@
 .profile-name {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .profile-badge {
   font-size: 0.875rem;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   margin-bottom: 1rem;
 }
 
@@ -133,25 +133,25 @@
 .form-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
 
 .form-input {
   padding: 0.75rem 1rem;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: border-color 0.2s;
 
   &:focus {
     outline: none;
-    border-color: #ff6b6b;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-overlay-primary-10);
   }
 
   &:disabled {
-    background: var(--app-border);
+    background: var(--color-border);
     cursor: not-allowed;
   }
 }
@@ -162,7 +162,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 
   &:last-child {
     border-bottom: none;
@@ -177,13 +177,13 @@
 .preference-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .preference-desc {
   font-size: 0.875rem;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
 }
 
 /* Toggle Switch */
@@ -205,7 +205,7 @@
     white-space: nowrap;
 
     &:checked + .toggle-slider {
-      background: #4caf50;
+      background: var(--color-success);
     }
 
     &:checked + .toggle-slider:before {
@@ -214,7 +214,7 @@
     }
 
     &:focus-visible + .toggle-slider {
-      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.35);
+      box-shadow: 0 0 0 3px var(--color-overlay-primary-35);
     }
   }
 }
@@ -223,7 +223,7 @@
   display: inline-block;
   width: 44px;
   height: 24px;
-  background: #ccc;
+  background: var(--color-neutral-200);
   border-radius: 12px;
   transition: background 0.3s;
   position: relative;
@@ -234,7 +234,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: white;
+    background: var(--color-neutral-0);
     transition: transform 0.3s;
   }
 }
@@ -245,7 +245,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 
   &:last-child {
     border-bottom: none;
@@ -260,13 +260,13 @@
 .security-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .security-desc {
   font-size: 0.875rem;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
 }
 
 /* Buttons */
@@ -288,35 +288,35 @@
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 107, 107, 0.7);
+    outline: 2px solid var(--color-overlay-primary-70);
     outline-offset: 2px;
   }
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary-strong) 100%);
+  color: var(--color-text-inverse);
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(255, 107, 107, 0.3);
+    box-shadow: 0 8px 16px var(--color-overlay-primary-30);
   }
 }
 
 .btn--secondary {
   background: transparent;
-  border: 1px solid var(--app-border);
-  color: var(--app-text);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
 
   &:hover:not(:disabled) {
-    background: var(--app-border);
-    border-color: var(--app-border);
+    background: var(--color-border);
+    border-color: var(--color-border);
   }
 }
 
 .btn--text {
   background: transparent;
-  color: var(--app-text);
+  color: var(--color-text-primary);
 
   &:hover:not(:disabled) {
     opacity: 0.7;
@@ -324,7 +324,7 @@
 }
 
 .btn--danger {
-  color: #ff6b6b;
+  color: var(--color-primary);
 }
 
 .password-modal-overlay {
@@ -333,7 +333,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--color-overlay-dark-50);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -344,12 +344,12 @@
 .password-modal {
   width: 100%;
   max-width: 520px;
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 1rem;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.3),
-    0 10px 30px rgba(0, 0, 0, 0.2);
+    0 20px 60px var(--color-shadow-lg),
+    0 10px 30px var(--color-overlay-dark-20);
   overflow: hidden;
 }
 
@@ -358,20 +358,20 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .password-modal__title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--app-text);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .password-modal__close {
   border: none;
   background: transparent;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 0.4rem;
   display: flex;
@@ -380,7 +380,7 @@
 }
 
 .password-modal__close:focus-visible {
-  outline: 2px solid rgba(255, 107, 107, 0.7);
+  outline: 2px solid var(--color-overlay-primary-70);
   outline-offset: 2px;
   border-radius: 0.5rem;
 }
@@ -400,7 +400,7 @@
 }
 
 .input-error {
-  color: #ff6b6b;
+  color: var(--color-primary);
   font-size: 0.85rem;
   margin-top: 0.35rem;
 }
@@ -412,7 +412,7 @@
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 }
 
 /* Profile Actions */

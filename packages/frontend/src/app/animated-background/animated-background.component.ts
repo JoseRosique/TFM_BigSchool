@@ -7,9 +7,9 @@ import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
   standalone: true,
 })
 export class AnimatedBackgroundComponent implements OnInit {
-  @Input() primaryColor: string = '#FF6B6B';
-  @Input() secondaryColor: string = '#FF8C7A';
-  @Input() accentColor: string = '#FFD1C8';
+  @Input() primaryColor?: string;
+  @Input() secondaryColor?: string;
+  @Input() accentColor?: string;
 
   constructor(
     private el: ElementRef,
@@ -21,8 +21,14 @@ export class AnimatedBackgroundComponent implements OnInit {
   }
 
   private setCustomColors(): void {
-    this.renderer.setStyle(this.el.nativeElement, '--color-primary', this.primaryColor);
-    this.renderer.setStyle(this.el.nativeElement, '--color-secondary', this.secondaryColor);
-    this.renderer.setStyle(this.el.nativeElement, '--color-accent', this.accentColor);
+    if (this.primaryColor) {
+      this.renderer.setStyle(this.el.nativeElement, '--color-primary', this.primaryColor);
+    }
+    if (this.secondaryColor) {
+      this.renderer.setStyle(this.el.nativeElement, '--color-secondary', this.secondaryColor);
+    }
+    if (this.accentColor) {
+      this.renderer.setStyle(this.el.nativeElement, '--color-accent', this.accentColor);
+    }
   }
 }

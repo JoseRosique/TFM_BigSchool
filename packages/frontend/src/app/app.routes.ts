@@ -54,4 +54,15 @@ export const APP_ROUTES: Routes = [
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent),
   },
+  {
+    path: 'error',
+    loadComponent: () => import('./features/error/error.component').then((m) => m.ErrorComponent),
+  },
+  {
+    path: 'access-denied',
+    loadComponent: () =>
+      import('./features/access-denied/access-denied.component').then(
+        (m) => m.AccessDeniedComponent,
+      ),
+  },
 ];

@@ -20,9 +20,12 @@ export const authGuard: CanActivateFn = () => {
   return authService.getProfile().pipe(
     map(() => true),
     catchError((error) => {
-      if (error?.status === 401 || error?.status === 403) {
+      if (error?.status === 401) {
         authService.clearAccessToken();
         return of(router.createUrlTree(['/auth/login']));
+      }
+      if (error?.status === 403) {
+        return of(router.createUrlTree(['/access-denied']));
       }
       console.error('Auth guard profile validation failed', error);
       return of(router.createUrlTree(['/error']));

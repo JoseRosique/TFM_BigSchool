@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { ToastContainerComponent } from './shared/components/toast/toast.component';
@@ -11,7 +12,14 @@ import { ThemeService } from './shared/services/theme.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, SidebarComponent, ToastContainerComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    HeaderComponent,
+    SidebarComponent,
+    ToastContainerComponent,
+    TranslateModule,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

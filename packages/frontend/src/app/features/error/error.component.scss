@@ -1,0 +1,46 @@
+.status-page {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.status-card {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  border-radius: 1rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+.status-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.status-message {
+  color: var(--app-muted);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  color: #ffffff;
+}

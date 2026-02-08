@@ -1,7 +1,8 @@
 {
   "GLOBAL": {
     "APP_NAME": "MeetWithFriends",
-    "LOGO_ARIA": "Logo de MeetWithFriends"
+    "LOGO_ARIA": "Logo de MeetWithFriends",
+    "LOADING_CONTENT": "Cargando contenido"
   },
   "HEADER": {
     "WELCOME": "¡Hola, {{name}}!",
@@ -205,5 +206,15 @@
     "CANCEL": "Cancelar",
     "AVATAR_IMAGE": "Imagen de avatar",
     "SELECT": "Seleccionar avatar"
+  },
+  "ERROR_PAGE": {
+    "TITLE": "Algo salió mal",
+    "MESSAGE": "No pudimos cargar esta página. Inténtalo de nuevo.",
+    "BACK_HOME": "Volver al inicio"
+  },
+  "ACCESS_DENIED": {
+    "TITLE": "Acceso denegado",
+    "MESSAGE": "No tienes permisos para ver este contenido.",
+    "BACK_DASHBOARD": "Volver al panel"
   }
 }

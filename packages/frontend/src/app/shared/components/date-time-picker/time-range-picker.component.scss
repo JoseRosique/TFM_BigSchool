@@ -1,0 +1,108 @@
+.time-range {
+  position: relative;
+  width: 100%;
+}
+
+.time-range__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.time-range__field-wrap {
+  position: relative;
+}
+
+.time-range__field {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.time-range__field--open,
+.time-range__field:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-overlay-primary-18);
+  outline: none;
+}
+
+.time-range__field:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.time-range__value {
+  font-weight: 500;
+}
+
+.time-range__icon {
+  font-size: 20px;
+  color: var(--color-text-secondary);
+}
+
+.time-range__panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 40;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  box-shadow: 0 16px 30px var(--color-shadow-sm);
+  overflow: hidden;
+}
+
+.time-range__list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.35rem;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.time-range__option {
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.time-range__option:hover {
+  background: var(--color-overlay-primary-12);
+}
+
+.time-range__option--selected {
+  background: var(--color-overlay-primary-12);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.time-range__check {
+  font-size: 18px;
+  opacity: 0;
+}
+
+.time-range__option--selected .time-range__check {
+  opacity: 1;
+}

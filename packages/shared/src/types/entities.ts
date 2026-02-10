@@ -180,6 +180,26 @@ export namespace ReserveSlotDTO {
   }
 }
 
+export namespace ListReservationsDTO {
+  export interface ResponseItem {
+    id: string;
+    slotId: string;
+    userId: string;
+    status: ReservationStatus;
+    createdAt: Date;
+    canceledAt?: Date;
+    slotStart: Date;
+    slotEnd: Date;
+    slotTimezone: string;
+    slotOwnerId: string;
+  }
+
+  export interface Response {
+    items: ResponseItem[];
+    total: number;
+  }
+}
+
 export namespace GetUserDTO {
   export interface Response {
     id: string;

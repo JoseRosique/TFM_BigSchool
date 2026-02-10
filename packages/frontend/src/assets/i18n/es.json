@@ -101,7 +101,8 @@
       },
       "BIRTHDATE": {
         "LABEL": "Fecha de nacimiento",
-        "OPTIONAL": "opcional"
+        "OPTIONAL": "opcional",
+        "PLACEHOLDER": "Selecciona fecha"
       },
       "SUBMIT": "Crear cuenta",
       "SUBMITTING": "Creando cuenta..."
@@ -216,5 +217,94 @@
     "TITLE": "Acceso denegado",
     "MESSAGE": "No tienes permisos para ver este contenido.",
     "BACK_DASHBOARD": "Volver al panel"
+  },
+  "DATE_PICKER": {
+    "CLEAR": "Limpiar",
+    "TODAY": "Hoy",
+    "DONE": "Listo",
+    "START_TIME": "Hora inicio",
+    "END_TIME": "Hora fin",
+    "SELECT_DATE_TIME": "Selecciona fecha y hora"
+  },
+  "CALENDAR_PAGE": {
+    "KICKER": "Disponibilidad",
+    "TITLE": "Calendario de disponibilidad",
+    "SUBTITLE": "Abre franjas, reserva tiempo y mantén tus planes al día.",
+    "NEW_SLOT": "Nueva disponibilidad",
+    "TIMEZONE": "Zona horaria",
+    "MY_AVAILABILITY": "Mi disponibilidad",
+    "EXPLORE": "Explorar franjas",
+    "PREV_WEEK": "Anterior",
+    "NEXT_WEEK": "Siguiente",
+    "PREV_MONTH": "Anterior",
+    "NEXT_MONTH": "Siguiente",
+    "TODAY": "Hoy",
+    "LOADING": "Cargando calendario...",
+    "EMPTY_DAY": "Sin franjas",
+    "RESERVE": "Reservar",
+    "RESERVE_SHORT": "Reservar",
+    "CANCEL_SLOT": "Cancelar franja",
+    "CANCEL_SLOT_SHORT": "Cancelar",
+    "DELETE_SLOT_SHORT": "Eliminar",
+    "CONFIRM_DELETE_TITLE": "Eliminar franja",
+    "CONFIRM_DELETE_BODY": "Si eliminas esta franja, desaparecera del calendario para todos.",
+    "CONFIRM_DELETE_CONFIRM": "Eliminar",
+    "CONFIRM_DELETE_CANCEL": "Cancelar",
+    "CANCEL_RESERVATION": "Cancelar reserva",
+    "MY_SLOT": "Mi franja",
+    "UNAVAILABLE": "No disponible",
+    "ADD_AVAILABILITY": "Agregar",
+    "EDIT_AVAILABILITY": "Editar franjas",
+    "MORE": "+{{count}} más",
+    "RESERVATIONS_KICKER": "Reservas",
+    "RESERVATIONS_TITLE": "Mis reservas",
+    "RESERVATIONS_EMPTY": "Aún no hay reservas.",
+    "LEGEND_KICKER": "Leyenda",
+    "LEGEND_TITLE": "Guía de estados",
+    "MODAL_KICKER": "Disponibilidad",
+    "FORM": {
+      "TITLE": "Abrir disponibilidad",
+      "DATE": "Fecha",
+      "START": "Hora inicio",
+      "END": "Hora fin",
+      "TIMEZONE": "Zona horaria",
+      "VISIBILITY": "Visibilidad",
+      "NOTES": "Notas",
+      "SUBMIT": "Crear franja",
+      "CANCEL": "Cancelar"
+    },
+    "STATUS": {
+      "AVAILABLE": "Disponible",
+      "RESERVED": "Reservada",
+      "CANCELED": "Cancelada"
+    },
+    "VISIBILITY": {
+      "PRIVATE": "Privada",
+      "FRIENDS": "Amigos",
+      "LIST": "Lista pública"
+    },
+    "RESERVATION_STATUS": {
+      "CREATED": "Confirmada",
+      "CANCELED": "Cancelada"
+    },
+    "INDICATORS": {
+      "AVAILABLE": "disponible",
+      "CONFIRMED": "confirmada",
+      "PENDING": "pendiente"
+    },
+    "TOASTS": {
+      "CREATED": "Disponibilidad abierta.",
+      "CREATE_ERROR": "No se pudo crear la franja.",
+      "RESERVED": "Reserva confirmada.",
+      "RESERVE_ERROR": "No se pudo reservar la franja.",
+      "RESERVATION_CANCELED": "Reserva cancelada.",
+      "RESERVATION_CANCEL_ERROR": "No se pudo cancelar la reserva.",
+      "SLOT_CANCELED": "Franja cancelada.",
+      "SLOT_CANCEL_ERROR": "No se pudo cancelar la franja.",
+      "SLOT_DELETED": "Franja eliminada.",
+      "SLOT_DELETE_ERROR": "No se pudo eliminar la franja.",
+      "LOAD_ERROR": "No se pudo cargar el calendario.",
+      "INVALID_RANGE": "Revisa el rango de horas."
+    }
   }
 }

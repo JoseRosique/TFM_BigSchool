@@ -1,0 +1,63 @@
+<div class="time-range" #popover>
+  <div class="time-range__fields">
+    <div class="time-range__field-wrap">
+      <button
+        class="time-range__field"
+        type="button"
+        [class.time-range__field--open]="isStartOpen()"
+        [disabled]="disabled()"
+        (click)="toggle('start')"
+      >
+        <span class="time-range__value">{{ startTime() || "--:--" }}</span>
+        <span class="material-symbols-outlined time-range__icon" aria-hidden="true">expand_more</span>
+      </button>
+      @if (isStartOpen()) {
+        <div class="time-range__panel" role="dialog" aria-label="Time picker">
+          <div class="time-range__list">
+            @for (option of timeOptions(); track option) {
+              <button
+                class="time-range__option"
+                type="button"
+                [class.time-range__option--selected]="option === (startTime() || '')"
+                (click)="selectStartTime(option)"
+              >
+                <span>{{ option }}</span>
+                <span class="material-symbols-outlined time-range__check" aria-hidden="true">check</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="time-range__field-wrap">
+      <button
+        class="time-range__field"
+        type="button"
+        [class.time-range__field--open]="isEndOpen()"
+        [disabled]="disabled()"
+        (click)="toggle('end')"
+      >
+        <span class="time-range__value">{{ endTime() || "--:--" }}</span>
+        <span class="material-symbols-outlined time-range__icon" aria-hidden="true">expand_more</span>
+      </button>
+      @if (isEndOpen()) {
+        <div class="time-range__panel" role="dialog" aria-label="Time picker">
+          <div class="time-range__list">
+            @for (option of timeOptions(); track option) {
+              <button
+                class="time-range__option"
+                type="button"
+                [class.time-range__option--selected]="option === (endTime() || '')"
+                (click)="selectEndTime(option)"
+              >
+                <span>{{ option }}</span>
+                <span class="material-symbols-outlined time-range__check" aria-hidden="true">check</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

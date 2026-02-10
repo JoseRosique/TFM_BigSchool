@@ -101,7 +101,8 @@
       },
       "BIRTHDATE": {
         "LABEL": "Birthdate",
-        "OPTIONAL": "optional"
+        "OPTIONAL": "optional",
+        "PLACEHOLDER": "Select date"
       },
       "SUBMIT": "Create account",
       "SUBMITTING": "Creating account..."
@@ -216,5 +217,94 @@
     "TITLE": "Access denied",
     "MESSAGE": "You don't have permission to view this content.",
     "BACK_DASHBOARD": "Back to dashboard"
+  },
+  "DATE_PICKER": {
+    "CLEAR": "Clear",
+    "TODAY": "Today",
+    "DONE": "Done",
+    "START_TIME": "Start time",
+    "END_TIME": "End time",
+    "SELECT_DATE_TIME": "Select date and time"
+  },
+  "CALENDAR_PAGE": {
+    "KICKER": "Availability",
+    "TITLE": "Availability Calendar",
+    "SUBTITLE": "Open slots, reserve time, and keep your plans in sync.",
+    "NEW_SLOT": "New availability",
+    "TIMEZONE": "Timezone",
+    "MY_AVAILABILITY": "My availability",
+    "EXPLORE": "Explore openings",
+    "PREV_WEEK": "Prev",
+    "NEXT_WEEK": "Next",
+    "PREV_MONTH": "Prev",
+    "NEXT_MONTH": "Next",
+    "TODAY": "Today",
+    "LOADING": "Loading calendar...",
+    "EMPTY_DAY": "No slots",
+    "RESERVE": "Reserve",
+    "RESERVE_SHORT": "Reserve",
+    "CANCEL_SLOT": "Cancel slot",
+    "CANCEL_SLOT_SHORT": "Cancel",
+    "DELETE_SLOT_SHORT": "Delete",
+    "CONFIRM_DELETE_TITLE": "Delete slot",
+    "CONFIRM_DELETE_BODY": "Deleting this slot will remove it from everyone’s calendar.",
+    "CONFIRM_DELETE_CONFIRM": "Delete",
+    "CONFIRM_DELETE_CANCEL": "Cancel",
+    "CANCEL_RESERVATION": "Cancel reservation",
+    "MY_SLOT": "My slot",
+    "UNAVAILABLE": "Unavailable",
+    "ADD_AVAILABILITY": "Add",
+    "EDIT_AVAILABILITY": "Edit slots",
+    "MORE": "+{{count}} more",
+    "RESERVATIONS_KICKER": "Bookings",
+    "RESERVATIONS_TITLE": "My reservations",
+    "RESERVATIONS_EMPTY": "No reservations yet.",
+    "LEGEND_KICKER": "Legend",
+    "LEGEND_TITLE": "Status guide",
+    "MODAL_KICKER": "Availability",
+    "FORM": {
+      "TITLE": "Open availability",
+      "DATE": "Date",
+      "START": "Start time",
+      "END": "End time",
+      "TIMEZONE": "Timezone",
+      "VISIBILITY": "Visibility",
+      "NOTES": "Notes",
+      "SUBMIT": "Create slot",
+      "CANCEL": "Cancel"
+    },
+    "STATUS": {
+      "AVAILABLE": "Available",
+      "RESERVED": "Reserved",
+      "CANCELED": "Canceled"
+    },
+    "VISIBILITY": {
+      "PRIVATE": "Private",
+      "FRIENDS": "Friends",
+      "LIST": "Public list"
+    },
+    "RESERVATION_STATUS": {
+      "CREATED": "Booked",
+      "CANCELED": "Canceled"
+    },
+    "INDICATORS": {
+      "AVAILABLE": "available",
+      "CONFIRMED": "confirmed",
+      "PENDING": "pending"
+    },
+    "TOASTS": {
+      "CREATED": "Availability opened.",
+      "CREATE_ERROR": "Unable to create slot.",
+      "RESERVED": "Reservation confirmed.",
+      "RESERVE_ERROR": "Unable to reserve slot.",
+      "RESERVATION_CANCELED": "Reservation canceled.",
+      "RESERVATION_CANCEL_ERROR": "Unable to cancel reservation.",
+      "SLOT_CANCELED": "Slot canceled.",
+      "SLOT_CANCEL_ERROR": "Unable to cancel slot.",
+      "SLOT_DELETED": "Slot deleted.",
+      "SLOT_DELETE_ERROR": "Unable to delete slot.",
+      "LOAD_ERROR": "Unable to load calendar.",
+      "INVALID_RANGE": "Check the time range."
+    }
   }
 }

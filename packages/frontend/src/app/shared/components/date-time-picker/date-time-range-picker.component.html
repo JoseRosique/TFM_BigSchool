@@ -1,0 +1,79 @@
+<div class="date-time-range" #popover>
+  <button
+    class="date-time-range__field"
+    type="button"
+    [class.date-time-range__field--open]="isOpen()"
+    [attr.aria-haspopup]="'dialog'"
+    [attr.aria-expanded]="isOpen()"
+    [disabled]="disabled()"
+    (click)="toggle()"
+  >
+    @if (displayValue()) {
+      <span class="date-time-range__value">{{ displayValue() }}</span>
+    } @else {
+      <span class="date-time-range__placeholder">{{ "DATE_PICKER.SELECT_DATE_TIME" | translate }}</span>
+    }
+    <span class="material-symbols-outlined date-time-range__icon" aria-hidden="true">event</span>
+  </button>
+
+  @if (isOpen()) {
+    <div class="date-time-range__popover" role="dialog" aria-label="Date time picker">
+      <div class="date-time-range__header">
+        <button class="date-time-range__nav" type="button" (click)="goPrevMonth()">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="date-time-range__title">
+          <span>{{ monthLabel() }}</span>
+        </div>
+        <button class="date-time-range__nav" type="button" (click)="goNextMonth()">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+      <div class="date-time-range__selectors">
+        <select class="date-time-range__select" [value]="viewDate().getMonth()" (change)="onMonthChange($event)">
+          @for (label of monthLabels(); track label; let index = $index) {
+            <option [value]="index">{{ label }}</option>
+          }
+        </select>
+        <select class="date-time-range__select" [value]="viewDate().getFullYear()" (change)="onYearChange($event)">
+          @for (year of years(); track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
+      </div>
+      <div class="date-time-range__weekdays">
+        @for (weekday of weekdays(); track weekday) {
+          <span>{{ weekday }}</span>
+        }
+      </div>
+      <div class="date-time-range__grid">
+        @for (day of grid(); track day.key; let i = $index) {
+          <button
+            class="date-time-range__day"
+            type="button"
+            data-day-button
+            [class.date-time-range__day--outside]="!day.isCurrentMonth"
+            [class.date-time-range__day--today]="day.isToday"
+            [class.date-time-range__day--selected]="day.key === date()"
+            [disabled]="isDisabled(day.key)"
+            (click)="selectDate(day.date)"
+            (keydown)="onDayKeydown($event, i)"
+          >
+            {{ day.dayNumber }}
+          </button>
+        }
+      </div>
+      <div class="date-time-range__footer">
+        <button class="date-time-range__action" type="button" (click)="clear()">
+          {{ "DATE_PICKER.CLEAR" | translate }}
+        </button>
+        <button class="date-time-range__action" type="button" (click)="selectToday()">
+          {{ "DATE_PICKER.TODAY" | translate }}
+        </button>
+        <button class="date-time-range__action" type="button" (click)="close()">
+          {{ "DATE_PICKER.DONE" | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

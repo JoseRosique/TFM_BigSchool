@@ -1,18 +1,25 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Slot, OpenSlotDTO, ListSlotsDTO } from "@meetwithfriends/shared";
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import {
+  Slot,
+  OpenSlotDTO,
+  ListSlotsDTO,
+  SlotStatus,
+  VisibilityScope,
+} from '@meetwithfriends/shared';
+import { environment } from '../../../environments/environment';
 
 /**
  * Slots Service - Angular
  * Gestiona operaciones con franjas de disponibilidad
  */
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class SlotsService {
   private http = inject(HttpClient);
-  private apiUrl = "http://localhost:3000/slots";
+  private apiUrl = `${environment.apiUrl}/slots`;
 
   createSlot(input: OpenSlotDTO.Request): Observable<OpenSlotDTO.Response> {
     return this.http.post<OpenSlotDTO.Response>(this.apiUrl, input);
@@ -28,10 +35,7 @@ export class SlotsService {
     });
   }
 
-  updateSlot(
-    slotId: string,
-    input: Partial<OpenSlotDTO.Request>
-  ): Observable<Slot> {
+  updateSlot(slotId: string, input: UpdateSlotPayload): Observable<Slot> {
     return this.http.patch<Slot>(`${this.apiUrl}/${slotId}`, input);
   }
 
@@ -39,3 +43,8 @@ export class SlotsService {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/${slotId}`);
   }
 }
+
+type UpdateSlotPayload = Partial<OpenSlotDTO.Request> & {
+  status?: SlotStatus;
+  visibilityScope?: VisibilityScope;
+};

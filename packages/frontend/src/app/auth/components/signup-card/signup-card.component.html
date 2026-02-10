@@ -118,13 +118,16 @@
       >
       <div class="input-wrapper">
         <span class="material-symbols-outlined input-icon">calendar_month</span>
-        <input
-          id="birthdate"
-          name="birthdate"
-          type="date"
-          [value]="birthdate()"
-          (input)="birthdate.set($event.target.value)"
-        />
+        <app-date-only-picker
+          class="date-picker-field"
+          [value]="birthdate() || null"
+          [max]="maxBirthdate"
+          [yearStart]="birthdateYearStart"
+          [yearEnd]="birthdateYearEnd"
+          [placeholder]="'SIGNUP.FORM.BIRTHDATE.PLACEHOLDER' | translate"
+          [embedded]="true"
+          (valueChange)="birthdate.set($event || '')"
+        ></app-date-only-picker>
       </div>
     </div>
 

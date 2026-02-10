@@ -1,0 +1,78 @@
+<div class="date-picker" #popover>
+  <button
+    class="date-picker__field"
+    [class.date-picker__field--embedded]="embedded()"
+    [class.date-picker__field--readonly]="readonly()"
+    type="button"
+    [class.date-picker__field--open]="isOpen()"
+    [attr.aria-haspopup]="readonly() ? undefined : 'dialog'"
+    [attr.aria-expanded]="isOpen()"
+    [disabled]="disabled() || readonly()"
+    (click)="toggle()"
+  >
+    @if (displayValue()) {
+      <span class="date-picker__value">{{ displayValue() }}</span>
+    } @else {
+      <span class="date-picker__placeholder">{{ placeholder() }}</span>
+    }
+    <span class="material-symbols-outlined date-picker__icon" aria-hidden="true">calendar_month</span>
+  </button>
+
+  @if (isOpen()) {
+    <div class="date-picker__popover" role="dialog" aria-label="Date picker">
+      <div class="date-picker__header">
+        <button class="date-picker__nav" type="button" (click)="goPrevMonth()">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <div class="date-picker__title">
+          <span>{{ monthLabel() }}</span>
+        </div>
+        <button class="date-picker__nav" type="button" (click)="goNextMonth()">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+      <div class="date-picker__selectors">
+        <select class="date-picker__select" [value]="viewDate().getMonth()" (change)="onMonthChange($event)">
+          @for (label of monthLabels(); track label; let index = $index) {
+            <option [value]="index">{{ label }}</option>
+          }
+        </select>
+        <select class="date-picker__select" [value]="viewDate().getFullYear()" (change)="onYearChange($event)">
+          @for (year of years(); track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
+      </div>
+      <div class="date-picker__weekdays">
+        @for (weekday of weekdays(); track weekday) {
+          <span>{{ weekday }}</span>
+        }
+      </div>
+      <div class="date-picker__grid">
+        @for (day of grid(); track day.key; let i = $index) {
+          <button
+            class="date-picker__day"
+            type="button"
+            data-day-button
+            [class.date-picker__day--outside]="!day.isCurrentMonth"
+            [class.date-picker__day--today]="day.isToday"
+            [class.date-picker__day--selected]="isSelected(day.key)"
+            [disabled]="isDisabled(day.key)"
+            (click)="selectDate(day.date)"
+            (keydown)="onDayKeydown($event, i)"
+          >
+            {{ day.dayNumber }}
+          </button>
+        }
+      </div>
+      <div class="date-picker__footer">
+        <button class="date-picker__action" type="button" (click)="clear()">
+          {{ "DATE_PICKER.CLEAR" | translate }}
+        </button>
+        <button class="date-picker__action" type="button" (click)="selectToday()">
+          {{ "DATE_PICKER.TODAY" | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,4 +1,3 @@
-@use 'sass:color';
 // Language Switcher Dropdown
 .lang-switcher {
   position: relative;
@@ -147,10 +146,7 @@
   color: var(--color-text-inverse);
   text-shadow:
     0 2px 4px var(--color-overlay-dark-15),
-    0 4px 8px var(--color-overlay-dark-20),
-    0 8px 16px var(--color-overlay-dark-30),
-    0 0 30px var(--color-overlay-primary-40);
-  filter: drop-shadow(0 6px 20px var(--color-shadow-brand-strong));
+    0 4px 8px var(--color-overlay-dark-20);
 }
 
 .hero__actions {
@@ -318,7 +314,6 @@
   font-size: 1.18rem;
   line-height: 1.7;
   font-weight: 500;
-  text-shadow: 0 6px 18px var(--color-overlay-dark-20);
 }
 
 // Feature bar

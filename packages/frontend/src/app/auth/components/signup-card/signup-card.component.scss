@@ -96,9 +96,8 @@ input[type='password']::placeholder {
   color: var(--color-text-muted);
 }
 
-input[type='date']::-webkit-calendar-picker-indicator {
-  filter: invert(0.3);
-  cursor: pointer;
+.date-picker-field {
+  flex: 1;
 }
 .input-check {
   color: var(--color-primary);

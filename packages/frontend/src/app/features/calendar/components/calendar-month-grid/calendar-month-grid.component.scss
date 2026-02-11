@@ -1,0 +1,4 @@
+:host {
+  /* Preserve grid children structure to avoid layout shifts. */
+  display: contents;
+}

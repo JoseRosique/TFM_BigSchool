@@ -14,14 +14,16 @@ const EnvSchema = z.object({
 
   // Auth
   JWT_SECRET: z.string(),
-  JWT_EXPIRATION: z.string().default('24h'),
+  JWT_EXPIRATION: z.string().default('15m'),
+  REFRESH_TOKEN_SECRET: z.string(),
+  REFRESH_TOKEN_EXPIRATION: z.string().default('7d'),
   SESSION_SECRET: z.string(),
   SESSION_TIMEOUT_MS: z.coerce.number().default(3600000),
 
   // Security
-  CORS_ORIGIN: z.string().default('http://localhost:5173'),
-  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
-  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(100),
+  CORS_ORIGIN: z.string().default('http://localhost:4200'),
+  THROTTLE_TTL: z.coerce.number().default(60),
+  THROTTLE_LIMIT: z.coerce.number().default(10),
 
   // Observability
   SENTRY_DSN: z.string().optional(),

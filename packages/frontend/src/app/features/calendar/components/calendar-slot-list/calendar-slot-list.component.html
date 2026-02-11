@@ -1,0 +1,44 @@
+@for (slot of slots(); track slot.id) {
+  <article
+    class="month-slot"
+    [class.month-slot--available]="slot.status === slotStatus().AVAILABLE"
+    [class.month-slot--reserved]="slot.status === slotStatus().RESERVED"
+    [class.month-slot--canceled]="slot.status === slotStatus().CANCELED"
+    (click)="$event.stopPropagation()"
+  >
+    <span class="month-slot__time">
+      {{ formatSlotRange(slot) }}
+    </span>
+    @if (isOwner(slot)) {
+      <span class="month-slot__tag">{{ "CALENDAR_PAGE.MY_SLOT" | translate }}</span>
+      @if (slot.status !== slotStatus().CANCELED) {
+        <button
+          class="month-slot__action"
+          type="button"
+          (click)="onDelete(slot, $event)"
+          [disabled]="processingSlotId() === slot.id"
+        >
+          {{ "CALENDAR_PAGE.DELETE_SLOT_SHORT" | translate }}
+        </button>
+      }
+    } @else {
+      @if (slot.status === slotStatus().AVAILABLE) {
+        <button
+          class="month-slot__action month-slot__action--primary"
+          type="button"
+          (click)="onReserve(slot, $event)"
+          [disabled]="processingSlotId() === slot.id"
+        >
+          {{ "CALENDAR_PAGE.RESERVE_SHORT" | translate }}
+        </button>
+      } @else {
+        <span class="month-slot__tag">{{ "CALENDAR_PAGE.UNAVAILABLE" | translate }}</span>
+      }
+    }
+  </article>
+}
+@if (moreCount() > 0) {
+  <button class="month-slot__more" type="button" (click)="onShowMore($event)">
+    {{ "CALENDAR_PAGE.MORE" | translate: { count: moreCount() } }}
+  </button>
+}

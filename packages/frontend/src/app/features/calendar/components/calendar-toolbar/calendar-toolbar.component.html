@@ -1,0 +1,40 @@
+<div class="calendar-toolbar">
+  <div class="calendar-tabs" role="tablist">
+    <button
+      class="tab"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="viewMode() === 'mine'"
+      [class.tab--active]="viewMode() === 'mine'"
+      (click)="setViewMode('mine')"
+    >
+      {{ "CALENDAR_PAGE.MY_AVAILABILITY" | translate }}
+    </button>
+    <button
+      class="tab"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="viewMode() === 'explore'"
+      [class.tab--active]="viewMode() === 'explore'"
+      (click)="setViewMode('explore')"
+    >
+      {{ "CALENDAR_PAGE.EXPLORE" | translate }}
+    </button>
+  </div>
+  <div class="calendar-toolbar__month">
+    <span class="calendar-month__label">{{ monthLabel() }}</span>
+  </div>
+  <div class="calendar-nav">
+    <button class="btn btn--ghost" type="button" (click)="goPrev()">
+      <span class="material-symbols-outlined">chevron_left</span>
+      {{ "CALENDAR_PAGE.PREV_MONTH" | translate }}
+    </button>
+    <button class="btn btn--ghost" type="button" (click)="goToday()">
+      {{ "CALENDAR_PAGE.TODAY" | translate }}
+    </button>
+    <button class="btn btn--ghost" type="button" (click)="goNext()">
+      {{ "CALENDAR_PAGE.NEXT_MONTH" | translate }}
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+</div>

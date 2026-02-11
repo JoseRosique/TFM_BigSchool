@@ -84,7 +84,6 @@
   transition:
     background 0.13s,
     color 0.13s;
-  position: relative;
 }
 .lang-menu-item.active,
 .lang-menu-item:focus {
@@ -123,7 +122,6 @@
 // Fondo animado: el contenido debe estar por encima
 :host {
   display: block;
-  background: transparent;
   min-height: 100vh;
   font-family: 'Inter', 'Roboto', 'Segoe UI', Arial, sans-serif;
 }
@@ -162,7 +160,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2.5rem 1.5rem 2rem;
-  background: transparent;
   position: relative;
   z-index: 10;
 
@@ -283,7 +280,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success) 100%);
+  background: var(--color-success);
   color: var(--color-brand-soft);
   font-size: 1rem;
   font-weight: 600;
@@ -346,7 +343,6 @@
 // Features grid
 .features {
   padding: 2.5rem 1.5rem 3.5rem 1.5rem;
-  background: transparent;
 }
 .features__grid {
   display: grid;

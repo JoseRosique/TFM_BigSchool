@@ -1,0 +1,26 @@
+<div class="calendar-month">
+  <div class="calendar-month__weekdays">
+    @for (weekday of monthWeekdays(); track weekday.key) {
+      <div class="calendar-month__weekday">{{ weekday.label }}</div>
+    }
+  </div>
+  <div class="calendar-month__grid">
+    @for (dayView of dayViews(); track dayView.day.key) {
+      <app-calendar-day-cell
+        [day]="dayView.day"
+        [slots]="dayView.slots"
+        [moreCount]="dayView.moreCount"
+        [availableCount]="dayView.availableCount"
+        [confirmedCount]="dayView.confirmedCount"
+        [pendingCount]="dayView.pendingCount"
+        [slotStatus]="slotStatus()"
+        [currentUserId]="currentUserId()"
+        [processingSlotId]="processingSlotId()"
+        [formatTimeRange]="formatTimeRange()"
+        (createForDay)="onCreateForDay($event)"
+        (reserveSlot)="onReserveSlot($event)"
+        (deleteSlot)="onDeleteSlot($event)"
+      ></app-calendar-day-cell>
+    }
+  </div>
+</div>

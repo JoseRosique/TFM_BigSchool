@@ -6,6 +6,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -17,15 +18,25 @@ import { TypeOrmUserRepository } from '../../infrastructure/repositories/typeorm
 import { RegisterUserUseCase } from './register-user.usecase';
 import { LoginUserUseCase } from './login-user.usecase';
 import { ChangePasswordUseCase } from './change-password.usecase';
+import { TokenBlacklistService } from './token-blacklist.service';
+import { PasswordResetService } from './password-reset.service';
+import { EmailService } from './email.service';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { TestUtilsController } from './test-utils.controller';
+import { TOKEN_STORE, InMemoryTokenStore } from './token-store';
 
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'change-me',
-      signOptions: { expiresIn: '24h' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.getOrThrow<string>('JWT_EXPIRATION'),
+        },
+      }),
     }),
     TypeOrmModule.forFeature([User]),
   ],
@@ -36,14 +47,21 @@ import { TestUtilsController } from './test-utils.controller';
     RegisterUserUseCase,
     LoginUserUseCase,
     ChangePasswordUseCase,
+    TokenBlacklistService,
+    PasswordResetService,
+    EmailService,
     {
       provide: USER_REPOSITORY,
       useClass: TypeOrmUserRepository,
     },
     TypeOrmUserRepository,
+    {
+      provide: TOKEN_STORE,
+      useClass: InMemoryTokenStore,
+    },
   ],
   controllers:
     process.env.NODE_ENV === 'test' ? [AuthController, TestUtilsController] : [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, TokenBlacklistService],
 })
 export class AuthModule {}

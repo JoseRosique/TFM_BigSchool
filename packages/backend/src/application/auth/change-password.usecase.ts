@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDTO } from '@meetwithfriends/shared';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ChangePasswordUseCase {
@@ -16,6 +17,7 @@ export class ChangePasswordUseCase {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async execute(
@@ -48,7 +50,10 @@ export class ChangePasswordUseCase {
         ? updated.passwordChangedAt.toISOString()
         : undefined,
     };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+      expiresIn: this.configService.getOrThrow<string>('JWT_EXPIRATION'),
+    });
 
     return { accessToken };
   }

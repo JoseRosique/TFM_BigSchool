@@ -1,0 +1,70 @@
+<section class="calendar-page">
+  <app-calendar-hero [displayTimezone]="displayTimezone()" (createClick)="openCreateModal()"></app-calendar-hero>
+
+  <div class="calendar-content">
+    <div class="calendar-board">
+      <app-calendar-toolbar
+        [viewMode]="viewMode()"
+        [monthLabel]="monthLabel()"
+        (viewModeChange)="setViewMode($event)"
+        (prevMonth)="navigateMonth(-1)"
+        (nextMonth)="navigateMonth(1)"
+        (today)="goToToday()"
+      ></app-calendar-toolbar>
+
+      @if (isLoadingSlots()) {
+        <div class="calendar-loading">{{ "CALENDAR_PAGE.LOADING" | translate }}</div>
+      } @else {
+        <app-calendar-month-grid
+          [monthWeekdays]="monthWeekdays()"
+          [dayViews]="monthDayViews()"
+          [slotStatus]="slotStatus"
+          [currentUserId]="currentUserId()"
+          [processingSlotId]="processingSlotId()"
+          [formatTimeRange]="formatTimeRange"
+          (createForDay)="openCreateModalForDayKey($event)"
+          (reserveSlot)="reserveSlot($event)"
+          (deleteSlot)="openDeleteModal($event)"
+        ></app-calendar-month-grid>
+      }
+    </div>
+
+    <aside class="calendar-aside">
+      <app-reservations-panel
+        [reservations]="reservations()"
+        [isLoading]="isLoadingReservations()"
+        [processingSlotId]="processingSlotId()"
+        [formatTimeRange]="formatTimeRange"
+        [reservationStatusKey]="reservationStatusKey"
+        (cancelReservation)="cancelReservation($event)"
+      ></app-reservations-panel>
+
+      <app-legend-panel></app-legend-panel>
+    </aside>
+  </div>
+
+  @if (showCreateModal()) {
+    <app-create-slot-modal
+      [formGroup]="createSlotForm"
+      [displayTimezone]="displayTimezone()"
+      [timezones]="timezones"
+      [visibilityScope]="visibilityScope"
+      [isDateLocked]="isDateLocked()"
+      [isSubmitting]="isCreating()"
+      (close)="closeCreateModal()"
+      (submitAction)="submitCreateSlot()"
+      (dateChange)="updateSlotDate($event)"
+      (startTimeChange)="updateStartTime($event)"
+      (endTimeChange)="updateEndTime($event)"
+      (notesInput)="autoResizeNotes($event)"
+    ></app-create-slot-modal>
+  }
+
+  @if (showDeleteModal()) {
+    <app-confirm-delete-modal
+      [isProcessing]="processingSlotId() !== null"
+      (close)="closeDeleteModal()"
+      (confirm)="confirmDeleteSlot()"
+    ></app-confirm-delete-modal>
+  }
+</section>

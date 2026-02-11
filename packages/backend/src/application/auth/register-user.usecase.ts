@@ -4,6 +4,7 @@ import { User } from '../../domain/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { RegisterDTO } from '@meetwithfriends/shared';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RegisterUserUseCase {
@@ -11,6 +12,7 @@ export class RegisterUserUseCase {
     @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async execute(input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
@@ -32,8 +34,16 @@ export class RegisterUserUseCase {
     user.theme = 'dark';
     user.passwordChangedAt = new Date();
     const saved = await this.userRepository.save(user);
-    const payload = { sub: saved.id, email: saved.email };
-    const accessToken = this.jwtService.sign(payload);
+    const accessPayload = { sub: saved.id, email: saved.email };
+    const accessToken = this.jwtService.sign(accessPayload, {
+      secret: this.configService.getOrThrow<string>('JWT_SECRET'),
+      expiresIn: this.configService.getOrThrow<string>('JWT_EXPIRATION'),
+    });
+    const refreshPayload = { sub: saved.id, email: saved.email, type: 'refresh' };
+    const refreshToken = this.jwtService.sign(refreshPayload, {
+      secret: this.configService.getOrThrow<string>('REFRESH_TOKEN_SECRET'),
+      expiresIn: this.configService.getOrThrow<string>('REFRESH_TOKEN_EXPIRATION'),
+    });
     // 5. Retornar DTO seguro
     return {
       id: saved.id,
@@ -42,6 +52,7 @@ export class RegisterUserUseCase {
       timezone: saved.timezone,
       language: saved.language,
       accessToken,
+      refreshToken,
     };
   }
 }

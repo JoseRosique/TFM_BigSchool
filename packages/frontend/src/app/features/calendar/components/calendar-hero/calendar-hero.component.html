@@ -1,0 +1,17 @@
+<div class="calendar-hero">
+  <div class="calendar-hero__text">
+    <p class="calendar-kicker">{{ "CALENDAR_PAGE.KICKER" | translate }}</p>
+    <h1 class="calendar-title">{{ "CALENDAR_PAGE.TITLE" | translate }}</h1>
+    <p class="calendar-subtitle">{{ "CALENDAR_PAGE.SUBTITLE" | translate }}</p>
+  </div>
+  <div class="calendar-hero__actions">
+    <button class="btn btn--primary" type="button" (click)="onCreateClick()">
+      <span class="material-symbols-outlined" aria-hidden="true">add</span>
+      {{ "CALENDAR_PAGE.NEW_SLOT" | translate }}
+    </button>
+    <div class="timezone-chip">
+      <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+      <span>{{ "CALENDAR_PAGE.TIMEZONE" | translate }}: {{ displayTimezone() }}</span>
+    </div>
+  </div>
+</div>

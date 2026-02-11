@@ -1,0 +1,33 @@
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  background: transparent;
+  justify-content: center;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 12px 20px var(--color-shadow-brand);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+}

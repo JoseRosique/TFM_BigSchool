@@ -1,0 +1,30 @@
+<div class="modal-overlay" (click)="onOverlayClick()">
+  <div
+    class="modal-container"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-describedby="modal-desc"
+  >
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title" class="modal-title">{{ "CALENDAR_PAGE.CONFIRM_DELETE_TITLE" | translate }}</h2>
+      </div>
+      <button class="modal-close" type="button" (click)="onClose()" [attr.aria-label]="'modal.close' | translate">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div id="modal-desc" class="modal-body">
+      <p class="modal-text">{{ "CALENDAR_PAGE.CONFIRM_DELETE_BODY" | translate }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--ghost btn-action" type="button" (click)="onClose()">
+        {{ "CALENDAR_PAGE.CONFIRM_DELETE_CANCEL" | translate }}
+      </button>
+      <button class="btn btn--primary btn-action" type="button" (click)="onConfirm()" [disabled]="isProcessing()">
+        {{ "CALENDAR_PAGE.CONFIRM_DELETE_CONFIRM" | translate }}
+      </button>
+    </div>
+  </div>
+</div>

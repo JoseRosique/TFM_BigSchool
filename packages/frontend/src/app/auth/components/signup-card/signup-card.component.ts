@@ -67,6 +67,32 @@ export class SignupCardComponent {
     this.errors.set(this.validate());
   }
 
+  private mapValidationErrors(err: HttpErrorResponse): { [key: string]: string } | null {
+    if (err.status !== 400 || !Array.isArray(err.error?.message)) {
+      return null;
+    }
+
+    const errors: { [key: string]: string } = {};
+    const messages = Array.isArray(err.error.message) ? err.error.message : [err.error.message];
+
+    for (const message of messages) {
+      const normalized = String(message).toLowerCase();
+      if (normalized.includes('name')) {
+        errors['name'] = this.translate.instant('SIGNUP.VALIDATION.NAME');
+      }
+      if (normalized.includes('email')) {
+        errors['email'] = this.translate.instant('SIGNUP.VALIDATION.EMAIL');
+      }
+      if (normalized.includes('confirm')) {
+        errors['confirmPassword'] = this.translate.instant('SIGNUP.VALIDATION.CONFIRM_PASSWORD');
+      } else if (normalized.includes('password')) {
+        errors['password'] = this.translate.instant('SIGNUP.VALIDATION.PASSWORD');
+      }
+    }
+
+    return Object.keys(errors).length > 0 ? errors : null;
+  }
+
   submit(event?: Event) {
     if (event) {
       event.preventDefault();
@@ -89,7 +115,7 @@ export class SignupCardComponent {
       next: (response) => {
         this.loading.set(false);
         this.success.set(true);
-        this.authService.setAccessToken(response.accessToken);
+        this.authService.setTokens(response.accessToken, response.refreshToken);
         this.languageService.setLang(response.language || input.language || 'es');
         this.themeService.setTheme('dark');
         this.toastService.success('SIGNUP.SUCCESS');
@@ -107,8 +133,20 @@ export class SignupCardComponent {
       error: (err: HttpErrorResponse) => {
         console.error('[SignupCardComponent] Registration error:', err);
         this.loading.set(false);
-        const errorMsg = err.error?.message || this.translate.instant('SIGNUP.ERROR.UNKNOWN');
-        this.errors.set({ general: errorMsg });
+        const fieldErrors = this.mapValidationErrors(err);
+        if (fieldErrors) {
+          this.errors.set(fieldErrors);
+          return;
+        }
+        let errorMsg = err.error?.message;
+        if (Array.isArray(errorMsg)) {
+          errorMsg = errorMsg.join(', ');
+        } else if (typeof errorMsg === 'object' && errorMsg !== null) {
+          errorMsg = JSON.stringify(errorMsg);
+        } else if (!errorMsg) {
+          errorMsg = this.translate.instant('SIGNUP.ERROR.UNKNOWN');
+        }
+        this.errors.set({ general: String(errorMsg) });
       },
     });
   }

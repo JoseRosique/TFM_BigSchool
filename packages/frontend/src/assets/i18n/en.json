@@ -151,6 +151,10 @@
     "SUCCESS": "Signed in successfully!",
     "DIVIDER": "or"
   },
+  "ERRORS": {
+    "TOO_MANY_REQUESTS": "Too many requests. Please wait and try again.",
+    "SESSION_EXPIRED": "Your session has expired. Please sign in again."
+  },
   "PROFILE": {
     "TITLE": "Profile Settings",
     "SUBTITLE": "Manage your account information and preferences.",

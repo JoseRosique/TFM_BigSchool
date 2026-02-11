@@ -7,17 +7,32 @@ import {
   Request,
   Inject,
   Patch,
+  Headers,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RegisterDTO, LoginDTO, User, ChangePasswordDTO } from '@meetwithfriends/shared';
+import {
+  RegisterDTO,
+  LoginDTO,
+  User,
+  ChangePasswordDTO,
+  RefreshTokenDTO,
+} from '@meetwithfriends/shared';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutDto } from './dto/logout.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangePasswordUseCase } from './change-password.usecase';
+import { PasswordResetService } from './password-reset.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -26,18 +41,43 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private changePasswordUseCase: ChangePasswordUseCase,
+    private passwordResetService: PasswordResetService,
     @Inject(USER_REPOSITORY)
     private userRepository: UserRepository,
   ) {}
 
+  @Throttle({ default: { limit: 3, ttl: 60 } })
   @Post('register')
-  async register(@Body() input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
+  async register(@Body() input: RegisterDto): Promise<RegisterDTO.Response> {
     return this.authService.register(input);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   @Post('login')
-  async login(@Body() input: LoginDTO.Request): Promise<LoginDTO.Response> {
+  async login(@Body() input: LoginDto): Promise<LoginDTO.Response> {
     return this.authService.login(input);
+  }
+
+  @Post('refresh')
+  async refresh(@Body() input: RefreshTokenDto): Promise<RefreshTokenDTO.Response> {
+    return this.authService.refreshAccessToken(input.refreshToken);
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60 } })
+  @Post('forgot-password')
+  async forgotPassword(@Body() input: ForgotPasswordDto): Promise<{ message: string }> {
+    await this.passwordResetService.requestPasswordReset(input.email);
+    return { message: 'RESET_EMAIL_SENT' };
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60 } })
+  @Post('reset-password')
+  async resetPassword(@Body() input: ResetPasswordDto): Promise<{ message: string }> {
+    if (input.newPassword !== input.confirmPassword) {
+      throw new BadRequestException('PASSWORD_MISMATCH');
+    }
+    await this.passwordResetService.resetPassword(input.token, input.newPassword);
+    return { message: 'PASSWORD_RESET_SUCCESS' };
   }
 
   @Get('me')
@@ -80,8 +120,12 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  logout(): { message: string } {
-    // TODO: Invalidar sesión/token si es necesario
+  async logout(
+    @Headers('authorization') authHeader: string,
+    @Body() body: LogoutDto,
+  ): Promise<{ message: string }> {
+    const accessToken = authHeader?.replace('Bearer ', '');
+    await this.authService.logout(accessToken, body.refreshToken);
     return { message: 'Logged out successfully' };
   }
 

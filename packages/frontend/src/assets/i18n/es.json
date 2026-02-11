@@ -151,6 +151,10 @@
     "SUCCESS": "¡Sesión iniciada con éxito!",
     "DIVIDER": "o"
   },
+  "ERRORS": {
+    "TOO_MANY_REQUESTS": "Demasiadas solicitudes. Espera un momento e intenta de nuevo.",
+    "SESSION_EXPIRED": "Tu sesión ha caducado. Inicia sesión de nuevo."
+  },
   "PROFILE": {
     "TITLE": "Configuración de Perfil",
     "SUBTITLE": "Gestiona tu información de cuenta y preferencias.",

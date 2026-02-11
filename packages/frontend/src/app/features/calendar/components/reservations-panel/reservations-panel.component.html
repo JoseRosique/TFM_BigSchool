@@ -1,0 +1,41 @@
+<section class="calendar-panel">
+  <header class="calendar-panel__header">
+    <div>
+      <p class="panel-kicker">{{ "CALENDAR_PAGE.RESERVATIONS_KICKER" | translate }}</p>
+      <h2 class="panel-title">{{ "CALENDAR_PAGE.RESERVATIONS_TITLE" | translate }}</h2>
+    </div>
+    <span class="panel-count">{{ reservations().length }}</span>
+  </header>
+
+  @if (isLoading()) {
+    <div class="panel-loading">{{ "CALENDAR_PAGE.LOADING" | translate }}</div>
+  } @else {
+    @if (reservations().length === 0) {
+      <p class="panel-empty">{{ "CALENDAR_PAGE.RESERVATIONS_EMPTY" | translate }}</p>
+    } @else {
+      <div class="reservation-list">
+        @for (reservation of reservations(); track reservation.id) {
+          <article class="reservation-card" [class.reservation-card--canceled]="reservation.status === 'canceled'">
+            <div class="reservation-card__time">
+              {{ formatTimeRange()(reservation.startDate, reservation.endDate, reservation.slotTimezone) }}
+            </div>
+            <div class="reservation-card__meta">
+              <span class="badge badge--status">
+                {{ reservationStatusKey()(reservation.status) | translate }}
+              </span>
+              <span class="chip">{{ reservation.slotTimezone }}</span>
+            </div>
+            <button
+              class="btn btn--ghost"
+              type="button"
+              (click)="onCancel(reservation.id)"
+              [disabled]="reservation.status === 'canceled' || processingSlotId() === reservation.id"
+            >
+              {{ "CALENDAR_PAGE.CANCEL_RESERVATION" | translate }}
+            </button>
+          </article>
+        }
+      </div>
+    }
+  }
+</section>

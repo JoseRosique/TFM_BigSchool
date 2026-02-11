@@ -1,0 +1,63 @@
+@if (day(); as day) {
+  <article
+    class="calendar-cell calendar-cell--clickable"
+    [class.calendar-cell--outside]="!day.isCurrentMonth"
+    [class.calendar-cell--today]="day.isToday"
+    (click)="onCellClick()"
+    (keydown.enter)="onCellClick()"
+    (keydown.space)="onCellClick()"
+    tabindex="0"
+  >
+    <header class="calendar-cell__header">
+      <span class="calendar-cell__number">{{ day.number }}</span>
+    </header>
+    <div class="calendar-cell__indicators">
+      @if (availableCount() > 0) {
+        <span class="indicator indicator--available">
+          {{ availableCount() }} {{ "CALENDAR_PAGE.INDICATORS.AVAILABLE" | translate }}
+        </span>
+      }
+      @if (confirmedCount() > 0) {
+        <span class="indicator indicator--confirmed">
+          {{ confirmedCount() }} {{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}
+        </span>
+      }
+      @if (pendingCount() > 0) {
+        <span class="indicator indicator--pending">
+          {{ pendingCount() }} {{ "CALENDAR_PAGE.INDICATORS.PENDING" | translate }}
+        </span>
+      }
+    </div>
+    <div class="calendar-cell__slots">
+      <app-calendar-slot-list
+        [slots]="slots()"
+        [moreCount]="moreCount()"
+        [slotStatus]="slotStatus()"
+        [currentUserId]="currentUserId()"
+        [processingSlotId]="processingSlotId()"
+        [formatTimeRange]="formatTimeRange()"
+        (reserveSlot)="onReserve($event)"
+        (deleteSlot)="onDelete($event)"
+      ></app-calendar-slot-list>
+    </div>
+    @if (availableCount() > 0) {
+      <button
+        class="calendar-cell__plus calendar-cell__plus--corner"
+        type="button"
+        [attr.aria-label]="'CALENDAR_PAGE.EDIT_AVAILABILITY' | translate"
+        (click)="onCreateClick($event)"
+      >
+        <span class="material-symbols-outlined">edit</span>
+      </button>
+    } @else {
+      <button
+        class="calendar-cell__plus"
+        type="button"
+        [attr.aria-label]="'CALENDAR_PAGE.ADD_AVAILABILITY' | translate"
+        (click)="onCreateClick($event)"
+      >
+        <span class="material-symbols-outlined">add</span>
+      </button>
+    }
+  </article>
+}

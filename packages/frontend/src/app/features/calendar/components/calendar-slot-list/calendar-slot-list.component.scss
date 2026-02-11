@@ -1,0 +1,4 @@
+:host {
+  /* Preserve slot layout by keeping flex children at the calendar-cell level. */
+  display: contents;
+}

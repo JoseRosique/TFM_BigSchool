@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { validateEnv } from './infrastructure/config/env.config';
 import { getDatabaseConfig } from './infrastructure/config/database.config';
 import { AuthModule } from './application/auth/auth.module';
@@ -16,6 +18,15 @@ import { NotificationsModule } from './application/notifications/notifications.m
       validate: validateEnv,
       isGlobal: true,
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => [
+        {
+          ttl: configService.getOrThrow<number>('THROTTLE_TTL'),
+          limit: configService.getOrThrow<number>('THROTTLE_LIMIT'),
+        },
+      ],
+    }),
     TypeOrmModule.forRoot(getDatabaseConfig()),
     AuthModule,
     UsersModule,
@@ -23,6 +34,12 @@ import { NotificationsModule } from './application/notifications/notifications.m
     SlotsModule,
     ReservationsModule,
     NotificationsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

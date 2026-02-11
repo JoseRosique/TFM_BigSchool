@@ -152,3 +152,45 @@ export function combineDateAndTime(dateValue: string, timeValue: string): Date |
   }
   return dateTime;
 }
+
+export function combineDateAndTimeInTimeZone(
+  dateValue: string,
+  timeValue: string,
+  timeZone: string,
+): Date | null {
+  if (!dateValue || !timeValue) return null;
+  const [year, month, day] = dateValue.split('-').map((part) => Number(part));
+  const [hour, minute] = timeValue.split(':').map((part) => Number(part));
+  if (!year || !month || !day || Number.isNaN(hour) || Number.isNaN(minute)) return null;
+
+  const utcCandidate = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
+  if (Number.isNaN(utcCandidate.getTime())) return null;
+  const offsetMinutes = getTimeZoneOffsetMinutes(utcCandidate, timeZone);
+  if (Number.isNaN(offsetMinutes)) return null;
+  const result = new Date(utcCandidate.getTime() - offsetMinutes * 60_000);
+  if (Number.isNaN(result.getTime())) return null;
+  return result;
+}
+
+function getTimeZoneOffsetMinutes(date: Date, timeZone: string): number {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(date);
+  const lookup = (type: string) => Number(parts.find((part) => part.type === type)?.value);
+  const year = lookup('year');
+  const month = lookup('month');
+  const day = lookup('day');
+  const hour = lookup('hour');
+  const minute = lookup('minute');
+  const second = lookup('second');
+  const asUtc = Date.UTC(year, month - 1, day, hour, minute, second);
+  return (asUtc - date.getTime()) / 60000;
+}

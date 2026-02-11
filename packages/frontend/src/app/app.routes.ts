@@ -34,7 +34,9 @@ export const APP_ROUTES: Routes = [
     path: 'calendar',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/calendar/calendar.component').then((m) => m.CalendarComponent),
+      import('./features/calendar/pages/calendar-page.component').then(
+        (m) => m.CalendarPageComponent,
+      ),
   },
   {
     path: 'friends',

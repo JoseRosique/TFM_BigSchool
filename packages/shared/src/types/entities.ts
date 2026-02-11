@@ -107,7 +107,7 @@ export namespace RegisterDTO {
     email: string;
     password: string;
     name: string;
-    timezone: string;
+    timezone?: string;
     language?: string;
   }
 
@@ -118,6 +118,7 @@ export namespace RegisterDTO {
     timezone: string;
     language: string;
     accessToken: string;
+    refreshToken: string;
   }
 }
 
@@ -131,7 +132,18 @@ export namespace LoginDTO {
     userId: string;
     email: string;
     accessToken: string;
+    refreshToken: string;
     language: string;
+  }
+}
+
+export namespace RefreshTokenDTO {
+  export interface Request {
+    refreshToken: string;
+  }
+
+  export interface Response {
+    accessToken: string;
   }
 }
 

@@ -1,8 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
-import { RegisterDTO, LoginDTO, User, ChangePasswordDTO } from '@meetwithfriends/shared';
-import { BehaviorSubject, Observable, finalize, of, shareReplay, tap } from 'rxjs';
+import {
+  RegisterDTO,
+  LoginDTO,
+  User,
+  ChangePasswordDTO,
+  RefreshTokenDTO,
+} from '@meetwithfriends/shared';
+import { BehaviorSubject, Observable, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -22,6 +28,8 @@ export class AuthService {
     inFlight$: null as Observable<User> | null,
   };
 
+  private refreshInFlight$: Observable<RefreshTokenDTO.Response> | null = null;
+
   private currentUser = signal<User | null>(null);
   public currentUser$ = new BehaviorSubject<User | null>(null);
   public guardLoading = signal(false);
@@ -35,7 +43,12 @@ export class AuthService {
   }
 
   logout(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/logout`, {});
+    const refreshToken = this.getRefreshToken();
+    return this.http.post<{ message: string }>(`${this.apiUrl}/logout`, { refreshToken }).pipe(
+      finalize(() => {
+        this.clearTokens();
+      }),
+    );
   }
 
   getProfile(force = false): Observable<User> {
@@ -86,6 +99,32 @@ export class AuthService {
     return this.http.patch<ChangePasswordDTO.Response>(`${this.apiUrl}/password`, input);
   }
 
+  refreshAccessToken(): Observable<string> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('NO_REFRESH_TOKEN'));
+    }
+
+    if (this.refreshInFlight$) {
+      return this.refreshInFlight$.pipe(map((response) => response.accessToken));
+    }
+
+    const request$ = this.http
+      .post<RefreshTokenDTO.Response>(`${this.apiUrl}/refresh`, { refreshToken })
+      .pipe(
+        tap((response) => {
+          this.setAccessToken(response.accessToken);
+        }),
+        finalize(() => {
+          this.refreshInFlight$ = null;
+        }),
+        shareReplay(1),
+      );
+
+    this.refreshInFlight$ = request$;
+    return request$.pipe(map((response) => response.accessToken));
+  }
+
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   }
@@ -94,13 +133,32 @@ export class AuthService {
     localStorage.setItem('accessToken', token);
   }
 
+  setRefreshToken(token: string): void {
+    sessionStorage.setItem('refreshToken', token);
+  }
+
+  setTokens(accessToken: string, refreshToken: string): void {
+    this.setAccessToken(accessToken);
+    this.setRefreshToken(refreshToken);
+  }
+
   clearAccessToken(): void {
     localStorage.removeItem('accessToken');
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('refreshToken');
     this.currentUser.set(null);
     this.currentUser$.next(null);
     this.profileCache.user = null;
     this.profileCache.expiresAt = 0;
     this.profileCache.inFlight$ = null;
+  }
+
+  clearTokens(): void {
+    this.clearAccessToken();
+  }
+
+  getRefreshToken(): string | null {
+    return sessionStorage.getItem('refreshToken');
   }
 
   setGuardLoading(isLoading: boolean): void {

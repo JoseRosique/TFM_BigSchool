@@ -1,0 +1,32 @@
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  background: transparent;
+  justify-content: center;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn--ghost {
+  background: var(--color-border-soft);
+  color: var(--color-text-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-border);
+  }
+}

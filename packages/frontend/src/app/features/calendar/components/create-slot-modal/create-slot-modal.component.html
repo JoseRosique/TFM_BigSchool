@@ -1,0 +1,77 @@
+<div class="modal-overlay" (click)="onOverlayClick()">
+  <div class="modal-container" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">{{ "CALENDAR_PAGE.FORM.TITLE" | translate }}</h2>
+      </div>
+      <button class="modal-close" type="button" (click)="onClose()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form class="modal-body" [formGroup]="formGroup()" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <div class="form-field form-field--full">
+          <span class="form-label">{{ "CALENDAR_PAGE.FORM.DATE" | translate }}</span>
+          <app-date-only-picker
+            [value]="formGroup().value.date || null"
+            [timeZone]="displayTimezone()"
+            [readonly]="isDateLocked()"
+            (openChange)="onDateOpenChange($event)"
+            (valueChange)="onDateChange($event)"
+          ></app-date-only-picker>
+        </div>
+        <div class="form-field form-field--full">
+          <span class="form-label"
+            >{{ "CALENDAR_PAGE.FORM.START" | translate }} - {{ "CALENDAR_PAGE.FORM.END" | translate }}</span
+          >
+          <app-time-range-picker
+            [startTime]="formGroup().value.startTime || null"
+            [endTime]="formGroup().value.endTime || null"
+            (openChange)="onTimeOpenChange($event)"
+            (startTimeChange)="onStartTimeChange($event)"
+            (endTimeChange)="onEndTimeChange($event)"
+          ></app-time-range-picker>
+        </div>
+        <label class="form-field">
+          <span class="form-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
+          <select class="form-input" formControlName="timezone">
+            @for (zone of timezones(); track zone.value) {
+              <option [value]="zone.value">{{ zone.label }}</option>
+            }
+          </select>
+        </label>
+        <label class="form-field">
+          <span class="form-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
+          <select class="form-input" formControlName="visibilityScope">
+            <option [value]="visibilityScope().PRIVATE">
+              {{ "CALENDAR_PAGE.VISIBILITY.PRIVATE" | translate }}
+            </option>
+            <option [value]="visibilityScope().FRIENDS">
+              {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }}
+            </option>
+            <option [value]="visibilityScope().LIST">
+              {{ "CALENDAR_PAGE.VISIBILITY.LIST" | translate }}
+            </option>
+          </select>
+        </label>
+        <label class="form-field form-field--full">
+          <span class="form-label">{{ "CALENDAR_PAGE.FORM.NOTES" | translate }}</span>
+          <textarea
+            class="form-input form-textarea"
+            rows="4"
+            formControlName="notes"
+            (input)="onNotesInput($event)"
+          ></textarea>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--ghost btn-action" type="button" (click)="onClose()">
+          {{ "CALENDAR_PAGE.FORM.CANCEL" | translate }}
+        </button>
+        <button class="btn btn--primary btn-action" type="submit" [disabled]="isSubmitting()">
+          {{ "CALENDAR_PAGE.FORM.SUBMIT" | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

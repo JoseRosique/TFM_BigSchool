@@ -22,7 +22,7 @@ import {
   addMonths,
   buildTimeOptions,
   buildMonthLabels,
-} from './date-time-utils';
+} from '../date-time-utils';
 
 @Component({
   selector: 'app-date-time-range-picker',

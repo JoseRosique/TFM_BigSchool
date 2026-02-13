@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { RegisterDTO } from '@meetwithfriends/shared';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { EmailService } from '../../infrastructure/services/email.service';
 
 @Injectable()
 export class RegisterUserUseCase {
@@ -13,6 +14,7 @@ export class RegisterUserUseCase {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {}
 
   async execute(input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
@@ -44,6 +46,12 @@ export class RegisterUserUseCase {
       secret: this.configService.getOrThrow<string>('REFRESH_TOKEN_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('REFRESH_TOKEN_EXPIRATION'),
     });
+
+    try {
+      await this.emailService.sendWelcomeEmail(saved.email, saved.name);
+    } catch (error) {
+      console.error('[RegisterUserUseCase] Welcome email failed:', error);
+    }
     // 5. Retornar DTO seguro
     return {
       id: saved.id,

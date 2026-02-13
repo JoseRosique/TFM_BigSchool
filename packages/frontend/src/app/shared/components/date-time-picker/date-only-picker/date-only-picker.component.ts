@@ -22,7 +22,7 @@ import {
   addMonths,
   buildMonthLabels,
   formatDateInputDisplay,
-} from './date-time-utils';
+} from '../date-time-utils';
 
 @Component({
   selector: 'app-date-only-picker',
@@ -32,6 +32,7 @@ import {
   styleUrl: './date-only-picker.component.scss',
 })
 export class DateOnlyPickerComponent {
+  showYearDropdown = false;
   private readonly translate = inject(TranslateService);
 
   value = input<string | null>(null);

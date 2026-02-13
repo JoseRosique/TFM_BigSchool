@@ -2,12 +2,12 @@ import { Injectable, BadRequestException, NotFoundException, Inject } from '@nes
 import { randomBytes, createHash } from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
-import { EmailService } from './email.service';
+import { EmailService } from '../../infrastructure/services/email.service';
 import { TokenStore, TOKEN_STORE } from './token-store';
 
 @Injectable()
 export class PasswordResetService {
-  private readonly tokenTtlMs = 60 * 60 * 1000;
+  private readonly tokenTtlMs = 15 * 60 * 1000;
   // Rate limiting map: email -> { count, windowStart }
   private readonly resetAttempts = new Map<string, { count: number; windowStart: number }>();
   private readonly rateLimitWindowMs = 15 * 60 * 1000; // 15 minutes

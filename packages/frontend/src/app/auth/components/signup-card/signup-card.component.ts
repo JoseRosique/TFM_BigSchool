@@ -8,7 +8,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { RegisterDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { DateOnlyPickerComponent } from '../../../shared/components/date-time-picker/date-only-picker.component';
+import { DateOnlyPickerComponent } from '../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
 import { formatDateInputValue } from '../../../shared/components/date-time-picker/date-time-utils';
 
 @Component({

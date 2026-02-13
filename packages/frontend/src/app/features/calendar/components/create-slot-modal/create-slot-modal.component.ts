@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VisibilityScope } from '@meetwithfriends/shared';
-import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker.component';
-import { TimeRangePickerComponent } from '../../../../shared/components/date-time-picker/time-range-picker.component';
+import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
+import { TimeRangePickerComponent } from '../../../../shared/components/date-time-picker/time-range-picker/time-range-picker.component';
 
 @Component({
   selector: 'app-create-slot-modal',

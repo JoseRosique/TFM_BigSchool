@@ -33,6 +33,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangePasswordUseCase } from './change-password.usecase';
 import { PasswordResetService } from './password-reset.service';
+import { EmailService } from '../../infrastructure/services/email.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -42,6 +43,7 @@ export class AuthController {
     private authService: AuthService,
     private changePasswordUseCase: ChangePasswordUseCase,
     private passwordResetService: PasswordResetService,
+    private emailService: EmailService,
     @Inject(USER_REPOSITORY)
     private userRepository: UserRepository,
   ) {}
@@ -68,6 +70,16 @@ export class AuthController {
   async forgotPassword(@Body() input: ForgotPasswordDto): Promise<{ message: string }> {
     await this.passwordResetService.requestPasswordReset(input.email);
     return { message: 'RESET_EMAIL_SENT' };
+  }
+
+  @Get('test-email')
+  async testEmail(@Request() req: any): Promise<{ message: string }> {
+    const to = req.query?.to;
+    if (typeof to !== 'string' || !to.length) {
+      throw new BadRequestException('MISSING_EMAIL');
+    }
+    await this.emailService.sendTestEmail(to);
+    return { message: 'TEST_EMAIL_SENT' };
   }
 
   @Throttle({ default: { limit: 3, ttl: 60 } })

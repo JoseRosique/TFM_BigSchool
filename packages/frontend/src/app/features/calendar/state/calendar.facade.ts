@@ -1,15 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  ListSlotsDTO,
-  OpenSlotDTO,
-  ReservationStatus,
-  SlotStatus,
-  User,
-} from '@meetwithfriends/shared';
+import { ListSlotsDTO, OpenSlotDTO, ReservationStatus, SlotStatus } from '@meetwithfriends/shared';
 import { AuthService } from '../../../shared/services/auth.service';
-import { ReservationsService } from '../../../shared/services/reservations.service';
-import { SlotsService } from '../../../shared/services/slots.service';
+import { User } from '../../../shared/models/user.model';
+import { ReservationsService } from '../services/reservations.service';
+import { SlotsService } from '../services/slots.service';
 import { CalendarDayView, CalendarSlot, ReservationItem } from '../calendar.types';
 
 @Injectable({

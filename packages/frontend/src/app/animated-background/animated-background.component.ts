@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 
 @Component({
   selector: 'app-animated-background',
@@ -6,7 +14,10 @@ import { Component, Input, OnInit, ElementRef, Renderer2 } from '@angular/core';
   styleUrls: ['./animated-background.component.scss'],
   standalone: true,
 })
-export class AnimatedBackgroundComponent implements OnInit {
+export class AnimatedBackgroundComponent implements OnInit, AfterViewInit {
+  // Referencia al elemento <video> del HTML
+  @ViewChild('bgVideo') videoPlayer!: ElementRef<HTMLVideoElement>;
+
   @Input() primaryColor?: string;
   @Input() secondaryColor?: string;
   @Input() accentColor?: string;
@@ -18,6 +29,17 @@ export class AnimatedBackgroundComponent implements OnInit {
 
   ngOnInit(): void {
     this.setCustomColors();
+  }
+
+  // Se ejecuta después de que la vista se ha inicializado
+  ngAfterViewInit(): void {
+    const video = this.videoPlayer.nativeElement;
+
+    // Forzamos el mute y el play para evitar bloqueos del navegador
+    video.muted = true;
+    video.play().catch((err) => {
+      console.warn('El auto-play fue bloqueado o el video no está listo:', err);
+    });
   }
 
   private setCustomColors(): void {

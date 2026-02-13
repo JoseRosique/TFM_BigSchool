@@ -17,6 +17,7 @@ import { NotificationsModule } from './application/notifications/notifications.m
     ConfigModule.forRoot({
       validate: validateEnv,
       isGlobal: true,
+      envFilePath: '.env',
     }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],

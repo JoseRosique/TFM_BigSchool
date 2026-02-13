@@ -20,6 +20,14 @@ const EnvSchema = z.object({
   SESSION_SECRET: z.string(),
   SESSION_TIMEOUT_MS: z.coerce.number().default(3600000),
 
+  // Email
+  EMAIL_HOST: z.string(),
+  EMAIL_PORT: z.coerce.number(),
+  EMAIL_USER: z.string(),
+  EMAIL_PASS: z.string(),
+  EMAIL_FROM: z.string(),
+  FRONTEND_URL: z.string().default('http://localhost:4200'),
+
   // Security
   CORS_ORIGIN: z.string().default('http://localhost:4200'),
   THROTTLE_TTL: z.coerce.number().default(60),

@@ -32,16 +32,35 @@
         </button>
       </div>
       <div class="date-picker__selectors">
+        <!-- Custom Month Select (nativo, pero puedes migrar igual que el año si lo deseas) -->
         <select class="date-picker__select" [value]="viewDate().getMonth()" (change)="onMonthChange($event)">
           @for (label of monthLabels(); track label; let index = $index) {
             <option [value]="index">{{ label }}</option>
           }
         </select>
-        <select class="date-picker__select" [value]="viewDate().getFullYear()" (change)="onYearChange($event)">
-          @for (year of years(); track year) {
-            <option [value]="year">{{ year }}</option>
-          }
-        </select>
+
+        <!-- Custom Year Dropdown -->
+        <div
+          class="date-picker__custom-select"
+          tabindex="0"
+          (click)="showYearDropdown = !showYearDropdown"
+          (blur)="showYearDropdown = false"
+        >
+          <div class="date-picker__custom-select-value">
+            {{ viewDate().getFullYear() }}
+            <span class="material-symbols-outlined" style="font-size: 1em; vertical-align: middle">expand_more</span>
+          </div>
+          <div class="date-picker__custom-select-dropdown" *ngIf="showYearDropdown">
+            <div
+              class="date-picker__custom-select-option"
+              *ngFor="let year of years()"
+              (click)="setYear(year.toString()); showYearDropdown = false"
+              [class.selected]="viewDate().getFullYear() === year"
+            >
+              {{ year }}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="date-picker__weekdays">
         @for (weekday of weekdays(); track weekday) {

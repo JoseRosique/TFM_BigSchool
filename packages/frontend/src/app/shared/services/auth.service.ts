@@ -1,15 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
-import {
-  RegisterDTO,
-  LoginDTO,
-  User,
-  ChangePasswordDTO,
-  RefreshTokenDTO,
-} from '@meetwithfriends/shared';
+import { RegisterDTO, LoginDTO, ChangePasswordDTO, RefreshTokenDTO } from '@meetwithfriends/shared';
 import { BehaviorSubject, Observable, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { User } from '../models/user.model';
 
 /**
  * Auth Service - Angular

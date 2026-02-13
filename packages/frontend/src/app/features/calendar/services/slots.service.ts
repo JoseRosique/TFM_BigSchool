@@ -8,7 +8,7 @@ import {
   SlotStatus,
   VisibilityScope,
 } from '@meetwithfriends/shared';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Slots Service - Angular

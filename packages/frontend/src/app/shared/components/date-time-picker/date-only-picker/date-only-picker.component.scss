@@ -1,3 +1,48 @@
+.date-picker__custom-select {
+  position: relative;
+  min-width: 0;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+
+.date-picker__custom-select-value {
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date-picker__custom-select-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 0.6rem;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px var(--color-shadow-sm);
+  margin-top: 2px;
+}
+
+.date-picker__custom-select-option {
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.date-picker__custom-select-option:hover,
+.date-picker__custom-select-option.selected {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
 .date-picker {
   position: relative;
   width: 100%;
@@ -117,6 +162,30 @@
   background: var(--color-bg-elevated);
   color: var(--color-text-primary);
   font-size: 0.9rem;
+  /* For native select, restrict height of dropdown list (works in Chrome, Edge, Opera) */
+  max-height: 2.5em;
+  overflow-y: auto;
+}
+
+/* For the dropdown panel (works for most browsers, especially if using custom select or Angular Material/PrimeNG) */
+::ng-deep .date-picker__select option,
+::ng-deep .date-picker__select optgroup {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* For global select dropdown panel (if browser supports) */
+::ng-deep select.date-picker__select {
+  max-height: 2.5em;
+  overflow-y: auto;
+}
+
+/* For custom dropdowns, if you use a custom panel, target it here */
+::ng-deep .date-picker__dropdown-panel,
+::ng-deep .date-picker__year-list,
+::ng-deep .date-picker__month-list {
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .date-picker__weekdays {

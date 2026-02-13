@@ -20,7 +20,7 @@ import { LoginUserUseCase } from './login-user.usecase';
 import { ChangePasswordUseCase } from './change-password.usecase';
 import { TokenBlacklistService } from './token-blacklist.service';
 import { PasswordResetService } from './password-reset.service';
-import { EmailService } from './email.service';
+import { EmailService } from '../../infrastructure/services/email.service';
 import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { TestUtilsController } from './test-utils.controller';
 import { TOKEN_STORE, InMemoryTokenStore } from './token-store';

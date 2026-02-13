@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { buildTimeOptions } from './date-time-utils';
+import { buildTimeOptions } from '../date-time-utils';
 
 @Component({
   selector: 'app-time-range-picker',

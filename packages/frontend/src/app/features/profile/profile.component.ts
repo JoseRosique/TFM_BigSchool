@@ -10,7 +10,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../shared/services/auth.service';
 import { ToastService } from '../../shared/services/toast.service';
-import { User } from '@meetwithfriends/shared';
+import { User } from '../../shared/models/user.model';
 import { Router } from '@angular/router';
 import { AvatarSelectorModalComponent } from '../../shared/components/avatar-selector-modal/avatar-selector-modal.component';
 

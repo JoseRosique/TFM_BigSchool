@@ -23,6 +23,7 @@ export class CalendarSlotListComponent {
 
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();
+  editSlot = output<CalendarSlot>();
   showMore = output<void>();
 
   onShowMore(event: Event): void {
@@ -33,6 +34,11 @@ export class CalendarSlotListComponent {
   onReserve(slot: CalendarSlot, event: MouseEvent): void {
     event.stopPropagation();
     this.reserveSlot.emit(slot);
+  }
+
+  onEdit(slot: CalendarSlot, event: MouseEvent): void {
+    event.stopPropagation();
+    this.editSlot.emit(slot);
   }
 
   onDelete(slot: CalendarSlot, event: MouseEvent): void {

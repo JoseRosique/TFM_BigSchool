@@ -46,6 +46,51 @@
       }
     </div>
 
+    <div class="forgot-row">
+      <button class="forgot-link" type="button" (click)="toggleForgot()">
+        {{ "LOGIN.FORGOT.LINK" | translate }}
+      </button>
+    </div>
+
+    @if (forgotOpen()) {
+      <div class="forgot-panel">
+        <div class="form-group">
+          <label for="forgotEmail">{{ "LOGIN.FORGOT.EMAIL_LABEL" | translate }}</label>
+          <div class="input-wrapper" [class.error]="forgotErrors()['email']">
+            <span class="material-symbols-outlined input-icon">mail</span>
+            <input
+              id="forgotEmail"
+              name="forgotEmail"
+              type="email"
+              [placeholder]="'LOGIN.FORGOT.EMAIL_PLACEHOLDER' | translate"
+              [value]="forgotEmail()"
+              (input)="forgotEmail.set($event.target.value); onForgotInput()"
+              [attr.aria-invalid]="!!forgotErrors()['email']"
+              required
+            />
+          </div>
+          @if (forgotErrors()["email"]) {
+            <div class="input-error">
+              {{ forgotErrors()["email"] }}
+            </div>
+          }
+        </div>
+
+        <button
+          class="btn btn--primary btn--block"
+          type="button"
+          [disabled]="forgotLoading() || !!forgotErrors()['email'] || !forgotEmail()"
+          (click)="onForgotPassword()"
+        >
+          {{ forgotLoading() ? ("LOGIN.FORGOT.SUBMITTING" | translate) : ("LOGIN.FORGOT.SUBMIT" | translate) }}
+        </button>
+
+        @if (forgotErrors()["general"]) {
+          <div class="input-error input-error--general">{{ forgotErrors()["general"] }}</div>
+        }
+      </div>
+    }
+
     <button class="btn btn--primary btn--block" type="submit" [disabled]="loading()">
       {{ loading() ? ("LOGIN.FORM.SUBMITTING" | translate) : ("LOGIN.FORM.SUBMIT" | translate) }}
     </button>
@@ -57,7 +102,7 @@
     <button class="btn btn--google btn--block" type="button" (click)="socialLogin('Google')">
       <img
         src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-        alt="Google"
+        [attr.alt]="'LOGIN.SOCIAL.GOOGLE_ALT' | translate"
         class="btn-icon"
       />
       {{ "LOGIN.SOCIAL.GOOGLE" | translate }}
@@ -65,7 +110,7 @@
     <button class="btn btn--apple btn--block" type="button" (click)="socialLogin('Apple')">
       <img
         src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
-        alt="Apple"
+        [attr.alt]="'LOGIN.SOCIAL.APPLE_ALT' | translate"
         class="btn-icon"
       />
       {{ "LOGIN.SOCIAL.APPLE" | translate }}

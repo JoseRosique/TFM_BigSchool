@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -6,6 +6,7 @@ import { LanguageService } from '../../../shared/services/language.service';
 import { LoginDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-login-card',
@@ -14,17 +15,33 @@ import { Router } from '@angular/router';
   styleUrls: ['./login-card.component.scss'],
   templateUrl: './login-card.component.html',
 })
-export class LoginCardComponent {
+export class LoginCardComponent implements OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   email = signal('');
   password = signal('');
   errors = signal<{ [key: string]: string }>({});
   loading = signal(false);
   success = signal(false);
+  forgotOpen = signal(false);
+  forgotEmail = signal('');
+  forgotErrors = signal<{ [key: string]: string }>({});
+  forgotLoading = signal(false);
+  forgotSuccess = signal(false);
+  forgotMessage = signal('');
+
+  private forgotAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+  ngOnDestroy(): void {
+    if (this.forgotAutoCloseTimer !== null) {
+      clearTimeout(this.forgotAutoCloseTimer);
+      this.forgotAutoCloseTimer = null;
+    }
+  }
 
   validate() {
     const errors: { [key: string]: string } = {};
@@ -38,6 +55,19 @@ export class LoginCardComponent {
 
   onInput() {
     this.errors.set(this.validate());
+  }
+
+  private validateForgot() {
+    const errors: { [key: string]: string } = {};
+    const email = this.forgotEmail();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      errors['email'] = this.translate.instant('LOGIN.VALIDATION.EMAIL');
+    }
+    return errors;
+  }
+
+  onForgotInput() {
+    this.forgotErrors.set(this.validateForgot());
   }
 
   private mapValidationErrors(err: HttpErrorResponse): { [key: string]: string } | null {
@@ -108,6 +138,67 @@ export class LoginCardComponent {
           errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
         }
         this.errors.set({ general: String(errorMsg) });
+      },
+    });
+  }
+
+  toggleForgot() {
+    if (this.forgotAutoCloseTimer) {
+      clearTimeout(this.forgotAutoCloseTimer);
+      this.forgotAutoCloseTimer = null;
+    }
+
+    const next = !this.forgotOpen();
+    this.forgotOpen.set(next);
+    if (!next) {
+      this.cleanupForgotPanel();
+    }
+  }
+
+  private cleanupForgotPanel() {
+    this.forgotEmail.set('');
+    this.forgotErrors.set({});
+    this.forgotLoading.set(false);
+    this.forgotSuccess.set(false);
+    this.forgotMessage.set('');
+  }
+
+  onForgotPassword() {
+    this.forgotErrors.set(this.validateForgot());
+    if (Object.keys(this.forgotErrors()).length > 0) {
+      return;
+    }
+    this.forgotLoading.set(true);
+    this.forgotSuccess.set(false);
+    this.forgotMessage.set('');
+
+    this.authService.forgotPassword(this.forgotEmail()).subscribe({
+      next: () => {
+        this.forgotLoading.set(false);
+        // SECURITY: Always show the same message regardless of email existence
+        const successMsg = this.translate.instant('LOGIN.FORGOT.SUCCESS_MESSAGE');
+        this.toastService.success(successMsg);
+        this.forgotSuccess.set(true);
+        this.forgotMessage.set(successMsg);
+
+        // Auto-close panel after 3 seconds
+        if (this.forgotAutoCloseTimer) {
+          clearTimeout(this.forgotAutoCloseTimer);
+        }
+        this.forgotAutoCloseTimer = setTimeout(() => {
+          this.toggleForgot();
+          this.forgotAutoCloseTimer = null;
+        }, 3000);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.forgotLoading.set(false);
+        // SECURITY: Show generic message for both validation errors and server errors
+        console.error('[LoginCardComponent] Forgot password error:', err);
+        const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
+        this.toastService.error(errorMsg);
+        this.forgotErrors.set({
+          general: errorMsg,
+        });
       },
     });
   }

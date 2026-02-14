@@ -11,16 +11,6 @@
     </span>
     @if (isOwner(slot)) {
       <span class="month-slot__tag">{{ "CALENDAR_PAGE.MY_SLOT" | translate }}</span>
-      @if (slot.status !== slotStatus().CANCELED) {
-        <button
-          class="month-slot__action"
-          type="button"
-          (click)="onDelete(slot, $event)"
-          [disabled]="processingSlotId() === slot.id"
-        >
-          {{ "CALENDAR_PAGE.DELETE_SLOT_SHORT" | translate }}
-        </button>
-      }
     } @else {
       @if (slot.status === slotStatus().AVAILABLE) {
         <button

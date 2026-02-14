@@ -232,6 +232,10 @@ export class CalendarFacade {
     return this.slotsService.createSlot(input);
   }
 
+  updateSlot(slotId: string, input: Partial<OpenSlotDTO.Request>) {
+    return this.slotsService.updateSlot(slotId, input);
+  }
+
   reserveSlot(slotId: string) {
     return this.reservationsService.reserve({ slotId });
   }

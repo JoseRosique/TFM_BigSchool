@@ -194,3 +194,16 @@ function getTimeZoneOffsetMinutes(date: Date, timeZone: string): number {
   const asUtc = Date.UTC(year, month - 1, day, hour, minute, second);
   return (asUtc - date.getTime()) / 60000;
 }
+
+export function formatTimeInTimeZone(utcDate: Date, timeZone: string): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(utcDate);
+  const hour = parts.find((part) => part.type === 'hour')?.value || '00';
+  const minute = parts.find((part) => part.type === 'minute')?.value || '00';
+  return `${hour}:${minute}`;
+}

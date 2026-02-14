@@ -24,6 +24,7 @@
           [formatTimeRange]="formatTimeRange"
           (createForDay)="openCreateModalForDayKey($event)"
           (reserveSlot)="reserveSlot($event)"
+          (editSlot)="openEditSlotModal($event)"
           (deleteSlot)="openDeleteModal($event)"
         ></app-calendar-month-grid>
       }
@@ -50,13 +51,11 @@
       [timezones]="timezones"
       [visibilityScope]="visibilityScope"
       [isDateLocked]="isDateLocked()"
-      [isSubmitting]="isCreating()"
+      [isSubmitting]="isLoading() || isCreating()"
+      [isEditMode]="isEditMode()"
       (close)="closeCreateModal()"
       (submitAction)="submitCreateSlot()"
       (dateChange)="updateSlotDate($event)"
-      (startTimeChange)="updateStartTime($event)"
-      (endTimeChange)="updateEndTime($event)"
-      (notesInput)="autoResizeNotes($event)"
     ></app-create-slot-modal>
   }
 

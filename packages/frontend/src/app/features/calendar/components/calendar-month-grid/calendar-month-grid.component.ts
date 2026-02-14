@@ -24,6 +24,7 @@ export class CalendarMonthGridComponent {
   createForDay = output<string>();
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();
+  editSlot = output<CalendarSlot>();
 
   onCreateForDay(dayKey: string): void {
     this.createForDay.emit(dayKey);
@@ -31,6 +32,10 @@ export class CalendarMonthGridComponent {
 
   onReserveSlot(slot: CalendarSlot): void {
     this.reserveSlot.emit(slot);
+  }
+
+  onEditSlot(slot: CalendarSlot): void {
+    this.editSlot.emit(slot);
   }
 
   onDeleteSlot(slot: CalendarSlot): void {

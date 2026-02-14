@@ -146,10 +146,46 @@
     "SOCIAL": {
       "GOOGLE": "Sign in with Google",
       "APPLE": "Sign in with Apple",
+      "GOOGLE_ALT": "Google logo",
+      "APPLE_ALT": "Apple logo",
       "NOT_IMPLEMENTED": "Sign in with {{provider}} not implemented yet."
     },
     "SUCCESS": "Signed in successfully!",
-    "DIVIDER": "or"
+    "DIVIDER": "or",
+    "FORGOT": {
+      "LINK": "Forgot your password?",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "your@email.com",
+      "SUBMIT": "Send link",
+      "SUBMITTING": "Sending...",
+      "SUCCESS_MESSAGE": "If the email exists in our database, you will receive a recovery link in a few minutes"
+    }
+  },
+  "AUTH": {
+    "NAV": {
+      "GO_HOME": "Go to home",
+      "GO_LOGIN": "Go to login"
+    },
+    "RESET": {
+      "TITLE": "Reset password",
+      "SUBTITLE": "Choose a new secure password.",
+      "NEW_PASSWORD_LABEL": "New password",
+      "CONFIRM_PASSWORD_LABEL": "Confirm password",
+      "NEW_PASSWORD_PLACEHOLDER": "At least 8 characters",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Re-enter your password",
+      "SUBMIT": "Reset",
+      "SUBMITTING": "Saving...",
+      "BACK_TO_LOGIN": "Back to login",
+      "SUCCESS": "Password reset successfully.",
+      "SUCCESS_TOAST": "Your password has been updated successfully. You can now sign in.",
+      "ERRORS": {
+        "INVALID_TOKEN": "Invalid or expired token.",
+        "TOKEN_EXPIRED": "The token has expired. Please request a new recovery link.",
+        "SUBMIT_FAILED": "Unable to reset password.",
+        "PASSWORD_INVALID": "Invalid password.",
+        "PASSWORD_MISMATCH": "Passwords do not match."
+      }
+    }
   },
   "ERRORS": {
     "TOO_MANY_REQUESTS": "Too many requests. Please wait and try again.",
@@ -249,6 +285,7 @@
     "RESERVE_SHORT": "Reserve",
     "CANCEL_SLOT": "Cancel slot",
     "CANCEL_SLOT_SHORT": "Cancel",
+    "EDIT_SLOT_SHORT": "Edit",
     "DELETE_SLOT_SHORT": "Delete",
     "CONFIRM_DELETE_TITLE": "Delete slot",
     "CONFIRM_DELETE_BODY": "Deleting this slot will remove it from everyone’s calendar.",
@@ -268,14 +305,27 @@
     "MODAL_KICKER": "Availability",
     "FORM": {
       "TITLE": "Open availability",
+      "TITLE_EDIT": "Modify availability",
       "DATE": "Date",
       "START": "Start time",
       "END": "End time",
       "TIMEZONE": "Timezone",
       "VISIBILITY": "Visibility",
       "NOTES": "Notes",
+      "NOTES_PLACEHOLDER": "Note for this time range...",
+      "TIME_RANGES": "Time ranges",
+      "ADD_RANGE": "Add another time range",
+      "ADD_SLOT_BTN": "Add time range",
+      "DELETE_SLOT_BTN": "Delete time range",
+      "REMOVE_RANGE": "Remove",
       "SUBMIT": "Create slot",
-      "CANCEL": "Cancel"
+      "SUBMIT_EDIT": "Update slots",
+      "CANCEL": "Cancel",
+      "EMPTY_SLOTS": "No time ranges defined for this day.",
+      "EMPTY_SLOTS_HINT": "Click + to add one.",
+      "ERROR_END_BEFORE_START": "End time must be after start time",
+      "ERROR_OVERLAPPING": "Time ranges cannot overlap",
+      "RANGE_LABEL": "Range {{number}}"
     },
     "STATUS": {
       "AVAILABLE": "Available",
@@ -299,6 +349,8 @@
     "TOASTS": {
       "CREATED": "Availability opened.",
       "CREATE_ERROR": "Unable to create slot.",
+      "UPDATED": "Slot updated successfully.",
+      "UPDATE_ERROR": "Unable to update slot.",
       "RESERVED": "Reservation confirmed.",
       "RESERVE_ERROR": "Unable to reserve slot.",
       "RESERVATION_CANCELED": "Reservation canceled.",

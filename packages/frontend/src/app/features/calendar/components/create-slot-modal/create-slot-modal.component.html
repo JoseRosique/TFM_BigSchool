@@ -1,16 +1,21 @@
 <div class="modal-overlay" (click)="onOverlayClick()">
   <div class="modal-container" (click)="onModalClick($event)">
+    <!-- Header -->
     <div class="modal-header">
       <div>
-        <h2 class="modal-title">{{ "CALENDAR_PAGE.FORM.TITLE" | translate }}</h2>
+        <h2 class="modal-title">
+          {{ (isEditMode() ? "CALENDAR_PAGE.FORM.TITLE_EDIT" : "CALENDAR_PAGE.FORM.TITLE") | translate }}
+        </h2>
       </div>
       <button class="modal-close" type="button" (click)="onClose()">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
+
     <form class="modal-body" [formGroup]="formGroup()" (ngSubmit)="onSubmit()">
-      <div class="form-grid">
-        <div class="form-field form-field--full">
+      <!-- Date Section -->
+      <div class="modal-section">
+        <label class="form-field form-field--full">
           <span class="form-label">{{ "CALENDAR_PAGE.FORM.DATE" | translate }}</span>
           <app-date-only-picker
             [value]="formGroup().value.date || null"
@@ -19,57 +24,122 @@
             (openChange)="onDateOpenChange($event)"
             (valueChange)="onDateChange($event)"
           ></app-date-only-picker>
-        </div>
-        <div class="form-field form-field--full">
-          <span class="form-label"
-            >{{ "CALENDAR_PAGE.FORM.START" | translate }} - {{ "CALENDAR_PAGE.FORM.END" | translate }}</span
-          >
-          <app-time-range-picker
-            [startTime]="formGroup().value.startTime || null"
-            [endTime]="formGroup().value.endTime || null"
-            (openChange)="onTimeOpenChange($event)"
-            (startTimeChange)="onStartTimeChange($event)"
-            (endTimeChange)="onEndTimeChange($event)"
-          ></app-time-range-picker>
-        </div>
-        <label class="form-field">
-          <span class="form-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
-          <select class="form-input" formControlName="timezone">
-            @for (zone of timezones(); track zone.value) {
-              <option [value]="zone.value">{{ zone.label }}</option>
-            }
-          </select>
-        </label>
-        <label class="form-field">
-          <span class="form-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
-          <select class="form-input" formControlName="visibilityScope">
-            <option [value]="visibilityScope().PRIVATE">
-              {{ "CALENDAR_PAGE.VISIBILITY.PRIVATE" | translate }}
-            </option>
-            <option [value]="visibilityScope().FRIENDS">
-              {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }}
-            </option>
-            <option [value]="visibilityScope().LIST">
-              {{ "CALENDAR_PAGE.VISIBILITY.LIST" | translate }}
-            </option>
-          </select>
-        </label>
-        <label class="form-field form-field--full">
-          <span class="form-label">{{ "CALENDAR_PAGE.FORM.NOTES" | translate }}</span>
-          <textarea
-            class="form-input form-textarea"
-            rows="4"
-            formControlName="notes"
-            (input)="onNotesInput($event)"
-          ></textarea>
         </label>
       </div>
+
+      <!-- Time Slots Section -->
+      <div class="modal-section slots-section">
+        <div class="slots-header">
+          <span class="form-label">{{ "CALENDAR_PAGE.FORM.TIME_RANGES" | translate }}</span>
+          <button
+            type="button"
+            class="btn-add-slot"
+            (click)="addTimeSlot()"
+            [disabled]="isSubmitting()"
+            [attr.aria-label]="'CALENDAR_PAGE.FORM.ADD_SLOT_BTN' | translate"
+          >
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
+
+        <!-- Scrollable Container for Slot Cards -->
+        <div class="slots-scroll-container" formArrayName="timeSlots">
+          @if (getTimeSlots().length > 0) {
+            @for (slot of getTimeSlots().controls; track $index) {
+              <div class="slot-card" [formGroupName]="$index">
+                <div class="slot-card__content">
+                  <!-- Row 1: Time inputs -->
+                  <div class="slot-time-group">
+                    <div class="time-input-wrapper">
+                      <label class="time-label">{{ "CALENDAR_PAGE.FORM.START" | translate }}</label>
+                      <input type="time" class="time-field" formControlName="startTime" [disabled]="isSubmitting()" />
+                    </div>
+                    <div class="time-input-wrapper">
+                      <label class="time-label">{{ "CALENDAR_PAGE.FORM.END" | translate }}</label>
+                      <input type="time" class="time-field" formControlName="endTime" [disabled]="isSubmitting()" />
+                    </div>
+                  </div>
+
+                  <!-- Row 2: Timezone and Visibility side by side -->
+                  <div class="slot-config-row">
+                    <label class="config-field">
+                      <span class="config-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
+                      <select class="config-select" formControlName="timezone" [disabled]="isSubmitting()">
+                        @for (zone of timezones(); track zone.value) {
+                          <option [value]="zone.value">{{ zone.label }}</option>
+                        }
+                      </select>
+                    </label>
+                    <label class="config-field">
+                      <span class="config-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
+                      <select class="config-select" formControlName="visibilityScope" [disabled]="isSubmitting()">
+                        <option [value]="visibilityScope().PRIVATE">
+                          {{ "CALENDAR_PAGE.VISIBILITY.PRIVATE" | translate }}
+                        </option>
+                        <option [value]="visibilityScope().FRIENDS">
+                          {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }}
+                        </option>
+                        <option [value]="visibilityScope().LIST">
+                          {{ "CALENDAR_PAGE.VISIBILITY.LIST" | translate }}
+                        </option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <!-- Row 3: Notes -->
+                  <div class="slot-notes">
+                    <label class="notes-label">{{ "CALENDAR_PAGE.FORM.NOTES" | translate }}</label>
+                    <textarea
+                      class="notes-textarea"
+                      formControlName="notes"
+                      rows="2"
+                      [disabled]="isSubmitting()"
+                      [placeholder]="'CALENDAR_PAGE.FORM.NOTES_PLACEHOLDER' | translate"
+                    ></textarea>
+                  </div>
+
+                  <!-- Error inline en la tarjeta -->
+                  @if (getTimeSlot($index)?.hasError("invalidTimeRange")) {
+                    <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_END_BEFORE_START" | translate }}</div>
+                  }
+                </div>
+
+                <!-- Delete button for slot -->
+                <button
+                  type="button"
+                  class="slot-card__delete"
+                  (click)="removeTimeSlot($index)"
+                  [disabled]="isSubmitting()"
+                  [attr.aria-label]="'CALENDAR_PAGE.FORM.DELETE_SLOT_BTN' | translate"
+                >
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            }
+          } @else {
+            <div class="empty-slots-message">
+              <span class="material-symbols-outlined">event_available</span>
+              <p>{{ "CALENDAR_PAGE.FORM.EMPTY_SLOTS" | translate }}</p>
+              <p class="hint">{{ "CALENDAR_PAGE.FORM.EMPTY_SLOTS_HINT" | translate }}</p>
+            </div>
+          }
+
+          <!-- Global validation error -->
+          @if (getTimeSlots().hasError("overlappingRanges")) {
+            <div class="slots-error-global">
+              {{ "CALENDAR_PAGE.FORM.ERROR_OVERLAPPING" | translate }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Footer with Actions -->
       <div class="modal-footer">
-        <button class="btn btn--ghost btn-action" type="button" (click)="onClose()">
+        <button class="btn-cancel" type="button" (click)="onClose()">
           {{ "CALENDAR_PAGE.FORM.CANCEL" | translate }}
         </button>
-        <button class="btn btn--primary btn-action" type="submit" [disabled]="isSubmitting()">
-          {{ "CALENDAR_PAGE.FORM.SUBMIT" | translate }}
+        <button class="btn-save" type="submit" [disabled]="isSubmitting() || formGroup().invalid">
+          {{ (isEditMode() ? "CALENDAR_PAGE.FORM.SUBMIT_EDIT" : "CALENDAR_PAGE.FORM.SUBMIT") | translate }}
         </button>
       </div>
     </form>

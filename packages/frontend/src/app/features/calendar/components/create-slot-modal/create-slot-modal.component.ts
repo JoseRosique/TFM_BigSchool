@@ -1,21 +1,21 @@
-import { Component, ViewChild, input, output } from '@angular/core';
+import { Component, ViewChild, input, output, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormArray,
+  AbstractControl,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VisibilityScope } from '@meetwithfriends/shared';
 import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
-import { TimeRangePickerComponent } from '../../../../shared/components/date-time-picker/time-range-picker/time-range-picker.component';
 
 @Component({
   selector: 'app-create-slot-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    DateOnlyPickerComponent,
-    TimeRangePickerComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateOnlyPickerComponent],
   templateUrl: './create-slot-modal.component.html',
   styleUrl: './create-slot-modal.component.scss',
 })
@@ -26,16 +26,20 @@ export class CreateSlotModalComponent {
   visibilityScope = input<typeof VisibilityScope>(VisibilityScope);
   isDateLocked = input<boolean>(false);
   isSubmitting = input<boolean>(false);
+  isEditMode = input<boolean>(false);
 
   @ViewChild(DateOnlyPickerComponent) datePicker?: DateOnlyPickerComponent;
-  @ViewChild(TimeRangePickerComponent) timeRangePicker?: TimeRangePickerComponent;
 
   close = output<void>();
   submitAction = output<void>();
   dateChange = output<string | null>();
-  startTimeChange = output<string | null>();
-  endTimeChange = output<string | null>();
-  notesInput = output<Event>();
+
+  constructor() {
+    effect(() => {
+      // Reactive track of form changes for internal state management
+      this.formGroup();
+    });
+  }
 
   onOverlayClick(): void {
     this.closePickers();
@@ -46,7 +50,7 @@ export class CreateSlotModalComponent {
     event.stopPropagation();
     const target = event.target as HTMLElement | null;
     if (!target) return;
-    const clickedPicker = target.closest('.date-picker, .time-range');
+    const clickedPicker = target.closest('.date-picker, .slot-card');
     if (clickedPicker) return;
     this.closePickers();
   }
@@ -62,13 +66,7 @@ export class CreateSlotModalComponent {
 
   onDateOpenChange(isOpen: boolean): void {
     if (isOpen) {
-      this.timeRangePicker?.close();
-    }
-  }
-
-  onTimeOpenChange(isOpen: boolean): void {
-    if (isOpen) {
-      this.datePicker?.close();
+      // Date picker opened
     }
   }
 
@@ -76,20 +74,41 @@ export class CreateSlotModalComponent {
     this.dateChange.emit(value);
   }
 
-  onStartTimeChange(value: string | null): void {
-    this.startTimeChange.emit(value);
+  getTimeSlots(): FormArray {
+    const control = this.formGroup().get('timeSlots');
+    if (!(control instanceof FormArray)) {
+      throw new Error('timeSlots control is not a FormArray');
+    }
+    return control;
   }
 
-  onEndTimeChange(value: string | null): void {
-    this.endTimeChange.emit(value);
+  getTimeSlot(index: number): AbstractControl | null {
+    const slots = this.getTimeSlots();
+    return slots?.at(index) || null;
   }
 
-  onNotesInput(event: Event): void {
-    this.notesInput.emit(event);
+  addTimeSlot(): void {
+    // New slots don't have an ID, parent component tracks those in deletedSlotIds
+    this.getTimeSlots().push(this.createTimeSlotControl());
+  }
+
+  removeTimeSlot(index: number): void {
+    const slots = this.getTimeSlots();
+    slots.removeAt(index);
+  }
+
+  private createTimeSlotControl(): FormGroup {
+    return new FormGroup({
+      id: new FormControl(null),
+      startTime: new FormControl('', Validators.required),
+      endTime: new FormControl('', Validators.required),
+      timezone: new FormControl(this.displayTimezone(), Validators.required),
+      visibilityScope: new FormControl(VisibilityScope.FRIENDS, Validators.required),
+      notes: new FormControl('', Validators.maxLength(500)),
+    });
   }
 
   private closePickers(): void {
     this.datePicker?.close();
-    this.timeRangePicker?.close();
   }
 }

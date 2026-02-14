@@ -37,6 +37,18 @@ export class AuthService {
     return this.http.post<LoginDTO.Response>(`${this.apiUrl}/login`, input);
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(input: {
+    token: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, input);
+  }
+
   logout(): Observable<{ message: string }> {
     const refreshToken = this.getRefreshToken();
     return this.http.post<{ message: string }>(`${this.apiUrl}/logout`, { refreshToken }).pipe(

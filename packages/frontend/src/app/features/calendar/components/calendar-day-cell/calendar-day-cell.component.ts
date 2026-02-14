@@ -37,6 +37,7 @@ export class CalendarDayCellComponent {
   createForDay = output<string>();
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();
+  editSlot = output<CalendarSlot>();
 
   onCellClick(): void {
     const day = this.day();
@@ -53,6 +54,10 @@ export class CalendarDayCellComponent {
 
   onReserve(slot: CalendarSlot): void {
     this.reserveSlot.emit(slot);
+  }
+
+  onEdit(slot: CalendarSlot): void {
+    this.editSlot.emit(slot);
   }
 
   onDelete(slot: CalendarSlot): void {

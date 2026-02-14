@@ -1,8 +1,13 @@
 import { ListReservationsDTO, Slot } from '@meetwithfriends/shared';
 
+export interface TimeSlot {
+  startTime: string; // HH:mm format
+  endTime: string; // HH:mm format
+}
+
 export interface CalendarSlot extends Slot {
-  startDate: Date;
-  endDate: Date;
+  startDate: Date; // Local date for display
+  endDate: Date; // Local date for display
 }
 
 export interface ReservationItem extends ListReservationsDTO.ResponseItem {

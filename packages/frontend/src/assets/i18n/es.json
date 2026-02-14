@@ -146,10 +146,46 @@
     "SOCIAL": {
       "GOOGLE": "Iniciar sesión con Google",
       "APPLE": "Iniciar sesión con Apple",
+      "GOOGLE_ALT": "Logo de Google",
+      "APPLE_ALT": "Logo de Apple",
       "NOT_IMPLEMENTED": "Inicio de sesión con {{provider}} no implementado aún."
     },
     "SUCCESS": "¡Sesión iniciada con éxito!",
-    "DIVIDER": "o"
+    "DIVIDER": "o",
+    "FORGOT": {
+      "LINK": "¿Olvidaste tu contraseña?",
+      "EMAIL_LABEL": "Email",
+      "EMAIL_PLACEHOLDER": "tu@email.com",
+      "SUBMIT": "Enviar enlace",
+      "SUBMITTING": "Enviando...",
+      "SUCCESS_MESSAGE": "Si el correo existe en nuestra base de datos, recibirás un enlace de recuperación en unos minutos"
+    }
+  },
+  "AUTH": {
+    "NAV": {
+      "GO_HOME": "Ir al inicio",
+      "GO_LOGIN": "Ir al login"
+    },
+    "RESET": {
+      "TITLE": "Restablecer contraseña",
+      "SUBTITLE": "Elige una nueva contraseña segura.",
+      "NEW_PASSWORD_LABEL": "Nueva contraseña",
+      "CONFIRM_PASSWORD_LABEL": "Confirmar contraseña",
+      "NEW_PASSWORD_PLACEHOLDER": "Mínimo 8 caracteres",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Repite la contraseña",
+      "SUBMIT": "Restablecer",
+      "SUBMITTING": "Guardando...",
+      "BACK_TO_LOGIN": "Volver a login",
+      "SUCCESS": "Contraseña restablecida correctamente.",
+      "SUCCESS_TOAST": "Tu contraseña ha sido actualizada correctamente. Ya puedes iniciar sesión.",
+      "ERRORS": {
+        "INVALID_TOKEN": "Token inválido o expirado.",
+        "TOKEN_EXPIRED": "El token ha expirado. Por favor, solicita un nuevo enlace de recuperación.",
+        "SUBMIT_FAILED": "No se pudo restablecer la contraseña.",
+        "PASSWORD_INVALID": "Contraseña inválida.",
+        "PASSWORD_MISMATCH": "Las contraseñas no coinciden."
+      }
+    }
   },
   "ERRORS": {
     "TOO_MANY_REQUESTS": "Demasiadas solicitudes. Espera un momento e intenta de nuevo.",
@@ -249,6 +285,7 @@
     "RESERVE_SHORT": "Reservar",
     "CANCEL_SLOT": "Cancelar franja",
     "CANCEL_SLOT_SHORT": "Cancelar",
+    "EDIT_SLOT_SHORT": "Editar",
     "DELETE_SLOT_SHORT": "Eliminar",
     "CONFIRM_DELETE_TITLE": "Eliminar franja",
     "CONFIRM_DELETE_BODY": "Si eliminas esta franja, desaparecera del calendario para todos.",
@@ -268,14 +305,27 @@
     "MODAL_KICKER": "Disponibilidad",
     "FORM": {
       "TITLE": "Abrir disponibilidad",
+      "TITLE_EDIT": "Modificar disponibilidad",
       "DATE": "Fecha",
       "START": "Hora inicio",
       "END": "Hora fin",
       "TIMEZONE": "Zona horaria",
       "VISIBILITY": "Visibilidad",
       "NOTES": "Notas",
+      "NOTES_PLACEHOLDER": "Nota para esta franja horaria...",
+      "TIME_RANGES": "Tramos horarios",
+      "ADD_RANGE": "Añadir otro tramo horario",
+      "ADD_SLOT_BTN": "Agregar franja horaria",
+      "DELETE_SLOT_BTN": "Eliminar franja",
+      "REMOVE_RANGE": "Eliminar",
       "SUBMIT": "Crear franja",
-      "CANCEL": "Cancelar"
+      "SUBMIT_EDIT": "Actualizar franjas",
+      "CANCEL": "Cancelar",
+      "EMPTY_SLOTS": "No hay franjas definidas para este día.",
+      "EMPTY_SLOTS_HINT": "Haz clic en + para añadir una.",
+      "ERROR_END_BEFORE_START": "La hora fin debe ser posterior a la hora inicio",
+      "ERROR_OVERLAPPING": "Los tramos horarios no pueden solaparse",
+      "RANGE_LABEL": "Tramo {{number}}"
     },
     "STATUS": {
       "AVAILABLE": "Disponible",
@@ -299,6 +349,8 @@
     "TOASTS": {
       "CREATED": "Disponibilidad abierta.",
       "CREATE_ERROR": "No se pudo crear la franja.",
+      "UPDATED": "Franja actualizada correctamente.",
+      "UPDATE_ERROR": "No se pudo actualizar la franja.",
       "RESERVED": "Reserva confirmada.",
       "RESERVE_ERROR": "No se pudo reservar la franja.",
       "RESERVATION_CANCELED": "Reserva cancelada.",

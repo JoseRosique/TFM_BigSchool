@@ -1,0 +1,39 @@
+<div class="group-list">
+  @if (isLoading) {
+    <div class="group-empty">
+      <span class="material-symbols-outlined">progress_activity</span>
+      <p>{{ "GLOBAL.LOADING_CONTENT" | translate }}</p>
+    </div>
+  } @else if (errorKey) {
+    <div class="group-empty">
+      <span class="material-symbols-outlined">error</span>
+      <p>{{ errorKey | translate }}</p>
+    </div>
+  } @else if (groups.length === 0) {
+    <div class="group-empty">
+      <span class="material-symbols-outlined">group_off</span>
+      <p>{{ "GROUPS_MANAGEMENT.EMPTY" | translate }}</p>
+    </div>
+  } @else {
+    <div class="group-grid">
+      @for (group of groups; track group.id) {
+        <article class="group-card">
+          <div class="group-card__header">
+            <div class="group-card__icon" [attr.data-color]="group.color">
+              <span class="material-symbols-outlined">{{ group.icon }}</span>
+            </div>
+            <button class="group-card__edit" (click)="onEdit(group)" [attr.aria-label]="'Edit ' + group.name">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+          </div>
+          <h3 class="group-card__title">{{ group.name }}</h3>
+          <p class="group-card__desc">{{ group.description || ("GROUPS_MANAGEMENT.NO_DESCRIPTION" | translate) }}</p>
+          <div class="group-card__meta">
+            <span class="material-symbols-outlined">people</span>
+            <span>{{ group.memberCount }} {{ "GROUPS_MANAGEMENT.MEMBERS" | translate }}</span>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>

@@ -8,6 +8,7 @@ import { getDatabaseConfig } from './infrastructure/config/database.config';
 import { AuthModule } from './application/auth/auth.module';
 import { UsersModule } from './application/users/users.module';
 import { FriendsModule } from './application/friends/friends.module';
+import { GroupsModule } from './application/groups/groups.module';
 import { SlotsModule } from './application/slots/slots.module';
 import { ReservationsModule } from './application/reservations/reservations.module';
 import { NotificationsModule } from './application/notifications/notifications.module';
@@ -32,6 +33,7 @@ import { NotificationsModule } from './application/notifications/notifications.m
     AuthModule,
     UsersModule,
     FriendsModule,
+    GroupsModule,
     SlotsModule,
     ReservationsModule,
     NotificationsModule,

@@ -1,0 +1,40 @@
+<!-- Sidebar Header -->
+<div class="sidebar-header">
+  <h2 class="sidebar-title">{{ "FRIENDS_PAGE.SIDEBAR.TITLE" | translate }}</h2>
+  <button
+    class="sidebar-action-btn"
+    [title]="'FRIENDS_PAGE.SIDEBAR.MANAGE_LISTS' | translate"
+    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.MANAGE_LISTS' | translate"
+    (click)="onManageLists()"
+  >
+    <span class="material-symbols-outlined">settings</span>
+  </button>
+</div>
+
+<!-- Friend Lists -->
+<div class="sidebar-lists">
+  @for (list of lists; track list.id) {
+    <button class="list-item" [class.list-item--selected]="selectedListId === list.id" (click)="onListClick(list.id)">
+      <div class="list-icon-container" [attr.data-color]="list.color">
+        <span class="material-symbols-outlined list-icon">{{ list.icon }}</span>
+      </div>
+      <div class="list-info">
+        <div class="list-name">{{ list.name }}</div>
+        <div class="list-count">
+          {{ list.count }}
+          {{
+            list.count === 1
+              ? ("FRIENDS_PAGE.SIDEBAR.MEMBER_SINGULAR" | translate)
+              : ("FRIENDS_PAGE.SIDEBAR.MEMBER_PLURAL" | translate)
+          }}
+        </div>
+      </div>
+    </button>
+  }
+</div>
+
+<!-- Create New List Button -->
+<button class="btn-create-list" (click)="onCreateList()">
+  <span class="material-symbols-outlined">add</span>
+  <span>{{ "FRIENDS_PAGE.SIDEBAR.CREATE_NEW_LIST" | translate }}</span>
+</button>

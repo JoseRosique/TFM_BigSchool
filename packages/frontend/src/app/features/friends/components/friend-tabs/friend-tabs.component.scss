@@ -1,0 +1,5 @@
+// CRITICAL: display: contents makes this component "invisible" to CSS layout
+// This prevents breaking the parent's Flexbox/Grid structure
+:host {
+  display: contents;
+}

@@ -1,0 +1,360 @@
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  merge,
+  of,
+  Subject,
+  switchMap,
+  catchError,
+  finalize,
+  tap,
+} from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GroupSearchComponent } from '../../components/group-search/group-search.component';
+import { GroupListComponent } from '../../components/group-list/group-list.component';
+import { GroupModalComponent } from '../../components/group-modal/group-modal.component';
+import { GroupsService } from '../../../../shared/services/groups.service';
+import { Group, GroupMember } from '../../../../shared/models/group.model';
+import { FriendsService, Friend } from '../../../friends/services/friends.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+
+type ModalMode = 'create' | 'edit';
+
+@Component({
+  selector: 'app-groups-page',
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslateModule,
+    GroupSearchComponent,
+    GroupListComponent,
+    GroupModalComponent,
+  ],
+  templateUrl: './groups-page.component.html',
+  styleUrls: ['./groups-page.component.scss'],
+})
+export class GroupsPageComponent {
+  private readonly groupsService = inject(GroupsService);
+  private readonly friendsService = inject(FriendsService);
+  private readonly toastService = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly search$ = new Subject<string>();
+  private readonly memberSearch$ = new Subject<string>();
+  private readonly memberSearchRefresh$ = new Subject<void>();
+
+  groups = computed(() => this.groupsService.groups());
+  searchQuery = signal('');
+  isLoading = signal(false);
+  errorKey = signal<string | null>(null);
+
+  isModalOpen = signal(false);
+  modalMode = signal<ModalMode>('create');
+  isSaving = signal(false);
+  editingGroupId = signal<string | null>(null);
+
+  formName = signal('');
+  formDescription = signal('');
+  formIcon = signal('group');
+  formColor = signal('blue');
+
+  iconOptions = ['group', 'diversity_3', 'workspaces', 'school', 'sports_soccer', 'favorite'];
+  colorOptions = ['blue', 'pink', 'orange', 'purple', 'green', 'teal'];
+
+  selectedMembers = signal<GroupMember[]>([]);
+  originalMemberIds = signal<string[]>([]);
+  availableFriends = signal<GroupMember[]>([]);
+  memberSearchQuery = signal('');
+
+  constructor() {
+    this.loadGroups();
+    this.bindSearch();
+    this.bindMemberSearch();
+  }
+
+  onSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.search$.next(query);
+  }
+
+  openCreateModal(): void {
+    this.modalMode.set('create');
+    this.editingGroupId.set(null);
+    this.resetForm();
+    this.selectedMembers.set([]);
+    this.originalMemberIds.set([]);
+    this.isModalOpen.set(true);
+    this.loadFriendsForCreate('');
+  }
+
+  openEditModal(group: Group): void {
+    this.modalMode.set('edit');
+    this.editingGroupId.set(group.id);
+    this.formName.set(group.name);
+    this.formDescription.set(group.description ?? '');
+    this.formIcon.set(group.icon);
+    this.formColor.set(group.color);
+    this.selectedMembers.set(group.members ?? []);
+    this.originalMemberIds.set(group.members?.map((member) => member.id) ?? []);
+    this.isModalOpen.set(true);
+    this.loadAvailableFriends(group.id, '');
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  updateName(value: string): void {
+    this.formName.set(value);
+  }
+
+  updateDescription(value: string): void {
+    this.formDescription.set(value);
+  }
+
+  updateIcon(value: string): void {
+    this.formIcon.set(value);
+  }
+
+  updateColor(value: string): void {
+    this.formColor.set(value);
+  }
+
+  toggleMember(member: GroupMember): void {
+    const current = this.selectedMembers();
+    const exists = current.some((item) => item.id === member.id);
+    if (exists) {
+      this.selectedMembers.set(current.filter((item) => item.id !== member.id));
+    } else {
+      this.selectedMembers.set([...current, member]);
+    }
+
+    this.memberSearchRefresh$.next();
+  }
+
+  onMemberSearch(query: string): void {
+    this.memberSearchQuery.set(query);
+    this.memberSearch$.next(query);
+  }
+
+  saveGroup(): void {
+    const name = this.formName().trim();
+    const icon = this.formIcon().trim();
+    const color = this.formColor().trim();
+    if (!name || !icon || !color) {
+      this.toastService.error('GROUPS_MANAGEMENT.TOASTS.ERROR_GENERIC');
+      return;
+    }
+
+    this.isSaving.set(true);
+    const memberIds = this.selectedMembers().map((member) => member.id);
+
+    const description = this.formDescription().trim();
+
+    if (this.modalMode() === 'create') {
+      this.groupsService
+        .createGroup({
+          name,
+          description,
+          icon,
+          color,
+          memberIds,
+        })
+        .pipe(
+          switchMap(() => this.groupsService.loadGroups(this.searchQuery())),
+          tap(() => {
+            this.toastService.success('GROUPS_MANAGEMENT.TOASTS.CREATED', undefined, {
+              count: memberIds.length,
+            });
+            this.closeModal();
+          }),
+          catchError((error) => {
+            this.toastService.error(this.resolveErrorKey(error));
+            return of([] as Group[]);
+          }),
+          finalize(() => this.isSaving.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe();
+      return;
+    }
+
+    const groupId = this.editingGroupId();
+    if (!groupId) {
+      this.isSaving.set(false);
+      return;
+    }
+
+    const originalIds = new Set(this.originalMemberIds());
+    const currentIds = new Set(memberIds);
+    const addMemberIds = memberIds.filter((id) => !originalIds.has(id));
+    const removeMemberIds = this.originalMemberIds().filter((id) => !currentIds.has(id));
+
+    this.groupsService
+      .updateGroup(groupId, {
+        name,
+        description,
+        icon,
+        color,
+        addMemberIds: addMemberIds.length ? addMemberIds : undefined,
+        removeMemberIds: removeMemberIds.length ? removeMemberIds : undefined,
+      })
+      .pipe(
+        switchMap(() => this.groupsService.loadGroups(this.searchQuery())),
+        tap(() => {
+          this.toastService.success('GROUPS_MANAGEMENT.TOASTS.UPDATED');
+          this.closeModal();
+        }),
+        catchError((error) => {
+          this.toastService.error(this.resolveErrorKey(error));
+          return of([] as Group[]);
+        }),
+        finalize(() => this.isSaving.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  private loadGroups(): void {
+    this.isLoading.set(true);
+    this.errorKey.set(null);
+    this.groupsService
+      .loadGroups()
+      .pipe(
+        catchError((error) => {
+          this.errorKey.set('GROUPS_MANAGEMENT.TOASTS.ERROR_GENERIC');
+          this.toastService.error(this.resolveErrorKey(error));
+          return of([] as Group[]);
+        }),
+        finalize(() => this.isLoading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  private bindSearch(): void {
+    this.search$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          this.isLoading.set(true);
+          this.errorKey.set(null);
+          return this.groupsService.searchGroups(query).pipe(
+            catchError((error) => {
+              this.errorKey.set('GROUPS_MANAGEMENT.TOASTS.ERROR_GENERIC');
+              this.toastService.error(this.resolveErrorKey(error));
+              return of([] as Group[]);
+            }),
+            finalize(() => this.isLoading.set(false)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  private bindMemberSearch(): void {
+    merge(this.memberSearch$, this.memberSearchRefresh$.pipe(map(() => this.memberSearchQuery())))
+      .pipe(
+        debounceTime(250),
+        switchMap((query) => {
+          const groupId = this.editingGroupId();
+          if (this.modalMode() === 'edit' && groupId) {
+            return this.loadAvailableFriends(groupId, query);
+          }
+          return this.loadFriendsForCreate(query);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  private loadAvailableFriends(groupId: string, query: string) {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      this.availableFriends.set([]);
+      return of([] as GroupMember[]);
+    }
+    return this.groupsService.getAvailableFriends(groupId, query).pipe(
+      tap((friends) => this.availableFriends.set(this.excludeSelected(friends))),
+      catchError((error) => {
+        this.toastService.error(this.resolveErrorKey(error));
+        this.availableFriends.set([]);
+        return of([] as GroupMember[]);
+      }),
+    );
+  }
+
+  private loadFriendsForCreate(query: string) {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      this.availableFriends.set([]);
+      return of([] as Friend[]);
+    }
+    return this.friendsService.getFriends().pipe(
+      tap((friends) => {
+        const filtered = this.filterFriendsForCreate(friends, query);
+        this.availableFriends.set(this.excludeSelected(filtered));
+      }),
+      catchError((error) => {
+        this.toastService.error(this.resolveErrorKey(error));
+        this.availableFriends.set([]);
+        return of([] as Friend[]);
+      }),
+    );
+  }
+
+  private filterFriendsForCreate(friends: Friend[], query: string): GroupMember[] {
+    const trimmed = query.trim().toLowerCase();
+    const mapped = friends.map((friend) => ({
+      id: friend.id,
+      name: friend.name,
+      username: friend.username,
+      avatarUrl: friend.avatarUrl,
+    }));
+
+    if (!trimmed) {
+      return mapped;
+    }
+
+    return mapped.filter(
+      (friend) =>
+        friend.name.toLowerCase().includes(trimmed) ||
+        friend.username.toLowerCase().includes(trimmed),
+    );
+  }
+
+  private excludeSelected(friends: GroupMember[]): GroupMember[] {
+    const selectedIds = new Set(this.selectedMembers().map((member) => member.id));
+    return friends.filter((friend) => !selectedIds.has(friend.id));
+  }
+
+  private resetForm(): void {
+    this.formName.set('');
+    this.formDescription.set('');
+    this.formIcon.set('group');
+    this.formColor.set('blue');
+    this.memberSearchQuery.set('');
+  }
+
+  private resolveErrorKey(error: unknown): string {
+    const fallback = 'GROUPS_MANAGEMENT.TOASTS.ERROR_GENERIC';
+    if (!error || typeof error !== 'object') {
+      return fallback;
+    }
+
+    const rawMessage = (error as any).error?.message ?? (error as any).message;
+    if (Array.isArray(rawMessage)) {
+      return rawMessage[0] ?? fallback;
+    }
+    if (typeof rawMessage === 'string' && rawMessage.trim().length > 0) {
+      return rawMessage;
+    }
+    return fallback;
+  }
+}

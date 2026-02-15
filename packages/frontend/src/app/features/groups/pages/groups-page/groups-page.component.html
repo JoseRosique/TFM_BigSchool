@@ -1,0 +1,46 @@
+<section class="groups-page-root">
+  <header class="groups-hero">
+    <div class="groups-hero__text">
+      <h1 class="groups-title">{{ "GROUPS_MANAGEMENT.TITLE" | translate }}</h1>
+      <p class="groups-subtitle">{{ "GROUPS_MANAGEMENT.SUBTITLE" | translate }}</p>
+    </div>
+    <button class="groups-create-btn" (click)="openCreateModal()">
+      <span class="material-symbols-outlined">add</span>
+      <span>{{ "GROUPS_MANAGEMENT.CREATE" | translate }}</span>
+    </button>
+  </header>
+
+  <div class="groups-toolbar">
+    <app-group-search [value]="searchQuery()" (search)="onSearch($event)"></app-group-search>
+  </div>
+
+  <app-group-list
+    [groups]="groups()"
+    [isLoading]="isLoading()"
+    [errorKey]="errorKey()"
+    (edit)="openEditModal($event)"
+  ></app-group-list>
+
+  <app-group-modal
+    [isOpen]="isModalOpen()"
+    [mode]="modalMode()"
+    [name]="formName()"
+    [description]="formDescription()"
+    [icon]="formIcon()"
+    [color]="formColor()"
+    [iconOptions]="iconOptions"
+    [colorOptions]="colorOptions"
+    [availableFriends]="availableFriends()"
+    [selectedMembers]="selectedMembers()"
+    [searchQuery]="memberSearchQuery()"
+    [isSaving]="isSaving()"
+    (close)="closeModal()"
+    (save)="saveGroup()"
+    (changeName)="updateName($event)"
+    (changeDescription)="updateDescription($event)"
+    (changeIcon)="updateIcon($event)"
+    (changeColor)="updateColor($event)"
+    (searchFriends)="onMemberSearch($event)"
+    (toggleMember)="toggleMember($event)"
+  ></app-group-modal>
+</section>

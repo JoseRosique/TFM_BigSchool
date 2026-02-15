@@ -1,0 +1,255 @@
+<div class="friend-list">
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input
+      type="text"
+      class="search-input"
+      [placeholder]="
+        (activeTab === 'search' ? 'FRIENDS_PAGE.SEARCH.PLACEHOLDER' : 'FRIENDS_PAGE.SEARCH_PLACEHOLDER') | translate
+      "
+      [ngModel]="searchQuery"
+      (ngModelChange)="onSearchChange($event)"
+    />
+  </div>
+
+  <!-- Friends Table -->
+  <div class="friends-table">
+    <!-- Table Header (visible only for All & Pending tabs) -->
+    @if (activeTab !== "blocked" && activeTab !== "search") {
+      <div class="friends-table__header">
+        <div class="header-col header-col--profile">{{ "FRIENDS_PAGE.TABLE_HEADERS.PROFILE" | translate }}</div>
+        <div class="header-col header-col--group">{{ "FRIENDS_PAGE.TABLE_HEADERS.GROUP" | translate }}</div>
+        <div class="header-col header-col--status">{{ "FRIENDS_PAGE.TABLE_HEADERS.STATUS" | translate }}</div>
+        <div class="header-col header-col--actions">{{ "FRIENDS_PAGE.TABLE_HEADERS.ACTIONS" | translate }}</div>
+      </div>
+    }
+
+    <!-- Table Body -->
+    <div class="friends-table__body" [class.friends-table__body--transition]="true">
+      @if (isLoading) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">progress_activity</span>
+          <p>{{ "GLOBAL.LOADING_CONTENT" | translate }}</p>
+        </div>
+      } @else if (errorKey) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined">error</span>
+          <p>{{ errorKey | translate }}</p>
+        </div>
+      } @else if (friends.length === 0) {
+        <div class="empty-state">
+          @if (activeTab === "search") {
+            <span class="material-symbols-outlined">person_search</span>
+            <p>{{ "FRIENDS_PAGE.SEARCH.EMPTY_TITLE" | translate }}</p>
+            <span class="empty-state__hint">{{ "FRIENDS_PAGE.SEARCH.EMPTY_HINT" | translate }}</span>
+          } @else if (activeTab === "pending") {
+            <span class="material-symbols-outlined">mail_outline</span>
+            <p>{{ "FRIENDS_PAGE.EMPTY_STATES.NO_PENDING_TITLE" | translate }}</p>
+            <span class="empty-state__hint">{{ "FRIENDS_PAGE.EMPTY_STATES.NO_PENDING_HINT" | translate }}</span>
+          } @else if (activeTab === "blocked") {
+            <span class="material-symbols-outlined">block</span>
+            <p>{{ "FRIENDS_PAGE.EMPTY_STATES.NO_BLOCKED_TITLE" | translate }}</p>
+            <span class="empty-state__hint">{{ "FRIENDS_PAGE.EMPTY_STATES.NO_BLOCKED_HINT" | translate }}</span>
+          } @else {
+            <span class="material-symbols-outlined">people_outline</span>
+            <p>{{ "FRIENDS_PAGE.EMPTY_STATES.NO_FRIENDS_TITLE" | translate }}</p>
+            <span class="empty-state__hint">{{ "FRIENDS_PAGE.EMPTY_STATES.NO_FRIENDS_HINT" | translate }}</span>
+          }
+        </div>
+      } @else {
+        <!-- SEARCH Tab: User Search Results -->
+        @if (activeTab === "search") {
+          @for (user of friends; track user.id) {
+            <div class="friends-row" [class.friends-row--loading]="isFriendLoading(user.id)">
+              <!-- Profile & Name Column -->
+              <div class="row-col row-col--profile">
+                <img [src]="user.avatarUrl" [alt]="user.name" class="friend-avatar" />
+                <div class="friend-info">
+                  <div class="friend-name">{{ user.name }}</div>
+                  <div class="friend-username">{{ user.username }}</div>
+                </div>
+              </div>
+
+              <!-- Group Column -->
+              <div class="row-col row-col--group">
+                @if (user.isFriend && user.group) {
+                  <span class="group-badge" [ngStyle]="getGroupBadgeStyles(user.group.color)">
+                    {{ user.group.name }}
+                  </span>
+                }
+              </div>
+
+              <!-- Status Column -->
+              <div class="row-col row-col--status">
+                <span class="status-indicator" [attr.data-status]="user.status"></span>
+                <span class="status-text">{{ "FRIENDS_PAGE.STATUS." + user.status.toUpperCase() | translate }}</span>
+              </div>
+
+              <!-- Actions Column (Add Friend) -->
+              <div class="row-col row-col--actions">
+                @switch (user.relationshipStatus) {
+                  @case ("BLOCKED") {
+                    <button
+                      class="action-btn action-btn--unblock"
+                      (click)="emitAction('unblock', user, $event)"
+                      [title]="'FRIENDS_PAGE.ACTIONS.UNBLOCK' | translate"
+                      [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.UNBLOCK_FRIEND' | translate: { name: user.name }"
+                    >
+                      <span class="material-symbols-outlined">lock_open</span>
+                    </button>
+                  }
+                  @case ("PENDING_SENT") {
+                    <button
+                      class="action-btn action-btn--pending"
+                      disabled
+                      [title]="'FRIENDS_PAGE.REQUEST_ALREADY_SENT' | translate"
+                      [attr.aria-label]="'FRIENDS_PAGE.REQUEST_ALREADY_SENT_WITH_NAME' | translate: { name: user.name }"
+                    >
+                      <span class="material-symbols-outlined">mail</span>
+                    </button>
+                  }
+                  @case ("PENDING_RECEIVED") {
+                    <button
+                      class="action-btn action-btn--accept"
+                      (click)="emitAction('accept', user, $event)"
+                      [title]="'FRIENDS_PAGE.ACTIONS.ACCEPT' | translate"
+                      [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.ACCEPT_REQUEST' | translate: { name: user.name }"
+                    >
+                      <span class="material-symbols-outlined">check_circle</span>
+                    </button>
+                  }
+                  @case ("ACCEPTED") {
+                    <button
+                      class="action-btn action-btn--delete"
+                      (click)="emitAction('delete', user, $event)"
+                      [title]="'FRIENDS_PAGE.ACTIONS.DELETE' | translate"
+                      [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.DELETE_FRIEND' | translate: { name: user.name }"
+                    >
+                      <span class="material-symbols-outlined">person_remove</span>
+                    </button>
+                  }
+                  @default {
+                    <button
+                      class="action-btn action-btn--add"
+                      (click)="emitAction('add', user, $event)"
+                      [title]="'FRIENDS_PAGE.SEARCH.ADD_ACTION' | translate"
+                      [attr.aria-label]="'FRIENDS_PAGE.SEARCH.ADD_ARIA' | translate: { name: user.name }"
+                    >
+                      <span class="material-symbols-outlined">person_add</span>
+                    </button>
+                  }
+                }
+              </div>
+            </div>
+          }
+        }
+        <!-- ALL & PENDING Tabs: Standard Table Layout -->
+        @if (activeTab !== "blocked" && activeTab !== "search") {
+          @for (friend of friends; track friend.id) {
+            <div class="friends-row" [class.friends-row--loading]="isFriendLoading(friend.id)">
+              <!-- Profile & Name Column -->
+              <div class="row-col row-col--profile">
+                <img [src]="friend.avatarUrl" [alt]="friend.name" class="friend-avatar" />
+                <div class="friend-info">
+                  <div class="friend-name">{{ friend.name }}</div>
+                  <div class="friend-username">{{ friend.username }}</div>
+                </div>
+              </div>
+
+              <!-- Group Column -->
+              <div class="row-col row-col--group">
+                @if (friend.isFriend && friend.group) {
+                  <span class="group-badge" [ngStyle]="getGroupBadgeStyles(friend.group.color)">
+                    {{ friend.group.name }}
+                  </span>
+                }
+              </div>
+
+              <!-- Status Column -->
+              <div class="row-col row-col--status">
+                <span class="status-indicator" [attr.data-status]="friend.status"></span>
+                <span class="status-text">{{ "FRIENDS_PAGE.STATUS." + friend.status.toUpperCase() | translate }}</span>
+              </div>
+
+              <!-- Actions Column (Pending Requests) -->
+              @if (activeTab === "pending") {
+                <div class="row-col row-col--actions">
+                  <button
+                    class="action-btn action-btn--accept"
+                    (click)="emitAction('accept', friend, $event)"
+                    [title]="'FRIENDS_PAGE.ACTIONS.ACCEPT' | translate"
+                    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.ACCEPT_REQUEST' | translate: { name: friend.name }"
+                  >
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </button>
+                  <button
+                    class="action-btn action-btn--reject"
+                    (click)="emitAction('reject', friend, $event)"
+                    [title]="'FRIENDS_PAGE.ACTIONS.REJECT' | translate"
+                    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.REJECT_REQUEST' | translate: { name: friend.name }"
+                  >
+                    <span class="material-symbols-outlined">cancel</span>
+                  </button>
+                </div>
+              }
+              <!-- Actions Column (All Friends) -->
+              @if (activeTab === "all") {
+                <div class="row-col row-col--actions">
+                  <button
+                    class="action-btn action-btn--message"
+                    (click)="emitAction('message', friend, $event)"
+                    [title]="'FRIENDS_PAGE.ACTIONS.MESSAGE' | translate"
+                    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.MESSAGE_FRIEND' | translate: { name: friend.name }"
+                  >
+                    <span class="material-symbols-outlined">mail</span>
+                  </button>
+                  <button
+                    class="action-btn action-btn--calendar"
+                    (click)="emitAction('calendar', friend, $event)"
+                    [title]="'FRIENDS_PAGE.ACTIONS.CALENDAR' | translate"
+                    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.VIEW_CALENDAR' | translate: { name: friend.name }"
+                  >
+                    <span class="material-symbols-outlined">calendar_today</span>
+                  </button>
+                  <button
+                    class="action-btn action-btn--delete"
+                    (click)="emitAction('delete', friend, $event)"
+                    [title]="'FRIENDS_PAGE.ACTIONS.DELETE' | translate"
+                    [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.DELETE_FRIEND' | translate: { name: friend.name }"
+                  >
+                    <span class="material-symbols-outlined">person_remove</span>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        }
+
+        <!-- BLOCKED Tab: Simplified Card Layout -->
+        @if (activeTab === "blocked") {
+          @for (friend of friends; track friend.id) {
+            <div class="blocked-friend-card">
+              <div class="blocked-friend-header">
+                <img [src]="friend.avatarUrl" [alt]="friend.name" class="friend-avatar" />
+                <div class="blocked-friend-info">
+                  <div class="friend-name">{{ friend.name }}</div>
+                  <div class="friend-username">{{ friend.username }}</div>
+                </div>
+              </div>
+              <button
+                class="btn-unblock"
+                (click)="emitAction('unblock', friend, $event)"
+                [title]="'FRIENDS_PAGE.ACTIONS.UNBLOCK_USER' | translate"
+                [attr.aria-label]="'FRIENDS_PAGE.ARIA_LABELS.UNBLOCK_FRIEND' | translate: { name: friend.name }"
+              >
+                <span class="material-symbols-outlined">lock_open</span>
+                <span>{{ "FRIENDS_PAGE.ACTIONS.UNBLOCK" | translate }}</span>
+              </button>
+            </div>
+          }
+        }
+      }
+    </div>
+  </div>
+</div>

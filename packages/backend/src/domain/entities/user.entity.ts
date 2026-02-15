@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  OneToMany,
 } from 'typeorm';
+import { Group } from './group.entity';
 
 @Entity('users')
 export class User {
@@ -52,4 +55,10 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
+
+  @OneToMany(() => Group, (group) => group.owner)
+  ownedGroups!: Group[];
+
+  @ManyToMany(() => Group, (group) => group.members)
+  groups!: Group[];
 }

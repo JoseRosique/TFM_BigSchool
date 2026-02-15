@@ -362,5 +362,115 @@
       "LOAD_ERROR": "No se pudo cargar el calendario.",
       "INVALID_RANGE": "Revisa el rango de horas."
     }
+  },
+  "FRIENDS_PAGE": {
+    "TITLE": "Gestión de Amigos",
+    "SUBTITLE": "Administra tus conexiones y configuraciones de privacidad.",
+    "ADD_FRIEND": "Agregar amigo",
+    "SEARCH_PLACEHOLDER": "Buscar amigos por nombre...",
+    "SEARCH": {
+      "PLACEHOLDER": "Buscar usuarios por nombre o usuario...",
+      "EMPTY_TITLE": "Busca a tus amigos",
+      "EMPTY_HINT": "Introduce un nombre de usuario para encontrar personas y agregarlas como amigos.",
+      "ADD_ACTION": "Agregar amigo",
+      "ADD_ARIA": "Agregar a {{name}} como amigo"
+    },
+    "TABS": {
+      "SEARCH": "Búsqueda",
+      "ALL": "Todos los amigos",
+      "PENDING": "Solicitudes pendientes",
+      "BLOCKED": "Bloqueados"
+    },
+    "TABLE_HEADERS": {
+      "PROFILE": "PERFIL Y NOMBRE",
+      "GROUP": "GRUPO",
+      "STATUS": "ESTADO",
+      "ACTIONS": "ACCIONES"
+    },
+    "GROUPS": {
+      "CLOSE_FRIENDS": "Amigos cercanos",
+      "WORK": "Trabajo",
+      "GYM_BUDDIES": "Compañeros de gym",
+      "COLLEGE": "Universidad"
+    },
+    "STATUS": {
+      "ONLINE": "En línea",
+      "OFFLINE": "Desconectado"
+    },
+    "EMPTY_STATES": {
+      "NO_PENDING_TITLE": "Sin solicitudes pendientes",
+      "NO_PENDING_HINT": "No tienes solicitudes de amistad esperando aprobación.",
+      "NO_BLOCKED_TITLE": "Sin usuarios bloqueados",
+      "NO_BLOCKED_HINT": "No has bloqueado a nadie todavía.",
+      "NO_FRIENDS_TITLE": "No se encontraron amigos",
+      "NO_FRIENDS_HINT": "Intenta ajustar tus criterios de búsqueda."
+    },
+    "ACTIONS": {
+      "ACCEPT": "Aceptar solicitud",
+      "REJECT": "Rechazar solicitud",
+      "MESSAGE": "Enviar mensaje",
+      "CALENDAR": "Ver calendario",
+      "DELETE": "Eliminar amigo",
+      "UNBLOCK": "Desbloquear",
+      "UNBLOCK_USER": "Desbloquear usuario"
+    },
+    "SIDEBAR": {
+      "TITLE": "Listas de amigos",
+      "MANAGE_LISTS": "Administrar listas",
+      "CREATE_NEW_LIST": "Crear nueva lista",
+      "MEMBERS": "miembros",
+      "MEMBER_SINGULAR": "miembro",
+      "MEMBER_PLURAL": "miembros"
+    },
+    "ARIA_LABELS": {
+      "ACCEPT_REQUEST": "Aceptar solicitud de amistad de {{name}}",
+      "REJECT_REQUEST": "Rechazar solicitud de amistad de {{name}}",
+      "MESSAGE_FRIEND": "Enviar mensaje a {{name}}",
+      "VIEW_CALENDAR": "Ver calendario de {{name}}",
+      "DELETE_FRIEND": "Eliminar amigo {{name}}",
+      "UNBLOCK_FRIEND": "Desbloquear a {{name}}",
+      "MANAGE_LISTS": "Administrar listas de amigos"
+    },
+    "TOASTS": {
+      "REQUEST_SENT": "Solicitud de amistad enviada.",
+      "REQUEST_ACCEPTED": "Solicitud de amistad aceptada.",
+      "REQUEST_DECLINED": "Solicitud de amistad rechazada.",
+      "FRIEND_REMOVED": "Amigo eliminado.",
+      "USER_UNBLOCKED": "Usuario desbloqueado.",
+      "ERROR_GENERIC": "No se pudo completar la acción. Intenta de nuevo."
+    },
+    "REQUEST_ALREADY_SENT": "Solicitud ya enviada",
+    "REQUEST_ALREADY_SENT_WITH_NAME": "Solicitud ya enviada a {{name}}"
+  },
+  "GROUPS_MANAGEMENT": {
+    "TITLE": "Grupos",
+    "SUBTITLE": "Organiza tus círculos y gestiona miembros.",
+    "CREATE": "Crear grupo",
+    "SEARCH": {
+      "PLACEHOLDER": "Buscar grupos por nombre..."
+    },
+    "EMPTY": "No hay grupos todavía.",
+    "NO_DESCRIPTION": "Sin descripción",
+    "MEMBERS": "miembros",
+    "MODAL": {
+      "CREATE_TITLE": "Crear grupo",
+      "EDIT_TITLE": "Editar grupo",
+      "NAME": "Nombre del grupo",
+      "DESCRIPTION": "Descripción",
+      "ICON": "Icono",
+      "COLOR": "Color",
+      "MEMBERS": "Miembros",
+      "SEARCH_FRIENDS": "Buscar amigos para agregar",
+      "NO_AVAILABLE": "No hay amigos disponibles",
+      "CANCEL": "Cancelar",
+      "CREATE": "Crear",
+      "SAVE": "Guardar",
+      "CLOSE": "Cerrar"
+    },
+    "TOASTS": {
+      "CREATED": "Grupo creado con {{count}} miembros.",
+      "UPDATED": "Grupo actualizado correctamente.",
+      "ERROR_GENERIC": "No se pudo completar la acción. Intenta de nuevo."
+    }
   }
 }

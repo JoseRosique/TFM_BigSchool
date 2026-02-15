@@ -1,0 +1,10 @@
+@for (tab of tabs; track tab.id) {
+  <button class="friends-tab" [class.friends-tab--active]="activeTab === tab.id" (click)="onTabClick(tab.id)">
+    <span class="friends-tab__label">{{ tab.label | translate }}</span>
+    @if (tab.count > 0) {
+      <span class="friends-tab__badge" [class.friends-tab__badge--highlight]="tab.id === 'pending'">
+        {{ tab.count }}
+      </span>
+    }
+  </button>
+}

@@ -17,7 +17,7 @@
           }
         }
       </span>
-      <span class="toast__message">{{ toast.message | translate }}</span>
+      <span class="toast__message">{{ toast.message | translate: toast.params }}</span>
       <button
         class="toast__close"
         type="button"

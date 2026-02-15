@@ -2,6 +2,8 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from '../../domain/entities/user.entity';
 import { Slot } from '../../domain/entities/slot.entity';
 import { Reservation } from '../../domain/entities/reservation.entity';
+import { Friendship } from '../../domain/entities/friendship.entity';
+import { Group } from '../../domain/entities/group.entity';
 
 export function getDatabaseConfig(): TypeOrmModuleOptions {
   return {
@@ -11,7 +13,7 @@ export function getDatabaseConfig(): TypeOrmModuleOptions {
     username: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
     database: process.env.DB_NAME || 'meetwithfriends',
-    entities: [User, Slot, Reservation],
+    entities: [User, Slot, Reservation, Friendship, Group],
     migrations: ['dist/infrastructure/migrations/*.js'],
     migrationsTableName: 'typeorm_migrations',
     synchronize: process.env.NODE_ENV === 'development',

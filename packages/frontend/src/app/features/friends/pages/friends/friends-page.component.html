@@ -1,0 +1,42 @@
+<section class="friends-page-root">
+  <!-- Header -->
+  <div class="friends-hero">
+    <div class="friends-hero__text">
+      <h1 class="friends-title">{{ "FRIENDS_PAGE.TITLE" | translate }}</h1>
+      <p class="friends-subtitle">{{ "FRIENDS_PAGE.SUBTITLE" | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="friends-tabs">
+    <app-friend-tabs [tabs]="tabs()" [activeTab]="activeTab()" (tabChange)="selectTab($event)"></app-friend-tabs>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="friends-content-container">
+    <!-- Left Main Area -->
+    <main class="main-list-area">
+      <app-friend-list
+        [activeTab]="activeTab()"
+        [friends]="visibleFriends()"
+        [searchQuery]="searchQuery()"
+        [isLoading]="isLoading()"
+        [errorKey]="errorKey()"
+        [loadingFriendIds]="loadingFriendIds()"
+        (search)="onSearch($event)"
+        (action)="handleListAction($event)"
+      ></app-friend-list>
+    </main>
+
+    <!-- Right Sidebar Area -->
+    <aside class="sidebar-area">
+      <app-friend-sidebar
+        [lists]="friendLists()"
+        [selectedListId]="selectedList()"
+        (listSelect)="selectFriendList($event)"
+        (createList)="onCreateNewList()"
+        (manageLists)="onManageLists()"
+      ></app-friend-sidebar>
+    </aside>
+  </div>
+</section>

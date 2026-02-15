@@ -1,0 +1,137 @@
+@if (isOpen) {
+  <div class="group-modal-overlay" (click)="onClose()"></div>
+  <div class="group-modal" role="dialog" aria-modal="true" aria-labelledby="groupModalTitle">
+    <header class="group-modal__header">
+      <h2 id="groupModalTitle">
+        {{
+          mode === "create"
+            ? ("GROUPS_MANAGEMENT.MODAL.CREATE_TITLE" | translate)
+            : ("GROUPS_MANAGEMENT.MODAL.EDIT_TITLE" | translate)
+        }}
+      </h2>
+      <button
+        class="group-modal__close"
+        (click)="onClose()"
+        [attr.aria-label]="'GROUPS_MANAGEMENT.MODAL.CLOSE' | translate"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="group-modal__body">
+      <label class="group-modal__label">
+        {{ "GROUPS_MANAGEMENT.MODAL.NAME" | translate }}
+        <input
+          class="group-modal__input"
+          type="text"
+          [value]="name"
+          (input)="changeName.emit($any($event.target).value)"
+        />
+      </label>
+
+      <label class="group-modal__label">
+        {{ "GROUPS_MANAGEMENT.MODAL.DESCRIPTION" | translate }}
+        <textarea
+          class="group-modal__textarea"
+          rows="3"
+          [value]="description"
+          (input)="changeDescription.emit($any($event.target).value)"
+        ></textarea>
+      </label>
+
+      <div class="group-modal__row">
+        <label class="group-modal__label">
+          {{ "GROUPS_MANAGEMENT.MODAL.ICON" | translate }}
+          <div class="group-modal__options">
+            @for (option of iconOptions; track option) {
+              <button
+                type="button"
+                class="group-modal__option"
+                [class.is-active]="option === icon"
+                (click)="changeIcon.emit(option)"
+              >
+                <span class="material-symbols-outlined">{{ option }}</span>
+              </button>
+            }
+          </div>
+        </label>
+
+        <label class="group-modal__label">
+          {{ "GROUPS_MANAGEMENT.MODAL.COLOR" | translate }}
+          <div class="group-modal__options">
+            @for (option of colorOptions; track option) {
+              <button
+                type="button"
+                class="group-modal__option"
+                [class.is-active]="option === color"
+                [attr.data-color]="option"
+                [attr.aria-label]="option"
+                (click)="changeColor.emit(option)"
+              ></button>
+            }
+          </div>
+        </label>
+      </div>
+
+      <div class="group-modal__members">
+        <div class="group-modal__members-header">
+          <h3>{{ "GROUPS_MANAGEMENT.MODAL.MEMBERS" | translate }}</h3>
+          <span>{{ selectedMembers.length }} {{ "GROUPS_MANAGEMENT.MEMBERS" | translate }}</span>
+        </div>
+        <div class="group-modal__members-list">
+          @for (member of selectedMembers; track member.id) {
+            <button class="member-chip" type="button" (click)="toggleMember.emit(member)">
+              <img class="member-chip__avatar" [src]="member.avatarUrl" [alt]="member.name" />
+              <span>{{ member.name }}</span>
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="group-modal__search">
+        <span class="material-symbols-outlined">search</span>
+        <input
+          type="text"
+          [value]="searchQuery"
+          (input)="searchFriends.emit($any($event.target).value)"
+          [placeholder]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
+          [attr.aria-label]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
+        />
+      </div>
+
+      <div class="group-modal__available">
+        @if (availableFriends.length === 0) {
+          <div class="group-modal__empty">
+            <span class="material-symbols-outlined">person_off</span>
+            <p>{{ "GROUPS_MANAGEMENT.MODAL.NO_AVAILABLE" | translate }}</p>
+          </div>
+        } @else {
+          @for (friend of availableFriends; track friend.id) {
+            <button class="group-modal__friend" type="button" (click)="toggleMember.emit(friend)">
+              <img class="group-modal__friend-avatar" [src]="friend.avatarUrl" [alt]="friend.name" />
+              <div class="group-modal__friend-info">
+                <span>{{ friend.name }}</span>
+                <small>{{ friend.username }}</small>
+              </div>
+              <span class="material-symbols-outlined">add_circle</span>
+            </button>
+          }
+        }
+      </div>
+    </div>
+
+    <footer class="group-modal__footer">
+      <button class="group-modal__btn group-modal__btn--ghost" type="button" (click)="onClose()">
+        {{ "GROUPS_MANAGEMENT.MODAL.CANCEL" | translate }}
+      </button>
+      <button class="group-modal__btn" type="button" [disabled]="isSaving" (click)="onSave()">
+        {{
+          mode === "create"
+            ? ("GROUPS_MANAGEMENT.MODAL.CREATE" | translate)
+            : ("GROUPS_MANAGEMENT.MODAL.SAVE" | translate)
+        }}
+      </button>
+    </footer>
+  </div>
+}

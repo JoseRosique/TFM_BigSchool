@@ -1,0 +1,11 @@
+<div class="group-search">
+  <span class="material-symbols-outlined group-search__icon" aria-hidden="true">search</span>
+  <input
+    type="text"
+    class="group-search__input"
+    [placeholder]="'GROUPS_MANAGEMENT.SEARCH.PLACEHOLDER' | translate"
+    [attr.aria-label]="'GROUPS_MANAGEMENT.SEARCH.PLACEHOLDER' | translate"
+    [value]="value"
+    (input)="onSearchChange($any($event.target).value)"
+  />
+</div>

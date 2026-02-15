@@ -49,13 +49,17 @@ export const APP_ROUTES: Routes = [
     path: 'friends',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/friends/friends.component').then((m) => m.FriendsComponent),
+      import('./features/friends/pages/friends/friends-page.component').then(
+        (m) => m.FriendsPageComponent,
+      ),
   },
   {
     path: 'groups',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/groups/groups.component').then((m) => m.GroupsComponent),
+      import('./features/groups/pages/groups-page/groups-page.component').then(
+        (m) => m.GroupsPageComponent,
+      ),
   },
   {
     path: 'profile',

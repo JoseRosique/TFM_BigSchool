@@ -362,5 +362,115 @@
       "LOAD_ERROR": "Unable to load calendar.",
       "INVALID_RANGE": "Check the time range."
     }
+  },
+  "FRIENDS_PAGE": {
+    "TITLE": "Friends Management",
+    "SUBTITLE": "Manage your connections and privacy settings.",
+    "ADD_FRIEND": "Add Friend",
+    "SEARCH_PLACEHOLDER": "Search friends by name...",
+    "SEARCH": {
+      "PLACEHOLDER": "Search users by name or username...",
+      "EMPTY_TITLE": "Search for your friends",
+      "EMPTY_HINT": "Enter a username to find people and add them as friends.",
+      "ADD_ACTION": "Add friend",
+      "ADD_ARIA": "Add {{name}} as friend"
+    },
+    "TABS": {
+      "SEARCH": "Search",
+      "ALL": "All Friends",
+      "PENDING": "Pending Requests",
+      "BLOCKED": "Blocked"
+    },
+    "TABLE_HEADERS": {
+      "PROFILE": "PROFILE & NAME",
+      "GROUP": "GROUP",
+      "STATUS": "STATUS",
+      "ACTIONS": "ACTIONS"
+    },
+    "GROUPS": {
+      "CLOSE_FRIENDS": "Close Friends",
+      "WORK": "Work",
+      "GYM_BUDDIES": "Gym Buddies",
+      "COLLEGE": "College"
+    },
+    "STATUS": {
+      "ONLINE": "Online",
+      "OFFLINE": "Offline"
+    },
+    "EMPTY_STATES": {
+      "NO_PENDING_TITLE": "No pending requests",
+      "NO_PENDING_HINT": "You have no friend requests waiting for approval.",
+      "NO_BLOCKED_TITLE": "No blocked users",
+      "NO_BLOCKED_HINT": "You haven't blocked anyone yet.",
+      "NO_FRIENDS_TITLE": "No friends found",
+      "NO_FRIENDS_HINT": "Try adjusting your search criteria."
+    },
+    "ACTIONS": {
+      "ACCEPT": "Accept request",
+      "REJECT": "Reject request",
+      "MESSAGE": "Send message",
+      "CALENDAR": "View calendar",
+      "DELETE": "Delete friend",
+      "UNBLOCK": "Unblock",
+      "UNBLOCK_USER": "Unblock user"
+    },
+    "SIDEBAR": {
+      "TITLE": "Friend Lists",
+      "MANAGE_LISTS": "Manage lists",
+      "CREATE_NEW_LIST": "Create New List",
+      "MEMBERS": "members",
+      "MEMBER_SINGULAR": "member",
+      "MEMBER_PLURAL": "members"
+    },
+    "ARIA_LABELS": {
+      "ACCEPT_REQUEST": "Accept friend request from {{name}}",
+      "REJECT_REQUEST": "Reject friend request from {{name}}",
+      "MESSAGE_FRIEND": "Send message to {{name}}",
+      "VIEW_CALENDAR": "View calendar of {{name}}",
+      "DELETE_FRIEND": "Delete friend {{name}}",
+      "UNBLOCK_FRIEND": "Unblock {{name}}",
+      "MANAGE_LISTS": "Manage friend lists"
+    },
+    "TOASTS": {
+      "REQUEST_SENT": "Friend request sent.",
+      "REQUEST_ACCEPTED": "Friend request accepted.",
+      "REQUEST_DECLINED": "Friend request declined.",
+      "FRIEND_REMOVED": "Friend removed.",
+      "USER_UNBLOCKED": "User unblocked.",
+      "ERROR_GENERIC": "Unable to complete the action. Please try again."
+    },
+    "REQUEST_ALREADY_SENT": "Request already sent",
+    "REQUEST_ALREADY_SENT_WITH_NAME": "Request already sent to {{name}}"
+  },
+  "GROUPS_MANAGEMENT": {
+    "TITLE": "Groups",
+    "SUBTITLE": "Organize your circles and manage members.",
+    "CREATE": "Create Group",
+    "SEARCH": {
+      "PLACEHOLDER": "Search groups by name..."
+    },
+    "EMPTY": "No groups yet.",
+    "NO_DESCRIPTION": "No description",
+    "MEMBERS": "members",
+    "MODAL": {
+      "CREATE_TITLE": "Create Group",
+      "EDIT_TITLE": "Edit Group",
+      "NAME": "Group name",
+      "DESCRIPTION": "Description",
+      "ICON": "Icon",
+      "COLOR": "Color",
+      "MEMBERS": "Members",
+      "SEARCH_FRIENDS": "Search friends to add",
+      "NO_AVAILABLE": "No friends available",
+      "CANCEL": "Cancel",
+      "CREATE": "Create",
+      "SAVE": "Save",
+      "CLOSE": "Close"
+    },
+    "TOASTS": {
+      "CREATED": "Group created with {{count}} members.",
+      "UPDATED": "Group updated successfully.",
+      "ERROR_GENERIC": "Unable to complete the action. Please try again."
+    }
   }
 }

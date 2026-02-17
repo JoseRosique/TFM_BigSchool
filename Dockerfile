@@ -44,27 +44,25 @@ RUN npm run build:backend 2>&1
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Instalamos dumb-init para gestión de procesos
+# Instalamos dumb-init pero lo usaremos de forma más directa
 RUN apk add --no-cache dumb-init
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# Copiamos los archivos de dependencias
+# Copiamos solo lo esencial
 COPY package.json package-lock.json* ./
 COPY packages/backend/package*.json ./packages/backend/
 
-# Instalamos solo dependencias de producción
-RUN npm install --production --legacy-peer-deps
+# Instalamos dependencias y limpiamos cache para ahorrar espacio
+RUN npm install --production --legacy-peer-deps && npm cache clean --force
 
-# COPIA DEL BACKEND: Asegúrate de que apunte a la carpeta dist que vimos
+# Copiamos los archivos compilados
 COPY --from=backend-builder /build/packages/backend/dist ./dist
-
-# COPIA DEL FRONTEND: Usando la ruta que verificamos antes
 COPY --from=frontend-builder /build/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
 # Exponemos el puerto
 EXPOSE 3000
 
-ENTRYPOINT ["/sbin/dumb-init", "--"]
-
-# COMANDO FINAL: Con la extensión .js para evitar el error 128
-CMD ["node", "dist/main.js"]
+# Cambiamos la forma de arrancar para que sea más compatible
+# Usamos dumb-init directamente en el comando
+CMD ["dumb-init", "node", "dist/main.js"]

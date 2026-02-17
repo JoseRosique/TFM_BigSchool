@@ -12,16 +12,15 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strict": false, // Cambiado para evitar que se detenga el build
-    "noImplicitAny": false, // Cambiado para ignorar errores de 'any'
-    "strictNullChecks": false, // Relajado para producción
-    "strictBindCallApply": true,
+    "strict": false,
+    "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "lib": ["ES2021"],
     "paths": {
+      "@/*": ["src/*"],
       "@meetwithfriends/shared": ["../shared/src/index.ts"]
     }
   },

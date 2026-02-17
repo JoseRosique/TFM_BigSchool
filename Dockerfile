@@ -62,8 +62,7 @@ RUN npm install --production --legacy-peer-deps && \
 COPY --from=backend-builder /build/packages/backend/dist ./dist
 
 # Copy compiled frontend from builder stage
-# Angular compiled output goes to dist/browser by default
-COPY --from=frontend-builder /build/packages/frontend/dist/browser ./public/client
+COPY --from=frontend-builder /build/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
 # Expose port (3000 for NestJS API + static frontend)
 EXPOSE 3000

@@ -69,9 +69,6 @@ COPY --from=backend-builder /build/packages/backend/dist ./dist
 # Angular compiled output goes to dist/browser by default
 COPY --from=frontend-builder /build/packages/frontend/dist/browser ./public/client
 
-# Copy environment file (optional, will be overridden by Render)
-COPY packages/backend/.env.example .env
-
 # Expose port (3000 for NestJS API + static frontend)
 EXPOSE 3000
 

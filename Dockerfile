@@ -44,35 +44,27 @@ RUN npm run build:backend 2>&1
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Install dumb-init for proper signal handling in containers
+# Instalamos dumb-init para gestión de procesos
 RUN apk add --no-cache dumb-init
-
-# Set Node environment to production
 ENV NODE_ENV=production
 
-# Copy package files for production dependencies installation
-COPY packages/backend/package*.json ./packages/backend/
+# Copiamos los archivos de dependencias
 COPY package.json package-lock.json* ./
+COPY packages/backend/package*.json ./packages/backend/
 
-# Install production dependencies only (exclude dev dependencies)
-RUN npm install --production --legacy-peer-deps && \
-    npm install --workspace=@meetwithfriends/backend --production
+# Instalamos solo dependencias de producción
+RUN npm install --production --legacy-peer-deps
 
-# Copy compiled backend from builder stage
+# COPIA DEL BACKEND: Asegúrate de que apunte a la carpeta dist que vimos
 COPY --from=backend-builder /build/packages/backend/dist ./dist
 
-# Copy compiled frontend from builder stage
+# COPIA DEL FRONTEND: Usando la ruta que verificamos antes
 COPY --from=frontend-builder /build/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
-# Expose port (3000 for NestJS API + static frontend)
+# Exponemos el puerto
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Use dumb-init to handle signals properly
 ENTRYPOINT ["/sbin/dumb-init", "--"]
 
-# Start server
-CMD ["node", "dist/main"]
+# COMANDO FINAL: Con la extensión .js para evitar el error 128
+CMD ["node", "dist/main.js"]

@@ -1,45 +1,41 @@
 # Multi-stage Dockerfile: Frontend + Backend unified deployment
 
-# =============================================================================
 # Stage 1: Frontend Builder
-# =============================================================================
 FROM node:20-alpine AS frontend-builder
 WORKDIR /build
 
-# Copy shared package dependencies
+# Copiamos TODOS los package.json primero
+COPY package.json package-lock.json* ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/frontend/package*.json ./packages/frontend/
-COPY package.json package-lock.json* ./
 
-# Install dependencies (with legacy peer deps for Angular compatibility)
+# Instalamos dependencias (esto crea los links internos del monorepo)
 RUN npm install --legacy-peer-deps
 
-# Copy frontend source code
-COPY packages/frontend/ ./packages/frontend/
+# AHORA copiamos el código fuente (Shared debe estar antes que Frontend)
 COPY packages/shared/ ./packages/shared/
+COPY packages/frontend/ ./packages/frontend/
 
-# Build Angular app for production
+# Build
 RUN npm run build:frontend 2>&1
 
-# =============================================================================
 # Stage 2: Backend Builder
-# =============================================================================
 FROM node:20-alpine AS backend-builder
 WORKDIR /build
 
-# Copy shared package dependencies
+# Copiamos TODOS los package.json
+COPY package.json package-lock.json* ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/backend/package*.json ./packages/backend/
-COPY package.json package-lock.json* ./
 
-# Install dependencies
+# Instalamos dependencias
 RUN npm install --legacy-peer-deps
 
-# Copy backend source code
-COPY packages/backend/ ./packages/backend/
+# Copiamos código fuente
 COPY packages/shared/ ./packages/shared/
+COPY packages/backend/ ./packages/backend/
 
-# Build NestJS app
+# Build
 RUN npm run build:backend 2>&1
 
 # =============================================================================

@@ -20,7 +20,7 @@ build/
 *.md
 .env*
 .angular
-docker*
+docker-compose.yml
 .github/
 playwright-report/
 jest.config.js

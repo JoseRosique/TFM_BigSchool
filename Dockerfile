@@ -44,25 +44,25 @@ RUN npm run build:backend 2>&1
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Instalamos dumb-init pero lo usaremos de forma más directa
 RUN apk add --no-cache dumb-init
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copiamos solo lo esencial
+# 1. Copiamos TODOS los package.json (Raíz, Shared y Backend)
+# Esto es vital para que npm resuelva las dependencias del monorepo
 COPY package.json package-lock.json* ./
+COPY packages/shared/package*.json ./packages/shared/
 COPY packages/backend/package*.json ./packages/backend/
 
-# Instalamos dependencias y limpiamos cache para ahorrar espacio
-RUN npm install --production --legacy-peer-deps && npm cache clean --force
+# 2. Instalamos TODAS las dependencias de producción del monorepo
+# Usamos --omit=dev para ignorar herramientas de desarrollo y ahorrar espacio
+RUN npm install --omit=dev --legacy-peer-deps
 
-# Copiamos los archivos compilados
+# 3. Copiamos los archivos compilados que ya tenemos de los builders
 COPY --from=backend-builder /build/packages/backend/dist ./dist
 COPY --from=frontend-builder /build/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
-# Exponemos el puerto
 EXPOSE 3000
 
-# Cambiamos la forma de arrancar para que sea más compatible
-# Usamos dumb-init directamente en el comando
+# Usamos dumb-init para gestionar el proceso node
 CMD ["dumb-init", "node", "dist/main.js"]

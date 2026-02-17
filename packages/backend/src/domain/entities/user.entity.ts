@@ -23,6 +23,9 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   name!: string;
 
+  @Column({ type: 'varchar', length: 100, unique: true })
+  nickname!: string;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   location?: string;
 

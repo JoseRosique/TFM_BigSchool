@@ -39,26 +39,29 @@
         (reserveSlot)="onReserve($event)"
         (editSlot)="onEdit($event)"
         (deleteSlot)="onDelete($event)"
+        [isReadOnly]="isReadOnly()"
       ></app-calendar-slot-list>
     </div>
-    @if (availableCount() > 0) {
-      <button
-        class="calendar-cell__plus calendar-cell__plus--corner"
-        type="button"
-        [attr.aria-label]="'CALENDAR_PAGE.EDIT_AVAILABILITY' | translate"
-        (click)="onCreateClick($event)"
-      >
-        <span class="material-symbols-outlined">edit</span>
-      </button>
-    } @else {
-      <button
-        class="calendar-cell__plus"
-        type="button"
-        [attr.aria-label]="'CALENDAR_PAGE.ADD_AVAILABILITY' | translate"
-        (click)="onCreateClick($event)"
-      >
-        <span class="material-symbols-outlined">add</span>
-      </button>
+    @if (!isReadOnly()) {
+      @if (availableCount() > 0) {
+        <button
+          class="calendar-cell__plus calendar-cell__plus--corner"
+          type="button"
+          [attr.aria-label]="'CALENDAR_PAGE.EDIT_AVAILABILITY' | translate"
+          (click)="onCreateClick($event)"
+        >
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+      } @else {
+        <button
+          class="calendar-cell__plus"
+          type="button"
+          [attr.aria-label]="'CALENDAR_PAGE.ADD_AVAILABILITY' | translate"
+          (click)="onCreateClick($event)"
+        >
+          <span class="material-symbols-outlined">add</span>
+        </button>
+      }
     }
   </article>
 }

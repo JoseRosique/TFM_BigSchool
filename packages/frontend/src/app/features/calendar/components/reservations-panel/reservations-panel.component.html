@@ -19,6 +19,24 @@
             <div class="reservation-card__time">
               {{ formatTimeRange()(reservation.startDate, reservation.endDate, reservation.slotTimezone) }}
             </div>
+
+            <div class="reservation-card__person">
+              <strong>
+                @if (isMyReservation(reservation)) {
+                  {{ "CALENDAR_PAGE.BOOKED_WITH" | translate }}:
+                } @else {
+                  {{ "CALENDAR_PAGE.BOOKED_BY" | translate }}:
+                }
+              </strong>
+              <span class="person-name">
+                @if (isMyReservation(reservation)) {
+                  {{ reservation.slotOwnerName || reservation.slotOwnerNickname }}
+                } @else {
+                  {{ reservation.reserverName || reservation.reserverNickname }}
+                }
+              </span>
+            </div>
+
             <div class="reservation-card__meta">
               <span class="badge badge--status">
                 {{ reservationStatusKey()(reservation.status) | translate }}

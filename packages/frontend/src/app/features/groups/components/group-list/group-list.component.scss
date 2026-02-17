@@ -37,6 +37,11 @@
   justify-content: space-between;
 }
 
+.group-card__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .group-card__icon {
   width: 44px;
   height: 44px;
@@ -95,6 +100,27 @@
     color: var(--color-text-primary);
     background: var(--color-border-soft);
     outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+.group-card__delete {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.4rem;
+
+  &:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+  }
+
+  &:focus-visible {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+    outline: 2px solid #ef4444;
     outline-offset: 2px;
   }
 }

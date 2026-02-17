@@ -32,9 +32,8 @@
     <aside class="sidebar-area">
       <app-friend-sidebar
         [lists]="friendLists()"
-        [selectedListId]="selectedList()"
+        [selectedListIds]="selectedLists()"
         (listSelect)="selectFriendList($event)"
-        (createList)="onCreateNewList()"
         (manageLists)="onManageLists()"
       ></app-friend-sidebar>
     </aside>

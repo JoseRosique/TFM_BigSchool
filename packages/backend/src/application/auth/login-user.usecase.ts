@@ -27,12 +27,17 @@ export class LoginUserUseCase {
       throw new UnauthorizedException('Invalid credentials');
     }
     // 3. Generar JWTs seguros
-    const accessPayload = { sub: user.id, email: user.email };
+    const accessPayload = { sub: user.id, email: user.email, nickname: user.nickname };
     const accessToken = this.jwtService.sign(accessPayload, {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('JWT_EXPIRATION'),
     });
-    const refreshPayload = { sub: user.id, email: user.email, type: 'refresh' };
+    const refreshPayload = {
+      sub: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      type: 'refresh',
+    };
     const refreshToken = this.jwtService.sign(refreshPayload, {
       secret: this.configService.getOrThrow<string>('REFRESH_TOKEN_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('REFRESH_TOKEN_EXPIRATION'),
@@ -41,6 +46,7 @@ export class LoginUserUseCase {
     return {
       userId: user.id,
       email: user.email,
+      nickname: user.nickname,
       accessToken,
       refreshToken,
       language: user.language,

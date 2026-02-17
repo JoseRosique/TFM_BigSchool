@@ -22,9 +22,18 @@
             <div class="group-card__icon" [attr.data-color]="group.color">
               <span class="material-symbols-outlined">{{ group.icon }}</span>
             </div>
-            <button class="group-card__edit" (click)="onEdit(group)" [attr.aria-label]="'Edit ' + group.name">
-              <span class="material-symbols-outlined">edit</span>
-            </button>
+            <div class="group-card__actions">
+              <button class="group-card__edit" (click)="onEdit(group)" [attr.aria-label]="'Edit ' + group.name">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button
+                class="group-card__delete"
+                (click)="onDelete(group, $event)"
+                [attr.aria-label]="'Delete ' + group.name"
+              >
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
           </div>
           <h3 class="group-card__title">{{ group.name }}</h3>
           <p class="group-card__desc">{{ group.description || ("GROUPS_MANAGEMENT.NO_DESCRIPTION" | translate) }}</p>

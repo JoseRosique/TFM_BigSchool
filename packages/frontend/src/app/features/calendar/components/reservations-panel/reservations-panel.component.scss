@@ -30,3 +30,21 @@
     background: var(--color-border);
   }
 }
+.reservation-card__person {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  align-items: center;
+
+  strong {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .person-name {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+}

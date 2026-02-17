@@ -19,7 +19,21 @@
     [isLoading]="isLoading()"
     [errorKey]="errorKey()"
     (edit)="openEditModal($event)"
+    (delete)="openDeleteConfirm($event)"
   ></app-group-list>
+
+  @if (isConfirmDialogOpen()) {
+    <app-confirm-dialog
+      [title]="'GROUPS_MANAGEMENT.DELETE_TITLE' | translate"
+      [message]="'GROUPS_MANAGEMENT.DELETE_MESSAGE' | translate: { groupName: groupToDelete()?.name }"
+      [confirmLabel]="'GROUPS_MANAGEMENT.DELETE_CONFIRM'"
+      [cancelLabel]="'GROUPS_MANAGEMENT.MODAL.CANCEL'"
+      [isDestructive]="true"
+      [isProcessing]="isDeleting()"
+      (close)="closeDeleteConfirm()"
+      (confirm)="confirmDelete()"
+    ></app-confirm-dialog>
+  }
 
   <app-group-modal
     [isOpen]="isModalOpen()"

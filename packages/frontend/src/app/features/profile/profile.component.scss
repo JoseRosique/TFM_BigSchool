@@ -154,6 +154,62 @@
   }
 }
 
+/* Nickname Input with Status */
+.nickname-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nickname-status {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  &.nickname-status--checking {
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+  }
+
+  &.nickname-status--success {
+    .material-symbols-outlined {
+      color: var(--color-success);
+    }
+  }
+
+  &.nickname-status--error {
+    .material-symbols-outlined {
+      color: var(--color-danger);
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form-error {
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  margin-top: 0.25rem;
+  display: block;
+}
+
 /* Preferences */
 .preference-item {
   display: flex;

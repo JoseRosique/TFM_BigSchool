@@ -19,17 +19,12 @@ interface FriendList {
 })
 export class FriendSidebarComponent {
   @Input() lists: FriendList[] = [];
-  @Input() selectedListId: string | null = null;
+  @Input() selectedListIds: string[] = [];
   @Output() listSelect = new EventEmitter<string>();
-  @Output() createList = new EventEmitter<void>();
   @Output() manageLists = new EventEmitter<void>();
 
   onListClick(listId: string): void {
     this.listSelect.emit(listId);
-  }
-
-  onCreateList(): void {
-    this.createList.emit();
   }
 
   onManageLists(): void {

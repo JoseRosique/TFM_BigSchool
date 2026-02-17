@@ -33,8 +33,10 @@ export class CalendarDayCellComponent {
   currentUserId = input<string | null>(null);
   processingSlotId = input<string | null>(null);
   formatTimeRange = input<TimeRangeFormatter>(() => '');
+  isReadOnly = input<boolean>(false);
 
   createForDay = output<string>();
+  openDayModal = output<string>();
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();
   editSlot = output<CalendarSlot>();
@@ -42,7 +44,14 @@ export class CalendarDayCellComponent {
   onCellClick(): void {
     const day = this.day();
     if (!day) return;
-    this.createForDay.emit(day.key);
+
+    // En modo read-only (explorar), abrir modal
+    if (this.isReadOnly()) {
+      this.openDayModal.emit(day.key);
+    } else {
+      // En modo normal (mi disponibilidad), permitir crear
+      this.createForDay.emit(day.key);
+    }
   }
 
   onCreateClick(event: MouseEvent): void {

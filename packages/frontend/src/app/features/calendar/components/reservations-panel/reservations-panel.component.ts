@@ -18,10 +18,15 @@ export class ReservationsPanelComponent {
   reservations = input<ReservationItem[]>([]);
   isLoading = input<boolean>(false);
   processingSlotId = input<string | null>(null);
+  currentUserId = input<string | null>(null);
   formatTimeRange = input<TimeRangeFormatter>(() => '');
   reservationStatusKey = input<ReservationStatusKey>(() => '');
 
   cancelReservation = output<string>();
+
+  isMyReservation(reservation: ReservationItem): boolean {
+    return reservation.userId === this.currentUserId();
+  }
 
   onCancel(reservationId: string): void {
     this.cancelReservation.emit(reservationId);

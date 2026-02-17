@@ -6,7 +6,15 @@ import { Friend } from '../../services/friends.service';
 
 type TabType = 'search' | 'all' | 'pending' | 'blocked';
 
-type FriendActionType = 'add' | 'accept' | 'reject' | 'message' | 'calendar' | 'delete' | 'unblock';
+type FriendActionType =
+  | 'add'
+  | 'accept'
+  | 'reject'
+  | 'message'
+  | 'calendar'
+  | 'delete'
+  | 'unblock'
+  | 'block';
 
 interface FriendAction {
   type: FriendActionType;

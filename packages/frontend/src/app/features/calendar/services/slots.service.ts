@@ -29,6 +29,18 @@ export class SlotsService {
     return this.http.get<Slot>(`${this.apiUrl}/${slotId}`);
   }
 
+  getMyAvailability(query?: ListSlotsDTO.Query): Observable<ListSlotsDTO.Response> {
+    return this.http.get<ListSlotsDTO.Response>(`${this.apiUrl}/my-availability`, {
+      params: query as any,
+    });
+  }
+
+  getExploreSlots(query?: ListSlotsDTO.Query): Observable<ListSlotsDTO.Response> {
+    return this.http.get<ListSlotsDTO.Response>(`${this.apiUrl}/explore`, {
+      params: query as any,
+    });
+  }
+
   listSlots(query?: ListSlotsDTO.Query): Observable<ListSlotsDTO.Response> {
     return this.http.get<ListSlotsDTO.Response>(this.apiUrl, {
       params: query as any,

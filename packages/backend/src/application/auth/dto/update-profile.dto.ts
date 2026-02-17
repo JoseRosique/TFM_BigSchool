@@ -1,4 +1,13 @@
-import { IsString, IsOptional, IsEmail, IsBoolean, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsBoolean,
+  IsIn,
+  MinLength,
+  MaxLength,
+  Matches,
+} from 'class-validator';
 
 export class UpdateProfileDto {
   @IsString()
@@ -8,6 +17,15 @@ export class UpdateProfileDto {
   @IsEmail()
   @IsOptional()
   email?: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(3, { message: 'Nickname must be at least 3 characters long' })
+  @MaxLength(20, { message: 'Nickname must not exceed 20 characters' })
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'Nickname can only contain letters, numbers, hyphens, and underscores',
+  })
+  nickname?: string;
 
   @IsString()
   @IsOptional()

@@ -1,4 +1,12 @@
-import { IsEnum, IsISO8601, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  IsArray,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 import { SlotStatus, VisibilityScope } from '@meetwithfriends/shared';
 
 export class UpdateSlotDto {
@@ -26,4 +34,9 @@ export class UpdateSlotDto {
   @IsOptional()
   @MaxLength(500)
   notes?: string;
+
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsOptional()
+  groupIds?: string[];
 }

@@ -234,6 +234,7 @@
     position: relative;
     display: flex;
     align-items: center;
+    margin-bottom: 16px;
   }
 
   .search-icon {
@@ -282,8 +283,7 @@
   }
 
   .friends-table__header {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 140px;
+    display: flex;
     gap: 1rem;
     padding: 1rem 1.25rem;
     background: var(--color-bg-elevated);
@@ -291,6 +291,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    justify-content: space-between;
   }
 
   .header-col {
@@ -325,13 +326,13 @@
   }
 
   .friends-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 140px;
+    display: flex;
     gap: 1rem;
     align-items: center;
     padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--color-border-soft);
     transition: all 0.2s ease;
+    justify-content: space-between;
 
     &:hover {
       background: var(--color-bg-elevated);
@@ -798,6 +799,16 @@
     &[data-color='purple'] {
       background: rgba(139, 92, 246, 0.15);
       color: #8b5cf6;
+    }
+
+    &[data-color='green'] {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    &[data-color='teal'] {
+      background: rgba(20, 184, 166, 0.15);
+      color: #14b8a6;
     }
   }
 

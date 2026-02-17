@@ -27,6 +27,21 @@ export class SlotsController {
     return this.slotsService.create(req.user.userId, dto);
   }
 
+  @Get('my-availability')
+  async getMyAvailability(@Request() req: any, @Query() query: ListSlotsQueryDto) {
+    return this.slotsService.getMyAvailability(req.user.userId, query);
+  }
+
+  @Get('explore')
+  async getExploreSlots(@Request() req: any, @Query() query: ListSlotsQueryDto) {
+    return this.slotsService.getExploreSlots(req.user.userId, query);
+  }
+
+  @Get(':id/detail')
+  async getDetail(@Request() req: any, @Param('id') id: string) {
+    return this.slotsService.getSlotDetail(id, req.user.userId);
+  }
+
   @Get()
   async list(@Request() req: any, @Query() query: ListSlotsQueryDto) {
     return this.slotsService.list(req.user.userId, query);

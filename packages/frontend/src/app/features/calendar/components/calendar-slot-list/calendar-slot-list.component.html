@@ -9,20 +9,31 @@
     <span class="month-slot__time">
       {{ formatSlotRange(slot) }}
     </span>
-    @if (isOwner(slot)) {
-      <span class="month-slot__tag">{{ "CALENDAR_PAGE.MY_SLOT" | translate }}</span>
+    @if (isReadOnly()) {
+      <button
+        class="month-slot__action month-slot__action--view"
+        type="button"
+        title="{{ 'CALENDAR_PAGE.VIEW' | translate }}"
+        (click)="onEdit(slot, $event)"
+      >
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
     } @else {
-      @if (slot.status === slotStatus().AVAILABLE) {
-        <button
-          class="month-slot__action month-slot__action--primary"
-          type="button"
-          (click)="onReserve(slot, $event)"
-          [disabled]="processingSlotId() === slot.id"
-        >
-          {{ "CALENDAR_PAGE.RESERVE_SHORT" | translate }}
-        </button>
+      @if (isOwner(slot)) {
+        <span class="month-slot__tag">{{ "CALENDAR_PAGE.MY_SLOT" | translate }}</span>
       } @else {
-        <span class="month-slot__tag">{{ "CALENDAR_PAGE.UNAVAILABLE" | translate }}</span>
+        @if (slot.status === slotStatus().AVAILABLE) {
+          <button
+            class="month-slot__action month-slot__action--primary"
+            type="button"
+            (click)="onReserve(slot, $event)"
+            [disabled]="processingSlotId() === slot.id"
+          >
+            {{ "CALENDAR_PAGE.RESERVE_SHORT" | translate }}
+          </button>
+        } @else {
+          <span class="month-slot__tag">{{ "CALENDAR_PAGE.UNAVAILABLE" | translate }}</span>
+        }
       }
     }
   </article>

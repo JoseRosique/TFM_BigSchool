@@ -27,6 +27,13 @@ export class RegisterDto {
   name!: string;
 
   @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(100)
+  @Matches(/^[a-zA-Z0-9_-]+$/)
+  nickname!: string;
+
+  @IsString()
   @IsOptional()
   @MaxLength(50)
   timezone?: string;

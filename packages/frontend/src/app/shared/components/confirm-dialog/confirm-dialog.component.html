@@ -1,0 +1,43 @@
+<div class="modal-overlay" (click)="onOverlayClick()">
+  <div
+    class="modal-container"
+    (click)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    [attr.aria-describedby]="descId"
+  >
+    <div class="modal-header">
+      <div>
+        <h2 [id]="titleId" class="modal-title">{{ title() }}</h2>
+      </div>
+      <button
+        class="modal-close"
+        type="button"
+        (click)="onClose()"
+        [disabled]="isProcessing()"
+        [attr.aria-label]="'GLOBAL.CLOSE' | translate"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div [id]="descId" class="modal-body">
+      <p class="modal-text">{{ message() }}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--ghost btn-action" type="button" (click)="onClose()" [disabled]="isProcessing()">
+        {{ cancelLabel() | translate }}
+      </button>
+      <button
+        class="btn btn-action"
+        [class.btn--destructive]="isDestructive()"
+        [class.btn--primary]="!isDestructive()"
+        type="button"
+        (click)="onConfirm()"
+        [disabled]="isProcessing()"
+      >
+        {{ confirmLabel() | translate }}
+      </button>
+    </div>
+  </div>
+</div>

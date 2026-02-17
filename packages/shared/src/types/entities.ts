@@ -44,6 +44,7 @@ export enum NotificationEventType {
 export interface User {
   id: string;
   email: string;
+  nickname: string; // Public identifier (unique)
   name: string;
   timezone: string; // IANA timezone (e.g., 'Europe/Madrid')
   location?: string; // City/location preference
@@ -105,6 +106,7 @@ export interface Notification {
 export namespace RegisterDTO {
   export interface Request {
     email: string;
+    nickname: string;
     password: string;
     name: string;
     timezone?: string;
@@ -114,6 +116,7 @@ export namespace RegisterDTO {
   export interface Response {
     id: string;
     email: string;
+    nickname: string;
     name: string;
     timezone: string;
     language: string;
@@ -131,6 +134,7 @@ export namespace LoginDTO {
   export interface Response {
     userId: string;
     email: string;
+    nickname: string;
     accessToken: string;
     refreshToken: string;
     language: string;
@@ -204,6 +208,10 @@ export namespace ListReservationsDTO {
     slotEnd: Date;
     slotTimezone: string;
     slotOwnerId: string;
+    slotOwnerName: string;
+    slotOwnerNickname: string;
+    reserverName: string;
+    reserverNickname: string;
   }
 
   export interface Response {
@@ -216,6 +224,7 @@ export namespace GetUserDTO {
   export interface Response {
     id: string;
     email: string;
+    nickname: string;
     name: string;
     timezone: string;
   }

@@ -10,6 +10,8 @@ import {
   Headers,
   NotFoundException,
   BadRequestException,
+  Param,
+  ConflictException,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
@@ -166,6 +168,17 @@ export class AuthController {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    // Validate nickname uniqueness if being changed
+    if (dto.nickname !== undefined && dto.nickname !== user.nickname) {
+      const cleanedNickname = dto.nickname.trim().toLowerCase();
+      const existingNickname = await this.userRepository.findByNickname(cleanedNickname);
+      if (existingNickname) {
+        throw new ConflictException('NICKNAME_ALREADY_IN_USE');
+      }
+      user.nickname = cleanedNickname;
+    }
+
     if (dto.name !== undefined) user.name = dto.name;
     if (dto.location !== undefined) user.location = dto.location;
     if (dto.timezone !== undefined) user.timezone = dto.timezone;
@@ -189,5 +202,18 @@ export class AuthController {
       throw new BadRequestException('PASSWORD_MISMATCH');
     }
     return this.changePasswordUseCase.execute(req.user.userId, dto);
+  }
+
+  @Get('check-nickname/:nickname')
+  @Throttle({ default: { limit: 5, ttl: 60 } })
+  async checkNicknameAvailability(
+    @Param('nickname') nickname: string,
+  ): Promise<{ available: boolean }> {
+    const cleanedNickname = nickname?.trim().toLowerCase();
+    if (!cleanedNickname || cleanedNickname.length < 3 || cleanedNickname.length > 20) {
+      throw new BadRequestException('INVALID_NICKNAME');
+    }
+    const existingUser = await this.userRepository.findByNickname(cleanedNickname);
+    return { available: !existingUser };
   }
 }

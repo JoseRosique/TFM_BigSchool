@@ -4,12 +4,15 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
   ManyToOne,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { SlotStatus, VisibilityScope } from '@meetwithfriends/shared';
 import { User } from './user.entity';
+import { Group } from './group.entity';
 
 @Entity('slots')
 @Index(['ownerId', 'start'])
@@ -51,6 +54,14 @@ export class Slot {
     default: SlotStatus.AVAILABLE,
   })
   status!: SlotStatus;
+
+  @ManyToMany(() => Group, { cascade: false, eager: false })
+  @JoinTable({
+    name: 'slot_groups',
+    joinColumn: { name: 'slot_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'group_id', referencedColumnName: 'id' },
+  })
+  groups!: Group[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

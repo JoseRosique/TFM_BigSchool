@@ -18,17 +18,23 @@ export class RegisterUserUseCase {
   ) {}
 
   async execute(input: RegisterDTO.Request): Promise<RegisterDTO.Response> {
-    // 1. Validar input (aquí se asume validación previa, pero podrías usar Zod)
+    // 1. Validar input
     // 2. Verificar que el usuario no existe
     const existing = await this.userRepository.findByEmail(input.email);
     if (existing) {
       throw new ConflictException('Email already exists');
     }
-    // 3. Hash password
+    // 3. Verificar que el nickname no existe
+    const existingNickname = await this.userRepository.findByNickname(input.nickname);
+    if (existingNickname) {
+      throw new ConflictException('Nickname already exists');
+    }
+    // 4. Hash password
     const passwordHash = await bcrypt.hash(input.password, 10);
-    // 4. Crear usuario
+    // 5. Crear usuario
     const user = new User();
     user.email = input.email;
+    user.nickname = input.nickname;
     user.passwordHash = passwordHash;
     user.name = input.name;
     user.timezone = input.timezone || 'UTC';
@@ -36,12 +42,12 @@ export class RegisterUserUseCase {
     user.theme = 'dark';
     user.passwordChangedAt = new Date();
     const saved = await this.userRepository.save(user);
-    const accessPayload = { sub: saved.id, email: saved.email };
+    const accessPayload = { sub: saved.id, nickname: saved.nickname };
     const accessToken = this.jwtService.sign(accessPayload, {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('JWT_EXPIRATION'),
     });
-    const refreshPayload = { sub: saved.id, email: saved.email, type: 'refresh' };
+    const refreshPayload = { sub: saved.id, nickname: saved.nickname, type: 'refresh' };
     const refreshToken = this.jwtService.sign(refreshPayload, {
       secret: this.configService.getOrThrow<string>('REFRESH_TOKEN_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('REFRESH_TOKEN_EXPIRATION'),
@@ -52,11 +58,12 @@ export class RegisterUserUseCase {
     } catch (error) {
       console.error('[RegisterUserUseCase] Welcome email failed:', error);
     }
-    // 5. Retornar DTO seguro
+    // 6. Retornar DTO seguro
     return {
       id: saved.id,
       email: saved.email,
       name: saved.name,
+      nickname: saved.nickname,
       timezone: saved.timezone,
       language: saved.language,
       accessToken,

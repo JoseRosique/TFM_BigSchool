@@ -77,8 +77,8 @@ export class FriendsController {
     if (userId === requesterId) {
       throw new BadRequestException('CANNOT_FRIEND_SELF');
     }
-    await this.friendsService.createRequest(requesterId, userId);
-    return { message: 'REQUEST_SENT' };
+    const friendship = await this.friendsService.createRequest(requesterId, userId);
+    return { message: 'REQUEST_SENT', requestId: friendship.id };
   }
 
   @Post('friends/requests')
@@ -93,8 +93,8 @@ export class FriendsController {
     if (dto.userId === requesterId) {
       throw new BadRequestException('CANNOT_FRIEND_SELF');
     }
-    await this.friendsService.createRequest(requesterId, dto.userId);
-    return { message: 'REQUEST_SENT' };
+    const friendship = await this.friendsService.createRequest(requesterId, dto.userId);
+    return { message: 'REQUEST_SENT', requestId: friendship.id };
   }
 
   @Post('friends/requests/:requestId/accept')

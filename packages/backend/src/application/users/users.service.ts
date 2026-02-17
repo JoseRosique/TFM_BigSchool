@@ -1,20 +1,16 @@
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import * as bcrypt from "bcryptjs";
-import { User } from "../../domain/entities/user.entity";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UserResponseDto } from "./dto/user-response.dto";
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+import { User } from '../../domain/entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
@@ -23,7 +19,15 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new ConflictException("Email already exists");
+      throw new ConflictException('Email already exists');
+    }
+
+    const existingNickname = await this.userRepository.findOne({
+      where: { nickname: createUserDto.nickname },
+    });
+
+    if (existingNickname) {
+      throw new ConflictException('Nickname already exists');
     }
 
     const passwordHash = await bcrypt.hash(createUserDto.password, 10);
@@ -32,7 +36,8 @@ export class UsersService {
       email: createUserDto.email,
       passwordHash,
       name: createUserDto.name,
-      timezone: createUserDto.timezone || "UTC",
+      nickname: createUserDto.nickname,
+      timezone: createUserDto.timezone || 'UTC',
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -42,7 +47,7 @@ export class UsersService {
 
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.userRepository.find({
-      order: { createdAt: "DESC" },
+      order: { createdAt: 'DESC' },
     });
 
     return users.map((user) => this.toResponseDto(user));
@@ -52,7 +57,7 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return this.toResponseDto(user);

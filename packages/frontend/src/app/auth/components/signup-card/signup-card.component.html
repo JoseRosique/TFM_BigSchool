@@ -58,6 +58,35 @@
     </div>
 
     <div class="form-group">
+      <label for="nickname">{{ "SIGNUP.FORM.NICKNAME.LABEL" | translate }}</label>
+      <div class="input-wrapper" [class.error]="errors()['nickname']">
+        <span class="material-symbols-outlined input-icon">person</span>
+        <input
+          id="nickname"
+          name="nickname"
+          type="text"
+          placeholder="{{ 'SIGNUP.FORM.NICKNAME.PLACEHOLDER' | translate }}"
+          [value]="nickname()"
+          (input)="nickname.set($event.target.value); onInput()"
+          (blur)="onBlur('nickname')"
+          [attr.aria-invalid]="!!errors()['nickname']"
+          [attr.aria-describedby]="errors()['nickname'] ? 'nickname-error' : null"
+          required
+        />
+        @if (nicknameChecking()) {
+          <span class="input-checking">⟳</span>
+        } @else if (touched()["nickname"] && !errors()["nickname"] && nicknameAvailable()) {
+          <span class="input-check">✔️</span>
+        }
+      </div>
+      @if (touched()["nickname"] && errors()["nickname"]) {
+        <div class="input-error" id="nickname-error">
+          {{ errors()["nickname"] }}
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
       <label for="password">{{ "SIGNUP.FORM.PASSWORD.LABEL" | translate }}</label>
       <div class="input-wrapper" [class.error]="errors()['password']">
         <span class="material-symbols-outlined input-icon">lock</span>

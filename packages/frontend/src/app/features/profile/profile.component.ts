@@ -6,6 +6,10 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
+  AbstractControl,
+  ValidationErrors,
+  AsyncValidator,
+  AsyncValidatorFn,
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../shared/services/auth.service';
@@ -13,6 +17,9 @@ import { ToastService } from '../../shared/services/toast.service';
 import { User } from '../../shared/models/user.model';
 import { Router } from '@angular/router';
 import { AvatarSelectorModalComponent } from '../../shared/components/avatar-selector-modal/avatar-selector-modal.component';
+import { Observable, of, timer } from 'rxjs';
+import { map, switchMap, catchError, finalize } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -33,6 +40,7 @@ export class ProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly toastService = inject(ToastService);
+  private readonly http = inject(HttpClient);
 
   user = signal<User | null>(null);
   profileForm!: FormGroup;
@@ -41,9 +49,11 @@ export class ProfileComponent implements OnInit {
   isChangingPassword = signal(false);
   showAvatarModal = signal(false);
   showPasswordModal = signal(false);
+  nicknameCheckInProgress = signal(false);
   @ViewChild('passwordModalRef') passwordModalRef?: ElementRef<HTMLDivElement>;
 
   private readonly passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
+  private readonly nicknamePattern = /^[a-zA-Z0-9_-]{3,20}$/;
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -83,12 +93,56 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: [u?.name || '', Validators.required],
       email: [u?.email || '', [Validators.required, Validators.email]],
+      nickname: [
+        u?.nickname || '',
+        [Validators.required, Validators.pattern(this.nicknamePattern)],
+        [this.nicknameAvailabilityValidator(u?.nickname)],
+      ],
       location: [u?.location || ''],
       timezone: [u?.timezone || 'UTC'],
       emailNotifications: [u ? (u as any).emailNotifications : true],
       pushNotifications: [u ? (u as any).pushNotifications : true],
       twoFactorEnabled: [u ? (u as any).twoFactorEnabled : false],
     });
+  }
+
+  /**
+   * Async validator para verificar disponibilidad del nickname
+   * con debounce de 500ms y tolerancia para el nickname actual
+   */
+  private nicknameAvailabilityValidator(currentNickname?: string): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (!control.value) {
+        return of(null);
+      }
+
+      const nickname = control.value.trim().toLowerCase();
+
+      // Si es el mismo nickname actual, no validar
+      if (currentNickname && nickname === currentNickname.toLowerCase()) {
+        return of(null);
+      }
+
+      // Validaciones básicas antes de llamar al servidor
+      if (nickname.length < 3 || nickname.length > 20) {
+        return of(null);
+      }
+
+      if (!this.nicknamePattern.test(nickname)) {
+        return of(null);
+      }
+
+      // Debounce de 500ms + Async validator
+      this.nicknameCheckInProgress.set(true);
+      const apiUrl = `${this.authService['apiUrl']}/check-nickname/${encodeURIComponent(nickname)}`;
+
+      return timer(500).pipe(
+        switchMap(() => this.http.get<{ available: boolean }>(apiUrl)),
+        map((response) => (response.available ? null : { nicknameInUse: true })),
+        catchError(() => of(null)),
+        finalize(() => this.nicknameCheckInProgress.set(false)),
+      );
+    };
   }
 
   saveChanges(): void {
@@ -102,8 +156,17 @@ export class ProfileComponent implements OnInit {
         this.isSaving.set(false);
         this.toastService.success('PROFILE.SAVE_SUCCESS');
       },
-      error: () => {
+      error: (error) => {
         this.isSaving.set(false);
+        const message = error?.error?.message;
+
+        if (message === 'NICKNAME_ALREADY_IN_USE') {
+          this.profileForm.get('nickname')?.setErrors({ nicknameInUse: true });
+          this.profileForm.get('nickname')?.markAsTouched();
+          this.toastService.error('PROFILE.ERRORS.NICKNAME_IN_USE');
+          return;
+        }
+
         this.toastService.error('PROFILE.SAVE_ERROR');
       },
     });

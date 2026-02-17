@@ -15,8 +15,15 @@ export class GroupListComponent {
   @Input() isLoading = false;
   @Input() errorKey: string | null = null;
   @Output() edit = new EventEmitter<Group>();
+  @Output() delete = new EventEmitter<Group>();
 
   onEdit(group: Group): void {
     this.edit.emit(group);
+  }
+
+  onDelete(group: Group, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.delete.emit(group);
   }
 }

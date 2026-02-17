@@ -34,6 +34,7 @@ describe('AuthService', () => {
   it('should call register use case', async () => {
     const input: RegisterDTO.Request = {
       email: 'test@example.com',
+      nickname: 'testuser',
       password: 'password123',
       name: 'Test',
       timezone: 'UTC',
@@ -41,6 +42,7 @@ describe('AuthService', () => {
     const output: RegisterDTO.Response = {
       id: '1',
       email: input.email,
+      nickname: input.nickname,
       name: input.name,
       timezone: input.timezone ?? 'UTC',
       language: 'es',
@@ -61,6 +63,7 @@ describe('AuthService', () => {
     const output: LoginDTO.Response = {
       userId: '1',
       email: input.email,
+      nickname: 'testuser',
       accessToken: 'jwt-token',
       refreshToken: 'refresh-token',
       language: 'es',

@@ -11,6 +11,24 @@ export const authGuard: CanActivateFn = () => {
     return router.createUrlTree(['/auth/login']);
   }
 
+  const cachedUser = authService.currentUser$.value;
+  // Si el usuario existe pero falta el nickname, intenta recuperarlo del payload JWT
+  if (cachedUser && (!('nickname' in cachedUser) || !cachedUser.nickname)) {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        // Decodifica JWT: convierte base64url a base64 estándar
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        if (payload.nickname && !cachedUser.nickname) {
+          cachedUser.nickname = payload.nickname;
+          authService.currentUser$.next(cachedUser);
+        }
+      } catch (e) {
+        console.warn('Error al obtener nickname del JWT:', e);
+      }
+    }
+  }
+
   if (authService.currentUser$.value) {
     return true;
   }

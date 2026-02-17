@@ -1,8 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../../domain/entities/user.entity';
 import { Friendship, FriendshipStatus } from '../../domain/entities/friendship.entity';
+import { Group } from '../../domain/entities/group.entity';
+import { Slot } from '../../domain/entities/slot.entity';
+import { Reservation } from '../../domain/entities/reservation.entity';
+import { ReservationStatus, SlotStatus } from '@meetwithfriends/shared';
 
 export interface FriendGroup {
   id: string;
@@ -14,9 +18,10 @@ export interface FriendGroup {
 export interface FriendResponse {
   id: string;
   name: string;
+  nickname: string;
   username: string;
   avatarUrl?: string;
-  group?: FriendGroup | null;
+  groups: FriendGroup[];
   status: 'online' | 'offline';
   isBlocked: boolean;
   isPending: boolean;
@@ -41,6 +46,13 @@ export class FriendsService {
     private readonly friendshipRepository: Repository<Friendship>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Group)
+    private readonly groupRepository: Repository<Group>,
+    @InjectRepository(Slot)
+    private readonly slotRepository: Repository<Slot>,
+    @InjectRepository(Reservation)
+    private readonly reservationRepository: Repository<Reservation>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getFriends(userId: string): Promise<FriendResponse[]> {
@@ -49,17 +61,20 @@ export class FriendsService {
         { requesterId: userId, status: FriendshipStatus.ACCEPTED },
         { recipientId: userId, status: FriendshipStatus.ACCEPTED },
       ],
-      relations: ['requester', 'recipient', 'requester.groups', 'recipient.groups'],
+      relations: ['requester', 'recipient'],
     });
 
-    return friendships.map((friendship) => {
-      const other = friendship.requesterId === userId ? friendship.recipient : friendship.requester;
-      return this.mapUserToFriend(other, {
-        isPending: false,
-        isBlocked: false,
-        isFriend: true,
-      });
-    });
+    return Promise.all(
+      friendships.map((friendship) => {
+        const other =
+          friendship.requesterId === userId ? friendship.recipient : friendship.requester;
+        return this.mapUserToFriend(other, userId, {
+          isPending: false,
+          isBlocked: false,
+          isFriend: true,
+        });
+      }),
+    );
   }
 
   async getPendingRequests(userId: string): Promise<FriendResponse[]> {
@@ -68,13 +83,15 @@ export class FriendsService {
       relations: ['requester'],
     });
 
-    return pending.map((friendship) =>
-      this.mapUserToFriend(friendship.requester, {
-        isPending: true,
-        isBlocked: false,
-        isFriend: false,
-        requestId: friendship.id,
-      }),
+    return Promise.all(
+      pending.map((friendship) =>
+        this.mapUserToFriend(friendship.requester, userId, {
+          isPending: true,
+          isBlocked: false,
+          isFriend: false,
+          requestId: friendship.id,
+        }),
+      ),
     );
   }
 
@@ -84,12 +101,14 @@ export class FriendsService {
       relations: ['recipient'],
     });
 
-    return blocked.map((friendship) =>
-      this.mapUserToFriend(friendship.recipient, {
-        isPending: false,
-        isBlocked: true,
-        isFriend: false,
-      }),
+    return Promise.all(
+      blocked.map((friendship) =>
+        this.mapUserToFriend(friendship.recipient, userId, {
+          isPending: false,
+          isBlocked: true,
+          isFriend: false,
+        }),
+      ),
     );
   }
 
@@ -105,11 +124,11 @@ export class FriendsService {
 
     const escaped = trimmed.replace(/([%_\\])/g, '\\$1');
 
-    // Buscar TODOS los usuarios que coincidan con el nombre (excepto el usuario actual)
+    // Buscar TODOS los usuarios que coincidan con el nombre o nickname (excepto el usuario actual)
     const qb = this.userRepository.createQueryBuilder('user');
     qb.where('user.id != :userId', { userId });
     qb.andWhere(
-      "(LOWER(user.name) LIKE :query ESCAPE '\\' OR LOWER(user.email) LIKE :query ESCAPE '\\')",
+      "(LOWER(user.name) LIKE :query ESCAPE '\\' OR LOWER(user.nickname) LIKE :query ESCAPE '\\')",
       { query: `%${escaped.toLowerCase()}%` },
     );
 
@@ -127,50 +146,51 @@ export class FriendsService {
     }
 
     // Mapear usuarios con sus estados de relación
-    return users.map((user) => {
-      const relation = relationMap.get(user.id);
-      if (!relation) {
-        // Sin relación: usuario desconocido
-        return this.mapUserToFriend(user, {
-          isPending: false,
-          isBlocked: false,
-          isFriend: false,
-        });
-      }
+    const results = users
+      .filter((user) => {
+        const relation = relationMap.get(user.id);
+        return !relation || relation.status !== FriendshipStatus.BLOCKED;
+      })
+      .map(async (user) => {
+        const relation = relationMap.get(user.id);
+        if (!relation) {
+          // Sin relación: usuario desconocido
+          return this.mapUserToFriend(user, userId, {
+            isPending: false,
+            isBlocked: false,
+            isFriend: false,
+          });
+        }
 
-      // Con relación: incluir el estado actual
-      switch (relation.status) {
-        case FriendshipStatus.ACCEPTED:
-          return this.mapUserToFriend(user, {
-            isPending: false,
-            isBlocked: false,
-            isFriend: true,
-          });
-        case FriendshipStatus.PENDING:
-          return this.mapUserToFriend(user, {
-            isPending: true,
-            isBlocked: false,
-            isFriend: false,
-            sentByMe: relation.requesterId === userId,
-            requestId: relation.id,
-          });
-        case FriendshipStatus.BLOCKED:
-          return this.mapUserToFriend(user, {
-            isPending: false,
-            isBlocked: true,
-            isFriend: false,
-          });
-        default:
-          return this.mapUserToFriend(user, {
-            isPending: false,
-            isBlocked: false,
-            isFriend: false,
-          });
-      }
-    });
+        // Con relación: incluir el estado actual
+        switch (relation.status) {
+          case FriendshipStatus.ACCEPTED:
+            return this.mapUserToFriend(user, userId, {
+              isPending: false,
+              isBlocked: false,
+              isFriend: true,
+            });
+          case FriendshipStatus.PENDING:
+            return this.mapUserToFriend(user, userId, {
+              isPending: true,
+              isBlocked: false,
+              isFriend: false,
+              sentByMe: relation.requesterId === userId,
+              requestId: relation.id,
+            });
+          default:
+            return this.mapUserToFriend(user, userId, {
+              isPending: false,
+              isBlocked: false,
+              isFriend: false,
+            });
+        }
+      });
+
+    return Promise.all(results);
   }
 
-  async createRequest(requesterId: string, recipientId: string): Promise<void> {
+  async createRequest(requesterId: string, recipientId: string): Promise<Friendship> {
     if (requesterId === recipientId) {
       throw new BadRequestException('CANNOT_FRIEND_SELF');
     }
@@ -194,7 +214,8 @@ export class FriendsService {
       status: FriendshipStatus.PENDING,
     });
 
-    await this.friendshipRepository.save(friendship);
+    const saved = await this.friendshipRepository.save(friendship);
+    return saved;
   }
 
   async acceptRequest(userId: string, requestId: string): Promise<void> {
@@ -211,21 +232,88 @@ export class FriendsService {
   }
 
   async deleteRelationship(userId: string, idOrUserId: string): Promise<void> {
-    const byId = await this.friendshipRepository.findOne({ where: { id: idOrUserId } });
-    if (byId) {
-      if (byId.requesterId !== userId && byId.recipientId !== userId) {
-        throw new BadRequestException('FORBIDDEN');
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const byId = await queryRunner.manager.findOne(Friendship, { where: { id: idOrUserId } });
+      let friendId: string;
+
+      if (byId) {
+        if (byId.requesterId !== userId && byId.recipientId !== userId) {
+          throw new BadRequestException('FORBIDDEN');
+        }
+        friendId = byId.requesterId === userId ? byId.recipientId : byId.requesterId;
+        await queryRunner.manager.remove(Friendship, byId);
+      } else {
+        const relationship = await this.findRelationshipBetween(userId, idOrUserId);
+        if (!relationship) {
+          throw new NotFoundException('FRIENDSHIP_NOT_FOUND');
+        }
+        friendId = idOrUserId;
+        await queryRunner.manager.remove(Friendship, relationship);
       }
-      await this.friendshipRepository.remove(byId);
-      return;
-    }
 
-    const relationship = await this.findRelationshipBetween(userId, idOrUserId);
-    if (!relationship) {
-      throw new NotFoundException('FRIENDSHIP_NOT_FOUND');
-    }
+      // 1. Eliminar al usuario de todos los grupos creados por el otro usuario
+      const friendGroups = await queryRunner.manager.find(Group, { where: { ownerId: friendId } });
+      if (friendGroups.length > 0) {
+        const groupIds = friendGroups.map((g: Group) => g.id);
+        await queryRunner.query(
+          `DELETE FROM group_members WHERE group_id = ANY($1) AND user_id = $2`,
+          [groupIds, userId],
+        );
+      }
 
-    await this.friendshipRepository.remove(relationship);
+      // 2. Cancelar reservas activas del usuario en franjas del amigo
+      const userReservationsByFriend = await queryRunner.manager
+        .createQueryBuilder(Reservation, 'reservation')
+        .innerJoin('reservation.slot', 'slot')
+        .where('reservation.userId = :userId', { userId })
+        .andWhere('slot.ownerId = :ownerId', { ownerId: friendId })
+        .andWhere('reservation.status = :status', { status: ReservationStatus.CREATED })
+        .getMany();
+
+      for (const reservation of userReservationsByFriend) {
+        reservation.status = ReservationStatus.CANCELED;
+        reservation.canceledAt = new Date();
+        await queryRunner.manager.save(reservation);
+
+        const slot = await queryRunner.manager.findOne(Slot, { where: { id: reservation.slotId } });
+        if (slot) {
+          slot.status = SlotStatus.AVAILABLE;
+          await queryRunner.manager.save(slot);
+        }
+      }
+
+      // 3. Cancelar reservas activas del amigo en franjas del usuario
+      const friendReservationsByUser = await queryRunner.manager
+        .createQueryBuilder(Reservation, 'reservation')
+        .innerJoin('reservation.slot', 'slot')
+        .where('reservation.userId = :userId', { userId: friendId })
+        .andWhere('slot.ownerId = :ownerId', { ownerId: userId })
+        .andWhere('reservation.status = :status', { status: ReservationStatus.CREATED })
+        .getMany();
+
+      for (const reservation of friendReservationsByUser) {
+        reservation.status = ReservationStatus.CANCELED;
+        reservation.canceledAt = new Date();
+        await queryRunner.manager.save(reservation);
+
+        const slot = await queryRunner.manager.findOne(Slot, { where: { id: reservation.slotId } });
+        if (slot) {
+          slot.status = SlotStatus.AVAILABLE;
+          await queryRunner.manager.save(slot);
+        }
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async blockUser(requesterId: string, recipientId: string): Promise<void> {
@@ -285,8 +373,9 @@ export class FriendsService {
     });
   }
 
-  private mapUserToFriend(
+  private async mapUserToFriend(
     user: User,
+    currentUserId: string,
     options: {
       isPending: boolean;
       isBlocked: boolean;
@@ -294,7 +383,7 @@ export class FriendsService {
       sentByMe?: boolean;
       requestId?: string;
     },
-  ): FriendResponse {
+  ): Promise<FriendResponse> {
     let relationshipStatus: 'PENDING_SENT' | 'PENDING_RECEIVED' | 'ACCEPTED' | 'BLOCKED' | null =
       null;
 
@@ -306,19 +395,33 @@ export class FriendsService {
       relationshipStatus = options.sentByMe ? 'PENDING_SENT' : 'PENDING_RECEIVED';
     }
 
+    // SEGURIDAD: Solo traer grupos que:
+    // 1. Pertenecen al usuario autenticado (ownerId === currentUserId)
+    // 2. Contienen al usuario actual (user.id está en los miembros del grupo)
+    const privateGroups = await this.groupRepository.find({
+      where: {
+        ownerId: currentUserId,
+      },
+      relations: ['members'],
+    });
+
+    // Filtrar solo los grupos que contienen al amigo
+    const groupsWithFriend = privateGroups.filter((group) =>
+      group.members?.some((member) => member.id === user.id),
+    );
+
     return {
       id: user.id,
       name: user.name,
-      username: user.email,
-      avatarUrl: user.avatarUrl ?? undefined,
-      group: user.groups?.[0]
-        ? {
-            id: user.groups[0].id,
-            name: user.groups[0].name,
-            icon: user.groups[0].icon,
-            color: user.groups[0].color,
-          }
-        : null,
+      nickname: user.nickname,
+      username: user.nickname,
+      avatarUrl: user.avatarUrl,
+      groups: groupsWithFriend.map((g) => ({
+        id: g.id,
+        name: g.name,
+        icon: g.icon,
+        color: g.color,
+      })),
       status: 'offline',
       isBlocked: options.isBlocked,
       isPending: options.isPending,

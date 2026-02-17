@@ -76,8 +76,8 @@
     "CALENDAR": "Calendario",
     "FRIENDS": "Amigos",
     "GROUPS": "Grupos",
-    "COLLAPSE": "Contraer menú",
-    "EXPAND": "Expandir menú"
+    "COLLAPSE": "Contraer barra lateral",
+    "EXPAND": "Expandir barra lateral"
   },
   "SIGNUP": {
     "TITLE": "Crea tu cuenta",
@@ -90,6 +90,10 @@
       "EMAIL": {
         "LABEL": "Email",
         "PLACEHOLDER": "ejemplo@email.com"
+      },
+      "NICKNAME": {
+        "LABEL": "Usuario",
+        "PLACEHOLDER": "Elige tu nombre de usuario público"
       },
       "PASSWORD": {
         "LABEL": "Contraseña",
@@ -110,6 +114,9 @@
     "VALIDATION": {
       "NAME": "Por favor, introduce tu nombre.",
       "EMAIL": "Introduce un email válido.",
+      "NICKNAME": "El nombre de usuario debe tener 3-100 caracteres.",
+      "NICKNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.",
+      "NICKNAME_TAKEN": "Este nombre de usuario ya está en uso.",
       "PASSWORD": "La contraseña debe tener al menos 8 caracteres.",
       "CONFIRM_PASSWORD": "Las contraseñas no coinciden."
     },
@@ -201,11 +208,13 @@
     "PERSONAL_INFO": "Información Personal",
     "FULL_NAME": "Nombre Completo",
     "EMAIL_ADDRESS": "Correo Electrónico",
+    "NICKNAME": "Apodo",
     "LOCATION": "Ubicación",
     "TIMEZONE": "Zona Horaria",
     "PLACEHOLDERS": {
       "NAME": "Juana Pérez",
       "EMAIL": "juana@ejemplo.com",
+      "NICKNAME": "juanaperez",
       "LOCATION": "Madrid"
     },
     "NOTIFICATION_PREFS": "Preferencias de Notificaciones",
@@ -238,7 +247,12 @@
     "SIGN_OUT": "Cerrar Sesión",
     "SAVE_CHANGES": "Guardar Cambios",
     "SAVE_SUCCESS": "¡Cambios guardados!",
-    "SAVE_ERROR": "Error al guardar los cambios"
+    "SAVE_ERROR": "Error al guardar los cambios",
+    "ERRORS": {
+      "NICKNAME_REQUIRED": "El apodo es obligatorio",
+      "NICKNAME_INVALID": "Solo letras, números, guiones y guiones bajos (3-20 caracteres)",
+      "NICKNAME_IN_USE": "Este apodo ya está en uso"
+    }
   },
   "AVATAR": {
     "SELECT_AVATAR": "Seleccionar un Avatar",
@@ -294,12 +308,18 @@
     "CANCEL_RESERVATION": "Cancelar reserva",
     "MY_SLOT": "Mi franja",
     "UNAVAILABLE": "No disponible",
+    "NO_SLOTS": "Sin franjas disponibles",
+    "CREATED_BY": "Creado por",
+    "NOTES": "Notas",
+    "OTHER_CAN_RESERVE": "Otros pueden reservar",
     "ADD_AVAILABILITY": "Agregar",
     "EDIT_AVAILABILITY": "Editar franjas",
     "MORE": "+{{count}} más",
     "RESERVATIONS_KICKER": "Reservas",
     "RESERVATIONS_TITLE": "Mis reservas",
     "RESERVATIONS_EMPTY": "Aún no hay reservas.",
+    "BOOKED_WITH": "Quedada con",
+    "BOOKED_BY": "Reservó",
     "LEGEND_KICKER": "Leyenda",
     "LEGEND_TITLE": "Guía de estados",
     "MODAL_KICKER": "Disponibilidad",
@@ -382,7 +402,7 @@
       "BLOCKED": "Bloqueados"
     },
     "TABLE_HEADERS": {
-      "PROFILE": "PERFIL Y NOMBRE",
+      "PROFILE": "Nombre",
       "GROUP": "GRUPO",
       "STATUS": "ESTADO",
       "ACTIONS": "ACCIONES"
@@ -408,23 +428,27 @@
     "ACTIONS": {
       "ACCEPT": "Aceptar solicitud",
       "REJECT": "Rechazar solicitud",
+      "CANCEL_REQUEST": "Cancelar solicitud de amistad",
       "MESSAGE": "Enviar mensaje",
       "CALENDAR": "Ver calendario",
       "DELETE": "Eliminar amigo",
+      "BLOCK": "Bloquear usuario",
       "UNBLOCK": "Desbloquear",
       "UNBLOCK_USER": "Desbloquear usuario"
     },
     "SIDEBAR": {
-      "TITLE": "Listas de amigos",
-      "MANAGE_LISTS": "Administrar listas",
       "CREATE_NEW_LIST": "Crear nueva lista",
-      "MEMBERS": "miembros",
+      "FILTER_BY_GROUP": "Filtrar por grupo",
+      "MANAGE_LISTS": "Administrar listas",
+      "MEMBER_PLURAL": "miembros",
       "MEMBER_SINGULAR": "miembro",
-      "MEMBER_PLURAL": "miembros"
+      "MEMBERS": "miembros",
+      "TITLE": "Grupos de amigos"
     },
     "ARIA_LABELS": {
       "ACCEPT_REQUEST": "Aceptar solicitud de amistad de {{name}}",
       "REJECT_REQUEST": "Rechazar solicitud de amistad de {{name}}",
+      "CANCEL_REQUEST": "Cancelar solicitud de amistad a {{name}}",
       "MESSAGE_FRIEND": "Enviar mensaje a {{name}}",
       "VIEW_CALENDAR": "Ver calendario de {{name}}",
       "DELETE_FRIEND": "Eliminar amigo {{name}}",
@@ -436,8 +460,10 @@
       "REQUEST_ACCEPTED": "Solicitud de amistad aceptada.",
       "REQUEST_DECLINED": "Solicitud de amistad rechazada.",
       "FRIEND_REMOVED": "Amigo eliminado.",
+      "USER_BLOCKED": "Usuario bloqueado.",
       "USER_UNBLOCKED": "Usuario desbloqueado.",
-      "ERROR_GENERIC": "No se pudo completar la acción. Intenta de nuevo."
+      "ERROR_GENERIC": "No se pudo completar la acción. Intenta de nuevo.",
+      "ERROR_MISSING_REQUEST_ID": "No se puede cancelar la solicitud: falta requestId."
     },
     "REQUEST_ALREADY_SENT": "Solicitud ya enviada",
     "REQUEST_ALREADY_SENT_WITH_NAME": "Solicitud ya enviada a {{name}}"
@@ -465,12 +491,18 @@
       "CANCEL": "Cancelar",
       "CREATE": "Crear",
       "SAVE": "Guardar",
-      "CLOSE": "Cerrar"
+      "CLOSE": "Cerrar",
+      "CONFIRM": "Confirmar"
     },
     "TOASTS": {
       "CREATED": "Grupo creado con {{count}} miembros.",
       "UPDATED": "Grupo actualizado correctamente.",
+      "DELETED_SUCCESS": "Grupo eliminado correctamente.",
       "ERROR_GENERIC": "No se pudo completar la acción. Intenta de nuevo."
-    }
+    },
+    "DELETE_TITLE": "Eliminar Grupo",
+    "DELETE_MESSAGE": "¿Estás seguro de que deseas eliminar el grupo '{{groupName}}'? Esta acción no se puede deshacer.",
+    "DELETE_CONFIRM": "Eliminar Grupo",
+    "DELETE_CONFIRMATION": "¿Estás seguro de que deseas eliminar el grupo '{{groupName}}'? Esta acción no se puede deshacer."
   }
 }

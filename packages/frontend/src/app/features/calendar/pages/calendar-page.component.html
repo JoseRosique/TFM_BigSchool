@@ -22,7 +22,9 @@
           [currentUserId]="currentUserId()"
           [processingSlotId]="processingSlotId()"
           [formatTimeRange]="formatTimeRange"
+          [isReadOnly]="isReadOnly()"
           (createForDay)="openCreateModalForDayKey($event)"
+          (openDayModal)="openDayModalForExplore($event)"
           (reserveSlot)="reserveSlot($event)"
           (editSlot)="openEditSlotModal($event)"
           (deleteSlot)="openDeleteModal($event)"
@@ -35,6 +37,7 @@
         [reservations]="reservations()"
         [isLoading]="isLoadingReservations()"
         [processingSlotId]="processingSlotId()"
+        [currentUserId]="currentUserId()"
         [formatTimeRange]="formatTimeRange"
         [reservationStatusKey]="reservationStatusKey"
         (cancelReservation)="cancelReservation($event)"
@@ -60,10 +63,23 @@
   }
 
   @if (showDeleteModal()) {
-    <app-confirm-delete-modal
+    <app-confirm-dialog
+      [title]="'CALENDAR_PAGE.CONFIRM_DELETE_TITLE' | translate"
+      [message]="'CALENDAR_PAGE.CONFIRM_DELETE_BODY' | translate"
+      [confirmLabel]="'CALENDAR_PAGE.CONFIRM_DELETE_CONFIRM' | translate"
+      [cancelLabel]="'CALENDAR_PAGE.CONFIRM_DELETE_CANCEL' | translate"
+      [isDestructive]="true"
       [isProcessing]="processingSlotId() !== null"
       (close)="closeDeleteModal()"
       (confirm)="confirmDeleteSlot()"
-    ></app-confirm-delete-modal>
+    ></app-confirm-dialog>
   }
+
+  <app-explore-slots-day-modal
+    [currentUserId]="currentUserId()"
+    [reservations]="reservations()"
+    [processingSlotId]="processingSlotId()"
+    (reserve)="reserveSlot($event)"
+    (cancelReservation)="cancelReservation($event)"
+  ></app-explore-slots-day-modal>
 </section>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject, signal, computed } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -27,7 +27,9 @@ import { CalendarMonthGridComponent } from '../components/calendar-month-grid/ca
 import { ReservationsPanelComponent } from '../components/reservations-panel/reservations-panel.component';
 import { LegendPanelComponent } from '../components/legend-panel/legend-panel.component';
 import { CreateSlotModalComponent } from '../components/create-slot-modal/create-slot-modal.component';
-import { ConfirmDeleteModalComponent } from '../components/confirm-delete-modal/confirm-delete-modal.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ExploreSlotsDayModalComponent } from '../components/explore-slots-day-modal/explore-slots-day-modal.component';
+import { UiModalService } from '../services/ui-modal.service';
 
 @Component({
   selector: 'app-calendar-page',
@@ -42,7 +44,8 @@ import { ConfirmDeleteModalComponent } from '../components/confirm-delete-modal/
     ReservationsPanelComponent,
     LegendPanelComponent,
     CreateSlotModalComponent,
-    ConfirmDeleteModalComponent,
+    ConfirmDialogComponent,
+    ExploreSlotsDayModalComponent,
   ],
   templateUrl: './calendar-page.component.html',
   styleUrls: ['./calendar-page.component.scss'],
@@ -52,12 +55,14 @@ export class CalendarPageComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly translate = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
+  private readonly uiModalService = inject(UiModalService);
 
   readonly slotStatus = SlotStatus;
   readonly visibilityScope = VisibilityScope;
   readonly maxItemsPerDay = this.facade.maxItemsPerDay;
 
   viewMode = this.facade.viewMode;
+  isReadOnly = computed(() => this.viewMode() === 'explore');
   viewDate = this.facade.viewDate;
   slots = this.facade.slots;
   reservations = this.facade.reservations;
@@ -211,6 +216,11 @@ export class CalendarPageComponent implements OnInit {
     this.initializeSlotForm(dayKey, slotsForDay);
     this.isDateLocked.set(true);
     this.showCreateModal.set(true);
+  }
+
+  openDayModalForExplore(dayKey: string): void {
+    const slotsForDay = this.slotsByDay().get(dayKey) ?? [];
+    this.uiModalService.openDayModal(dayKey, slotsForDay, dayKey);
   }
 
   openEditSlotModal(slot: CalendarSlot): void {

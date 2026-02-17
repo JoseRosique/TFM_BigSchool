@@ -179,18 +179,12 @@ export class CalendarFacade {
       to: end.toISOString(),
     };
 
-    if (this.viewMode() === 'mine') {
-      const userId = this.currentUserId();
-      if (!userId) {
-        this.isLoadingSlots.set(false);
-        return;
-      }
-      query.userId = userId;
-    } else {
-      query.status = SlotStatus.AVAILABLE;
-    }
+    const slotsRequest$ =
+      this.viewMode() === 'mine'
+        ? this.slotsService.getMyAvailability(query)
+        : this.slotsService.getExploreSlots(query);
 
-    this.slotsService.listSlots(query).subscribe({
+    slotsRequest$.subscribe({
       next: (response) => {
         const items = response.items
           .filter((slot) => slot.status !== SlotStatus.CANCELED)

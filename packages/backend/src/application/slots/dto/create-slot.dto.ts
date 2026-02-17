@@ -1,4 +1,13 @@
-import { IsEnum, IsISO8601, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsISO8601,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsArray,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 import { VisibilityScope } from '@meetwithfriends/shared';
 
 export class CreateSlotDto {
@@ -19,4 +28,9 @@ export class CreateSlotDto {
   @IsOptional()
   @MaxLength(500)
   notes?: string;
+
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsOptional()
+  groupIds?: string[];
 }

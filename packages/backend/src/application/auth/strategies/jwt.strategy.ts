@@ -46,6 +46,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (changedAtSec && changedAtSec > issuedAt) {
       throw new UnauthorizedException('Token expired');
     }
-    return { userId: user.id, email: user.email };
+    return { userId: user.id, email: user.email, nickname: user.nickname };
   }
 }

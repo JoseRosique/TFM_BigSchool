@@ -15,9 +15,10 @@ export interface FriendGroup {
 export interface Friend {
   id: string;
   name: string;
+  nickname: string;
   username: string;
   avatarUrl: string;
-  group?: FriendGroup | null;
+  groups: FriendGroup[];
   status: FriendStatus;
   isBlocked: boolean;
   isPending: boolean;
@@ -39,6 +40,9 @@ export interface FriendList {
   providedIn: 'root',
 })
 export class FriendsService {
+  blockUser(userId: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/block/${userId}`, {});
+  }
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/friends`;
 
@@ -63,8 +67,10 @@ export class FriendsService {
     return this.http.get<FriendList[]>(`${this.apiUrl}/lists`);
   }
 
-  sendFriendRequest(userId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/requests`, { userId });
+  sendFriendRequest(userId: string): Observable<{ message: string; requestId: string }> {
+    return this.http.post<{ message: string; requestId: string }>(`${this.apiUrl}/requests`, {
+      userId,
+    });
   }
 
   acceptRequest(requestId: string): Observable<void> {
@@ -72,7 +78,7 @@ export class FriendsService {
   }
 
   declineRequest(requestId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/requests/${requestId}/decline`, {});
+    return this.http.delete<void>(`${this.apiUrl}/requests/${requestId}/decline`);
   }
 
   removeFriend(friendId: string): Observable<void> {
@@ -80,6 +86,6 @@ export class FriendsService {
   }
 
   unblockUser(userId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/blocked/${userId}/unblock`, {});
+    return this.http.put<void>(`${this.apiUrl}/unblock/${userId}`, {});
   }
 }

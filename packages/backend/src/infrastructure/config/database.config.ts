@@ -16,7 +16,7 @@ export function getDatabaseConfig(): TypeOrmModuleOptions {
     entities: [User, Slot, Reservation, Friendship, Group],
     migrations: ['dist/infrastructure/migrations/*.js'],
     migrationsTableName: 'typeorm_migrations',
-    synchronize: process.env.NODE_ENV === 'development',
+    synchronize: false, // CRITICAL: Always false in production. Migrations are the source of truth.
     logging: process.env.LOG_LEVEL === 'debug',
   };
 }

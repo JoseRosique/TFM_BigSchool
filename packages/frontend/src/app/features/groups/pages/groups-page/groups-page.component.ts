@@ -1,6 +1,6 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -17,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GroupSearchComponent } from '../../components/group-search/group-search.component';
 import { GroupListComponent } from '../../components/group-list/group-list.component';
 import { GroupModalComponent } from '../../components/group-modal/group-modal.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { GroupsService } from '../../../../shared/services/groups.service';
 import { Group, GroupMember } from '../../../../shared/models/group.model';
 import { FriendsService, Friend } from '../../../friends/services/friends.service';
@@ -33,6 +34,7 @@ type ModalMode = 'create' | 'edit';
     GroupSearchComponent,
     GroupListComponent,
     GroupModalComponent,
+    ConfirmDialogComponent,
   ],
   templateUrl: './groups-page.component.html',
   styleUrls: ['./groups-page.component.scss'],
@@ -41,6 +43,7 @@ export class GroupsPageComponent {
   private readonly groupsService = inject(GroupsService);
   private readonly friendsService = inject(FriendsService);
   private readonly toastService = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly search$ = new Subject<string>();
@@ -69,6 +72,10 @@ export class GroupsPageComponent {
   originalMemberIds = signal<string[]>([]);
   availableFriends = signal<GroupMember[]>([]);
   memberSearchQuery = signal('');
+
+  isConfirmDialogOpen = signal(false);
+  groupToDelete = signal<Group | null>(null);
+  isDeleting = signal(false);
 
   constructor() {
     this.loadGroups();
@@ -106,6 +113,78 @@ export class GroupsPageComponent {
 
   closeModal(): void {
     this.isModalOpen.set(false);
+  }
+
+  openDeleteConfirm(group: Group): void {
+    this.groupToDelete.set(group);
+    this.isConfirmDialogOpen.set(true);
+  }
+
+  closeDeleteConfirm(): void {
+    this.isConfirmDialogOpen.set(false);
+    this.groupToDelete.set(null);
+    this.isDeleting.set(false);
+  }
+
+  confirmDelete(): void {
+    const group = this.groupToDelete();
+    if (!group) return;
+
+    this.isDeleting.set(true);
+    this.groupsService
+      .deleteGroup(group.id)
+      .pipe(
+        switchMap(() => this.groupsService.loadGroups(this.searchQuery())),
+        tap(() => {
+          if (this.editingGroupId() === group.id) {
+            this.closeModal();
+            this.editingGroupId.set(null);
+          }
+          this.toastService.success('GROUPS_MANAGEMENT.TOASTS.DELETED_SUCCESS');
+          this.closeDeleteConfirm();
+        }),
+        catchError((error) => {
+          this.toastService.error(this.resolveErrorKey(error));
+          return of([] as Group[]);
+        }),
+        finalize(() => this.isDeleting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  deleteGroup(group: Group): void {
+    const confirmMessage = this.translateService.instant('GROUPS_MANAGEMENT.DELETE_CONFIRMATION', {
+      groupName: group.name,
+    });
+    const confirmDelete = window.confirm(confirmMessage);
+    if (!confirmDelete) {
+      return;
+    }
+
+    this.isSaving.set(true);
+    this.groupsService
+      .deleteGroup(group.id)
+      .pipe(
+        switchMap(() => this.groupsService.loadGroups(this.searchQuery())),
+        tap(() => {
+          // Clear selection if the deleted group was selected
+          if (this.editingGroupId() === group.id) {
+            this.closeModal();
+            this.editingGroupId.set(null);
+          }
+          this.toastService.success('GROUPS_MANAGEMENT.TOASTS.DELETED_SUCCESS');
+          // Clear search if needed to show remaining groups
+          this.searchQuery.set('');
+        }),
+        catchError((error) => {
+          this.toastService.error(this.resolveErrorKey(error));
+          return of([] as Group[]);
+        }),
+        finalize(() => this.isSaving.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   updateName(value: string): void {

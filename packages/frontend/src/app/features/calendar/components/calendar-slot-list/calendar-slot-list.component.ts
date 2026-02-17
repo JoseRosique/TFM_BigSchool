@@ -20,6 +20,7 @@ export class CalendarSlotListComponent {
   currentUserId = input<string | null>(null);
   processingSlotId = input<string | null>(null);
   formatTimeRange = input<TimeRangeFormatter>((start: Date, end: Date, timeZone: string) => '');
+  isReadOnly = input<boolean>(false);
 
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();

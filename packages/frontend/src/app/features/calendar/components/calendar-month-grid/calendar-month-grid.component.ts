@@ -20,14 +20,20 @@ export class CalendarMonthGridComponent {
   currentUserId = input<string | null>(null);
   processingSlotId = input<string | null>(null);
   formatTimeRange = input<TimeRangeFormatter>(() => '');
+  isReadOnly = input<boolean>(false);
 
   createForDay = output<string>();
+  openDayModal = output<string>();
   reserveSlot = output<CalendarSlot>();
   deleteSlot = output<CalendarSlot>();
   editSlot = output<CalendarSlot>();
 
   onCreateForDay(dayKey: string): void {
     this.createForDay.emit(dayKey);
+  }
+
+  onOpenDayModal(dayKey: string): void {
+    this.openDayModal.emit(dayKey);
   }
 
   onReserveSlot(slot: CalendarSlot): void {

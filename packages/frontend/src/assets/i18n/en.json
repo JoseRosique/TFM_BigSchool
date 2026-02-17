@@ -76,8 +76,8 @@
     "CALENDAR": "Calendar",
     "FRIENDS": "Friends",
     "GROUPS": "Groups",
-    "COLLAPSE": "Collapse menu",
-    "EXPAND": "Expand menu"
+    "COLLAPSE": "Collapse sidebar",
+    "EXPAND": "Expand sidebar"
   },
   "SIGNUP": {
     "TITLE": "Create your account",
@@ -90,6 +90,10 @@
       "EMAIL": {
         "LABEL": "Email",
         "PLACEHOLDER": "example@email.com"
+      },
+      "NICKNAME": {
+        "LABEL": "Username",
+        "PLACEHOLDER": "Choose your public username"
       },
       "PASSWORD": {
         "LABEL": "Password",
@@ -110,6 +114,9 @@
     "VALIDATION": {
       "NAME": "Please enter your name.",
       "EMAIL": "Please enter a valid email.",
+      "NICKNAME": "Username must be 3-100 characters.",
+      "NICKNAME_FORMAT": "Username can only contain letters, numbers, hyphens, and underscores.",
+      "NICKNAME_TAKEN": "This username is already taken.",
       "PASSWORD": "Password must be at least 8 characters.",
       "CONFIRM_PASSWORD": "Passwords do not match."
     },
@@ -201,11 +208,13 @@
     "PERSONAL_INFO": "Personal Information",
     "FULL_NAME": "Full Name",
     "EMAIL_ADDRESS": "Email Address",
+    "NICKNAME": "Nickname",
     "LOCATION": "Location",
     "TIMEZONE": "Timezone",
     "PLACEHOLDERS": {
       "NAME": "Jane Doe",
       "EMAIL": "jane@example.com",
+      "NICKNAME": "janedoe",
       "LOCATION": "London"
     },
     "NOTIFICATION_PREFS": "Notification Preferences",
@@ -238,7 +247,12 @@
     "SIGN_OUT": "Sign Out",
     "SAVE_CHANGES": "Save Changes",
     "SAVE_SUCCESS": "Changes saved!",
-    "SAVE_ERROR": "Error saving changes"
+    "SAVE_ERROR": "Error saving changes",
+    "ERRORS": {
+      "NICKNAME_REQUIRED": "Nickname is required",
+      "NICKNAME_INVALID": "Only letters, numbers, hyphens, and underscores (3-20 chars)",
+      "NICKNAME_IN_USE": "This nickname is already taken"
+    }
   },
   "AVATAR": {
     "SELECT_AVATAR": "Select an Avatar",
@@ -294,12 +308,18 @@
     "CANCEL_RESERVATION": "Cancel reservation",
     "MY_SLOT": "My slot",
     "UNAVAILABLE": "Unavailable",
+    "NO_SLOTS": "No available slots",
+    "CREATED_BY": "Created by",
+    "NOTES": "Notes",
+    "OTHER_CAN_RESERVE": "Others can reserve",
     "ADD_AVAILABILITY": "Add",
     "EDIT_AVAILABILITY": "Edit slots",
     "MORE": "+{{count}} more",
     "RESERVATIONS_KICKER": "Bookings",
     "RESERVATIONS_TITLE": "My reservations",
     "RESERVATIONS_EMPTY": "No reservations yet.",
+    "BOOKED_WITH": "Booked with",
+    "BOOKED_BY": "Booked by",
     "LEGEND_KICKER": "Legend",
     "LEGEND_TITLE": "Status guide",
     "MODAL_KICKER": "Availability",
@@ -382,10 +402,10 @@
       "BLOCKED": "Blocked"
     },
     "TABLE_HEADERS": {
-      "PROFILE": "PROFILE & NAME",
-      "GROUP": "GROUP",
-      "STATUS": "STATUS",
-      "ACTIONS": "ACTIONS"
+      "PROFILE": "Name",
+      "GROUP": "Group",
+      "STATUS": "Status",
+      "ACTIONS": "Actions"
     },
     "GROUPS": {
       "CLOSE_FRIENDS": "Close Friends",
@@ -408,23 +428,27 @@
     "ACTIONS": {
       "ACCEPT": "Accept request",
       "REJECT": "Reject request",
+      "CANCEL_REQUEST": "Cancel friend request",
       "MESSAGE": "Send message",
       "CALENDAR": "View calendar",
       "DELETE": "Delete friend",
+      "BLOCK": "Block user",
       "UNBLOCK": "Unblock",
       "UNBLOCK_USER": "Unblock user"
     },
     "SIDEBAR": {
-      "TITLE": "Friend Lists",
-      "MANAGE_LISTS": "Manage lists",
       "CREATE_NEW_LIST": "Create New List",
-      "MEMBERS": "members",
+      "FILTER_BY_GROUP": "Filter by group",
+      "MANAGE_LISTS": "Manage lists",
+      "MEMBER_PLURAL": "members",
       "MEMBER_SINGULAR": "member",
-      "MEMBER_PLURAL": "members"
+      "MEMBERS": "members",
+      "TITLE": "Friend Lists"
     },
     "ARIA_LABELS": {
       "ACCEPT_REQUEST": "Accept friend request from {{name}}",
       "REJECT_REQUEST": "Reject friend request from {{name}}",
+      "CANCEL_REQUEST": "Cancel friend request to {{name}}",
       "MESSAGE_FRIEND": "Send message to {{name}}",
       "VIEW_CALENDAR": "View calendar of {{name}}",
       "DELETE_FRIEND": "Delete friend {{name}}",
@@ -436,8 +460,10 @@
       "REQUEST_ACCEPTED": "Friend request accepted.",
       "REQUEST_DECLINED": "Friend request declined.",
       "FRIEND_REMOVED": "Friend removed.",
+      "USER_BLOCKED": "User blocked.",
       "USER_UNBLOCKED": "User unblocked.",
-      "ERROR_GENERIC": "Unable to complete the action. Please try again."
+      "ERROR_GENERIC": "Unable to complete the action. Please try again.",
+      "ERROR_MISSING_REQUEST_ID": "Unable to cancel request: missing requestId."
     },
     "REQUEST_ALREADY_SENT": "Request already sent",
     "REQUEST_ALREADY_SENT_WITH_NAME": "Request already sent to {{name}}"
@@ -465,12 +491,17 @@
       "CANCEL": "Cancel",
       "CREATE": "Create",
       "SAVE": "Save",
-      "CLOSE": "Close"
+      "CLOSE": "Close",
+      "CONFIRM": "Confirm"
     },
     "TOASTS": {
       "CREATED": "Group created with {{count}} members.",
       "UPDATED": "Group updated successfully.",
+      "DELETED_SUCCESS": "Group deleted successfully.",
       "ERROR_GENERIC": "Unable to complete the action. Please try again."
-    }
+    },
+    "DELETE_TITLE": "Delete Group",
+    "DELETE_MESSAGE": "Are you sure you want to delete the group '{{groupName}}'? This action cannot be undone.",
+    "DELETE_CONFIRM": "Delete Group"
   }
 }

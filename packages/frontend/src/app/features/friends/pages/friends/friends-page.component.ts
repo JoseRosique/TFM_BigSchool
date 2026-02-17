@@ -27,7 +27,15 @@ import { Group } from '../../../../shared/models/group.model';
 
 type TabType = 'search' | 'all' | 'pending' | 'blocked';
 
-type FriendActionType = 'add' | 'accept' | 'reject' | 'message' | 'calendar' | 'delete' | 'unblock';
+type FriendActionType =
+  | 'add'
+  | 'accept'
+  | 'reject'
+  | 'message'
+  | 'calendar'
+  | 'delete'
+  | 'unblock'
+  | 'block';
 
 interface FriendAction {
   type: FriendActionType;
@@ -62,7 +70,7 @@ export class FriendsPageComponent {
 
   activeTab = signal<TabType>('search');
   searchQuery = signal<string>('');
-  selectedList = signal<string | null>(null);
+  selectedLists = signal<string[]>([]);
   tabFriends = signal<Friend[]>([]);
   searchResults = signal<Friend[]>([]);
   friendLists = computed(() => this.mapGroupsToLists(this.groupsService.groups()));
@@ -85,10 +93,17 @@ export class FriendsPageComponent {
     const tab = this.activeTab();
     const query = this.searchQuery().trim().toLowerCase();
     const base = tab === 'search' ? this.searchResults() : this.tabFriends();
-    if (!query || tab === 'search') {
-      return base;
+    const selectedLists = this.selectedLists();
+    let filtered = base;
+    if (selectedLists.length > 0) {
+      filtered = filtered.filter((friend) =>
+        friend.groups?.some((g) => selectedLists.includes(g.id)),
+      );
     }
-    return base.filter(
+    if (!query || tab === 'search') {
+      return filtered;
+    }
+    return filtered.filter(
       (friend) =>
         friend.name.toLowerCase().includes(query) || friend.username.toLowerCase().includes(query),
     );
@@ -160,24 +175,37 @@ export class FriendsPageComponent {
 
   handleListAction(action: FriendAction): void {
     switch (action.type) {
-      case 'add':
-        this.runAction(this.friendsService.sendFriendRequest(action.friend.id), {
-          successKey: 'FRIENDS_PAGE.TOASTS.REQUEST_SENT',
-          refreshTabs: ['search'],
+      case 'add': {
+        this.friendsService.sendFriendRequest(action.friend.id).subscribe({
+          next: (res) => {
+            this.toastService.success('FRIENDS_PAGE.TOASTS.REQUEST_SENT');
+            this.searchQuery$.next(this.searchQuery());
+          },
+          error: (err) => {
+            this.toastService.error(this.resolveErrorKey(err));
+            this.searchQuery$.next(this.searchQuery());
+          },
         });
         break;
+      }
       case 'accept':
         this.runAction(this.friendsService.acceptRequest(this.getRequestId(action.friend)), {
           successKey: 'FRIENDS_PAGE.TOASTS.REQUEST_ACCEPTED',
           refreshTabs: ['all', 'pending'],
         });
         break;
-      case 'reject':
+      case 'reject': {
+        // Si es una solicitud enviada (PENDING_SENT), solo cancelar si hay requestId
+        if (action.friend.relationshipStatus === 'PENDING_SENT' && !action.friend.requestId) {
+          this.toastService.error('FRIENDS_PAGE.TOASTS.ERROR_MISSING_REQUEST_ID');
+          break;
+        }
         this.runAction(this.friendsService.declineRequest(this.getRequestId(action.friend)), {
           successKey: 'FRIENDS_PAGE.TOASTS.REQUEST_DECLINED',
-          refreshTabs: ['pending'],
+          refreshTabs: ['pending', 'search'],
         });
         break;
+      }
       case 'message':
         this.onMessageFriend(action.friend);
         break;
@@ -190,22 +218,59 @@ export class FriendsPageComponent {
           refreshTabs: ['all'],
         });
         break;
-      case 'unblock':
+      case 'unblock': {
         this.runAction(this.friendsService.unblockUser(action.friend.id), {
           successKey: 'FRIENDS_PAGE.TOASTS.USER_UNBLOCKED',
-          refreshTabs: ['blocked'],
+          refreshTabs: ['blocked', 'search'],
         });
+        // Actualizar el usuario desbloqueado en los resultados de búsqueda inmediatamente
+        const currentResults = this.searchResults();
+        const updatedResults = currentResults.map((u) =>
+          u.id === action.friend.id
+            ? {
+                ...u,
+                relationshipStatus: null,
+                isBlocked: false,
+                // isFriend, isPending, sentByMe, requestId quedan como estaban o se refrescarán con la búsqueda
+              }
+            : u,
+        );
+        this.searchResults.set(updatedResults);
         break;
+      }
+      case 'block': {
+        this.runAction(this.friendsService.blockUser(action.friend.id), {
+          successKey: 'FRIENDS_PAGE.TOASTS.USER_BLOCKED',
+          refreshTabs: ['all', 'blocked', 'search'],
+        });
+        // Actualizar el usuario bloqueado en los resultados de búsqueda inmediatamente
+        const currentResults = this.searchResults();
+        const updatedResults = currentResults.map((u) =>
+          u.id === action.friend.id
+            ? {
+                ...u,
+                relationshipStatus: 'BLOCKED' as const,
+                isBlocked: true,
+                isFriend: false,
+                isPending: false,
+                sentByMe: false,
+                requestId: undefined,
+              }
+            : u,
+        );
+        this.searchResults.set(updatedResults);
+        break;
+      }
     }
   }
 
   selectFriendList(listId: string): void {
-    this.selectedList.set(this.selectedList() === listId ? null : listId);
-  }
-
-  onCreateNewList(): void {
-    console.log('Create new list clicked');
-    // TODO: Implement create list modal
+    const current = this.selectedLists();
+    if (current.includes(listId)) {
+      this.selectedLists.set(current.filter((id) => id !== listId));
+    } else {
+      this.selectedLists.set([...current, listId]);
+    }
   }
 
   onManageLists(): void {
@@ -249,7 +314,7 @@ export class FriendsPageComponent {
       .pipe(
         map((query) => query.trim()),
         debounceTime(300),
-        distinctUntilChanged(),
+        // distinctUntilChanged() eliminado para forzar búsqueda siempre
         switchMap((query) => {
           this.errorKey.set(null);
           if (!query) {
@@ -388,7 +453,7 @@ export class FriendsPageComponent {
   }
 
   private getRequestId(friend: Friend): string {
-    return friend.requestId ?? friend.id;
+    return friend.requestId ? friend.requestId : friend.id;
   }
 
   private mapGroupsToLists(groups: Group[]) {

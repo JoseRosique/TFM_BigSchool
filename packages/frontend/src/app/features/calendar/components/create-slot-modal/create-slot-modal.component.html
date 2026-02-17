@@ -72,17 +72,39 @@
                     </label>
                     <label class="config-field">
                       <span class="config-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
-                      <select class="config-select" formControlName="visibilityScope" [disabled]="isSubmitting()">
-                        <option [value]="visibilityScope().PRIVATE">
-                          {{ "CALENDAR_PAGE.VISIBILITY.PRIVATE" | translate }}
-                        </option>
-                        <option [value]="visibilityScope().FRIENDS">
-                          {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }}
-                        </option>
-                        <option [value]="visibilityScope().LIST">
-                          {{ "CALENDAR_PAGE.VISIBILITY.LIST" | translate }}
-                        </option>
-                      </select>
+                      @if (isLoadingGroups()) {
+                        <div class="groups-loading">
+                          <span class="loading-spinner"></span>
+                          <span>{{ "CALENDAR_PAGE.FORM.LOADING_GROUPS" | translate }}</span>
+                        </div>
+                      } @else {
+                        <select
+                          class="config-select"
+                          [value]="getVisibilityValue($index)"
+                          (change)="onVisibilityChange($any($event.target).value, $index)"
+                          [disabled]="isSubmitting()"
+                        >
+                          <option [value]="visibilityScope().PRIVATE">
+                            {{ "CALENDAR_PAGE.VISIBILITY.PRIVATE" | translate }}
+                          </option>
+                          <option [value]="visibilityScope().FRIENDS">
+                            @if (userGroups().length === 0) {
+                              {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }} ({{
+                                "CALENDAR_PAGE.FORM.NO_GROUPS_HINT" | translate
+                              }})
+                            } @else {
+                              {{ "CALENDAR_PAGE.VISIBILITY.FRIENDS" | translate }}
+                            }
+                          </option>
+                          @if (userGroups().length > 0) {
+                            <optgroup [label]="'CALENDAR_PAGE.FORM.MY_GROUPS' | translate">
+                              @for (group of userGroups(); track group.id) {
+                                <option [value]="'GROUP:' + group.id">{{ group.name }}</option>
+                              }
+                            </optgroup>
+                          }
+                        </select>
+                      }
                     </label>
                   </div>
 

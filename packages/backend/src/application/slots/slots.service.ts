@@ -26,6 +26,30 @@ import { UpdateSlotDto } from './dto/update-slot.dto';
 
 @Injectable()
 export class SlotsService {
+  // Lista estática de timezones IANA válidos
+  private readonly validTimezones: Set<string> = new Set([
+    'UTC',
+    'Europe/Madrid',
+    'Europe/London',
+    'Europe/Paris',
+    'Europe/Berlin',
+    'America/New_York',
+    'America/Chicago',
+    'America/Denver',
+    'America/Los_Angeles',
+    'America/Mexico_City',
+    'America/Sao_Paulo',
+    'America/Buenos_Aires',
+    'Asia/Tokyo',
+    'Asia/Shanghai',
+    'Asia/Dubai',
+    'Asia/Kolkata',
+    'Asia/Singapore',
+    'Australia/Sydney',
+    'Pacific/Auckland',
+    // Agregar más según necesidad
+  ]);
+
   constructor(
     @InjectRepository(Slot)
     private readonly slotRepository: Repository<Slot>,
@@ -39,6 +63,15 @@ export class SlotsService {
     private readonly friendshipRepository: Repository<Friendship>,
   ) {}
 
+  /**
+   * Valida que el timezone proporcionado sea un identificador IANA válido
+   */
+  private validateTimezone(timezone: string): void {
+    if (!timezone || !this.validTimezones.has(timezone)) {
+      throw new BadRequestException('INVALID_TIMEZONE');
+    }
+  }
+
   async create(ownerId: string, dto: CreateSlotDto): Promise<OpenSlotDTO.Response> {
     const start = new Date(dto.start);
     const end = new Date(dto.end);
@@ -50,6 +83,9 @@ export class SlotsService {
     if (end <= start) {
       throw new BadRequestException('INVALID_TIME_RANGE');
     }
+
+    // Validar timezone
+    this.validateTimezone(dto.timezone);
 
     // Validar que todos los groupIds pertenecen al dueño
     let groups: Group[] = [];
@@ -180,6 +216,11 @@ export class SlotsService {
 
     if (nextEnd <= nextStart) {
       throw new BadRequestException('INVALID_TIME_RANGE');
+    }
+
+    // Validar timezone si se proporciona
+    if (dto.timezone) {
+      this.validateTimezone(dto.timezone);
     }
 
     if (dto.status === SlotStatus.CANCELED && slot.status === SlotStatus.RESERVED) {

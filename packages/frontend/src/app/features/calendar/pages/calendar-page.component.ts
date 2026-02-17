@@ -13,6 +13,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SlotStatus, VisibilityScope } from '@meetwithfriends/shared';
 import { forkJoin, of } from 'rxjs';
 import { ToastService } from '../../../shared/services/toast.service';
+import { GroupsService } from '../../../shared/services/groups.service';
+import { Group } from '../../../shared/models/group.model';
 
 import {
   combineDateAndTimeInTimeZone,
@@ -56,6 +58,7 @@ export class CalendarPageComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
   private readonly uiModalService = inject(UiModalService);
+  private readonly groupsService = inject(GroupsService);
 
   readonly slotStatus = SlotStatus;
   readonly visibilityScope = VisibilityScope;
@@ -77,6 +80,8 @@ export class CalendarPageComponent implements OnInit {
   displayTimezone = this.facade.displayTimezone;
   currentUserId = this.facade.currentUserId;
   deletedSlotIds = signal<string[]>([]);
+  userGroups = signal<Group[]>([]);
+  isLoadingGroups = signal(false);
 
   pendingDeleteSlot = signal<CalendarSlot | null>(null);
   editingSlot = signal<CalendarSlot | null>(null);
@@ -91,6 +96,14 @@ export class CalendarPageComponent implements OnInit {
     { value: 'Australia/Sydney', label: 'Australia/Sydney' },
   ];
 
+  private detectUserTimezone(): string {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    } catch {
+      return 'UTC';
+    }
+  }
+
   createSlotForm = this.fb.group({
     date: ['', Validators.required],
     timeSlots: this.fb.array(
@@ -104,13 +117,15 @@ export class CalendarPageComponent implements OnInit {
     notes?: string,
     timezone?: string,
     visibilityScope?: VisibilityScope,
+    groupIds?: string[],
   ) {
     return this.fb.group({
       id: [id || null],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      timezone: [timezone || this.displayTimezone(), Validators.required],
+      timezone: [timezone || this.detectUserTimezone(), Validators.required],
       visibilityScope: [visibilityScope || VisibilityScope.FRIENDS, Validators.required],
+      groupIds: [groupIds || []],
       notes: [notes || '', Validators.maxLength(500)],
     });
   }
@@ -201,6 +216,7 @@ export class CalendarPageComponent implements OnInit {
     this.editingSlot.set(null);
     this.initializeSlotForm(formatDateInputValue(new Date()), []);
     this.isDateLocked.set(false);
+    this.loadUserGroups();
     this.showCreateModal.set(true);
   }
 
@@ -215,6 +231,7 @@ export class CalendarPageComponent implements OnInit {
 
     this.initializeSlotForm(dayKey, slotsForDay);
     this.isDateLocked.set(true);
+    this.loadUserGroups();
     this.showCreateModal.set(true);
   }
 
@@ -233,6 +250,7 @@ export class CalendarPageComponent implements OnInit {
     const slotsForDay = this.slotsByDay().get(dateKey) ?? [];
     this.initializeSlotForm(dateKey, slotsForDay);
     this.isDateLocked.set(true);
+    this.loadUserGroups();
 
     setTimeout(() => {
       this.showCreateModal.set(true);
@@ -622,5 +640,20 @@ export class CalendarPageComponent implements OnInit {
     // Mark form as untouched and pristine
     this.createSlotForm.markAsUntouched();
     this.createSlotForm.markAsPristine();
+  }
+
+  private loadUserGroups(): void {
+    this.isLoadingGroups.set(true);
+    this.groupsService.loadGroups().subscribe({
+      next: (groups) => {
+        this.userGroups.set(groups);
+        this.isLoadingGroups.set(false);
+      },
+      error: () => {
+        this.userGroups.set([]);
+        this.isLoadingGroups.set(false);
+        this.toastService.error('CALENDAR_PAGE.TOASTS.GROUPS_LOAD_ERROR');
+      },
+    });
   }
 }

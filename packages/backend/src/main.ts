@@ -45,12 +45,10 @@ async function bootstrap() {
     }),
   );
 
-  const rawPort = configService.getOrThrow<string>('PORT');
-  let port = parseInt(rawPort, 10);
-  if (Number.isNaN(port)) {
-    port = 3000;
-  }
-  await app.listen(port);
+  const port = parseInt(process.env.PORT ?? '3000', 10);
+
+  await app.listen(port, '0.0.0.0');
+
   console.log(`🚀 Backend listening on port ${port}`);
 }
 bootstrap();

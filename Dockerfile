@@ -4,46 +4,48 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copiamos absolutamente todo el proyecto
-# En monorepos, esto es lo más seguro para que npm workspaces no falle
+# Copiamos todo el proyecto
 COPY . .
 
-# Instalamos todas las dependencias (necesitamos las de desarrollo para buildear)
+# Instalamos dependencias totales para la compilación
 RUN npm install --legacy-peer-deps
 
-# Ejecutamos los comandos de compilación desde la raíz
+# Compilamos backend y frontend
 RUN npm run build:backend
 RUN npm run build:frontend
 
 # =============================================================================
-# Etapa 2: Production (Imagen ligera para Render)
+# Etapa 2: Production (Imagen optimizada para despliegue)
 # =============================================================================
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Instalamos dumb-init para un manejo correcto de procesos
+# Herramientas de sistema
 RUN apk add --no-cache dumb-init
 
 # Variables de entorno
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# 1. COPIAMOS EL ÁRBOL DE DEPENDENCIAS COMPLETO
-# Al copiar el node_modules entero del builder, nos aseguramos de que
-# 'zod', 'glob' y los enlaces (symlinks) a @shared no se rompan.
+# 1. Copiamos node_modules completo para mantener los workspaces intactos
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# 2. COPIAMOS LOS PAQUETES (Estructura necesaria para los symlinks)
-# Es vital copiar la carpeta shared porque el symlink en node_modules apunta allí
+# 2. Copiamos paquetes locales (necesario para que los symlinks no apunten al vacío)
 COPY --from=builder /app/packages/shared ./packages/shared
 COPY --from=builder /app/packages/backend/package.json ./packages/backend/package.json
 
-# 3. COPIAMOS LOS DIST (Código compilado)
+# 3. Copiamos el código compilado (Backend y Frontend)
 COPY --from=builder /app/packages/backend/dist ./dist
 COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
+# -----------------------------------------------------------------------------
+# FIX: Forzamos la instalación de 'pg' en la raíz de producción.
+# Esto resuelve el error "this.postgres.Pool is not a constructor" en TypeORM.
+# -----------------------------------------------------------------------------
+RUN npm install pg --legacy-peer-deps
+
 EXPOSE 3000
 
-# Iniciamos la aplicación
+# Ejecución con dumb-init para gestionar señales de proceso (SIGTERM, etc.)
 CMD ["dumb-init", "node", "dist/main.js"]

@@ -12,9 +12,15 @@ import { GroupsModule } from './application/groups/groups.module';
 import { SlotsModule } from './application/slots/slots.module';
 import { ReservationsModule } from './application/reservations/reservations.module';
 import { NotificationsModule } from './application/notifications/notifications.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public', 'client'),
+      exclude: ['/api/(.*)'], // No tocar nada que sea de la API
+    }),
     ConfigModule.forRoot({
       validate: validateEnv,
       isGlobal: true,

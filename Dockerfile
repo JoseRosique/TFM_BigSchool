@@ -1,45 +1,42 @@
 # =============================================================================
-# 1️⃣ Builder Stage
+# STAGE 1 — BUILDER
 # =============================================================================
 FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-# Copiar package files primero (mejor cache)
+# Copiamos solo archivos necesarios primero (mejora cache)
 COPY package*.json ./
-COPY packages/*/package*.json ./packages/
+COPY packages/backend/package*.json ./packages/backend/
+COPY packages/shared/package*.json ./packages/shared/
 
-# Instalar TODAS las dependencias (incluye dev)
+# Instalamos dependencias completas del monorepo
 RUN npm install --legacy-peer-deps
 
-# Copiar el resto del código
+# Copiamos el resto del código
 COPY . .
 
-# Build backend y frontend
+# Build backend
 RUN npm run build:backend
-RUN npm run build:frontend
-
 
 # =============================================================================
-# 2️⃣ Production Stage
+# STAGE 2 — PRODUCTION
 # =============================================================================
 FROM node:20-alpine AS production
+
 WORKDIR /app
 
 RUN apk add --no-cache dumb-init
 
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# Copiar solo package.json raíz
-COPY package*.json ./
-
-# Instalar SOLO dependencias de producción
-RUN npm install --omit=dev --legacy-peer-deps
-
-# Copiar backend compilado
+# Copiamos SOLO lo necesario del backend
 COPY --from=builder /app/packages/backend/dist ./dist
+COPY --from=builder /app/packages/backend/package.json ./package.json
 
-# Copiar frontend compilado (estático)
-COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
+# Instalamos SOLO dependencias de producción del backend
+RUN npm install --omit=dev --legacy-peer-deps
 
 EXPOSE 3000
 

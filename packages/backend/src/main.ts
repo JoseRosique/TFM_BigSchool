@@ -17,18 +17,20 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'"],
+          // AÑADIDO: 'unsafe-inline' aquí es necesario para Angular
+          scriptSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
           frameAncestors: ["'none'"],
-          // Permitimos estilos propios, inline y de Google Fonts
+          scriptSrcAttr: ["'unsafe-inline'"],
+          // Para los iconos y estilos de Google
           styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-          // Permitimos que las fuentes se descarguen de Google y de archivos locales
+          // Para descargar las fuentes reales
           fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
-          // Ajuste para connect-src (importante para evitar el error del shader/data:)
+          // Para las llamadas a la API y extensiones
           connectSrc: ["'self'", corsOrigin, 'data:'],
-          upgradeInsecureRequests: [], // Render ya usa HTTPS, esto evita conflictos
+          upgradeInsecureRequests: [],
         },
       },
       crossOriginEmbedderPolicy: false, // Necesario para que algunos navegadores no bloqueen recursos externos

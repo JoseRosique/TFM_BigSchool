@@ -59,7 +59,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "liveReload": true,
-            "watch": true
+            "watch": true,
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

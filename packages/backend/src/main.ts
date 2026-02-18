@@ -18,15 +18,20 @@ async function bootstrap() {
         directives: {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", corsOrigin],
-          fontSrc: ["'self'", 'data:'],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
           frameAncestors: ["'none'"],
+          // Permitimos estilos propios, inline y de Google Fonts
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+          // Permitimos que las fuentes se descarguen de Google y de archivos locales
+          fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+          // Ajuste para connect-src (importante para evitar el error del shader/data:)
+          connectSrc: ["'self'", corsOrigin, 'data:'],
+          upgradeInsecureRequests: [], // Render ya usa HTTPS, esto evita conflictos
         },
       },
+      crossOriginEmbedderPolicy: false, // Necesario para que algunos navegadores no bloqueen recursos externos
       referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     }),
   );

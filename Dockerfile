@@ -1,51 +1,46 @@
 # =============================================================================
-# Etapa 1: Builder (Construye todo el Monorepo)
+# 1️⃣ Builder Stage
 # =============================================================================
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copiamos todo el proyecto
-COPY . .
+# Copiar package files primero (mejor cache)
+COPY package*.json ./
+COPY packages/*/package*.json ./packages/
 
-# Instalamos dependencias totales para la compilación
+# Instalar TODAS las dependencias (incluye dev)
 RUN npm install --legacy-peer-deps
 
-# Compilamos backend y frontend
+# Copiar el resto del código
+COPY . .
+
+# Build backend y frontend
 RUN npm run build:backend
 RUN npm run build:frontend
 
+
 # =============================================================================
-# Etapa 2: Production (Imagen optimizada para despliegue)
+# 2️⃣ Production Stage
 # =============================================================================
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Herramientas de sistema
 RUN apk add --no-cache dumb-init
 
-# Variables de entorno
 ENV NODE_ENV=production
-ENV PORT=3000
 
-# 1. Copiamos node_modules completo para mantener los workspaces intactos
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copiar solo package.json raíz
+COPY package*.json ./
 
-# 2. Copiamos paquetes locales (necesario para que los symlinks no apunten al vacío)
-COPY --from=builder /app/packages/shared ./packages/shared
-COPY --from=builder /app/packages/backend/package.json ./packages/backend/package.json
+# Instalar SOLO dependencias de producción
+RUN npm install --omit=dev --legacy-peer-deps
 
-# 3. Copiamos el código compilado (Backend y Frontend)
+# Copiar backend compilado
 COPY --from=builder /app/packages/backend/dist ./dist
-COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
-# -----------------------------------------------------------------------------
-# FIX: Forzamos la instalación de 'pg' en la raíz de producción.
-# Esto resuelve el error "this.postgres.Pool is not a constructor" en TypeORM.
-# -----------------------------------------------------------------------------
-RUN npm install pg --legacy-peer-deps
+# Copiar frontend compilado (estático)
+COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
 EXPOSE 3000
 
-# Ejecución con dumb-init para gestionar señales de proceso (SIGTERM, etc.)
 CMD ["dumb-init", "node", "dist/main.js"]

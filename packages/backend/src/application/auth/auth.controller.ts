@@ -108,9 +108,15 @@ export class AuthController {
   @Get('avatars')
   @UseGuards(JwtAuthGuard)
   getAvailableAvatars(): { avatars: string[] } {
-    // Ruta desde la raíz del monorepo al directorio de avatares
-    const workspaceRoot = path.join(process.cwd(), '..');
-    const avatarsPath = path.join(workspaceRoot, 'frontend/src/assets/avatars');
+    // 1. Detectamos la ruta de la carpeta 'public/client/assets/avatars'
+    // En producción, Nest sirve desde 'public/client'
+    const publicPath = path.join(process.cwd(), 'public', 'client', 'assets', 'avatars');
+
+    // 2. Mantenemos una ruta de fallback para local si fuera necesario
+    const localPath = path.join(process.cwd(), '..', 'frontend', 'src', 'assets', 'avatars');
+
+    // Intentamos primero la de producción, si no, la de local
+    const avatarsPath = fs.existsSync(publicPath) ? publicPath : localPath;
 
     try {
       const files = fs.readdirSync(avatarsPath);
@@ -121,13 +127,12 @@ export class AuthController {
           const numB = parseInt(b.match(/avatar-(\d+)/)?.[1] || '0');
           return numA - numB;
         })
+        // La URL pública siempre será /assets/avatars/...
         .map((file) => `/assets/avatars/${file}`);
 
       return { avatars };
     } catch (error) {
       console.error('Error reading avatars directory:', error);
-      console.error('Attempted path:', avatarsPath);
-      // Fallback a un arreglo vacío o avatares por defecto
       return { avatars: [] };
     }
   }

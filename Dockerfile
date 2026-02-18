@@ -1,51 +1,49 @@
-# Stage 1: Frontend Builder
-FROM node:20-alpine AS frontend-builder
-WORKDIR /build
-COPY package.json package-lock.json* ./
-COPY packages/shared/package*.json ./packages/shared/
-COPY packages/frontend/package*.json ./packages/frontend/
+# =============================================================================
+# Etapa 1: Builder (Construye todo el Monorepo)
+# =============================================================================
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Copiamos absolutamente todo el proyecto
+# En monorepos, esto es lo más seguro para que npm workspaces no falle
+COPY . .
+
+# Instalamos todas las dependencias (necesitamos las de desarrollo para buildear)
 RUN npm install --legacy-peer-deps
-COPY packages/shared/ ./packages/shared/
-COPY packages/frontend/ ./packages/frontend/
+
+# Ejecutamos los comandos de compilación desde la raíz
+RUN npm run build:backend
 RUN npm run build:frontend
 
-# Stage 2: Backend Builder
-FROM node:20-alpine AS backend-builder
-WORKDIR /build
-COPY package.json package-lock.json* ./
-COPY packages/shared/package*.json ./packages/shared/
-COPY packages/backend/package*.json ./packages/backend/
-RUN npm install --legacy-peer-deps
-COPY packages/shared/ ./packages/shared/
-COPY packages/backend/ ./packages/backend/
-RUN npm run build:backend
-
-# Stage 3: Production Runtime
+# =============================================================================
+# Etapa 2: Production (Imagen ligera para Render)
+# =============================================================================
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Instalamos herramientas necesarias
+# Instalamos dumb-init para un manejo correcto de procesos
 RUN apk add --no-cache dumb-init
+
+# Variables de entorno
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# 1. Copiamos los archivos de configuración del monorepo
-COPY package.json package-lock.json* ./
-COPY packages/shared/package*.json ./packages/shared/
-COPY packages/backend/package*.json ./packages/backend/
+# 1. COPIAMOS EL ÁRBOL DE DEPENDENCIAS COMPLETO
+# Al copiar el node_modules entero del builder, nos aseguramos de que
+# 'zod', 'glob' y los enlaces (symlinks) a @shared no se rompan.
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-# 2. INSTALACIÓN LIMPIA de producción (Sin prune, instalamos solo lo necesario)
-# Añadimos 'glob' explícitamente por si acaso el monorepo no lo detecta
-RUN npm install --omit=dev --legacy-peer-deps && npm install glob
+# 2. COPIAMOS LOS PAQUETES (Estructura necesaria para los symlinks)
+# Es vital copiar la carpeta shared porque el symlink en node_modules apunta allí
+COPY --from=builder /app/packages/shared ./packages/shared
+COPY --from=builder /app/packages/backend/package.json ./packages/backend/package.json
 
-# 3. Copiamos los archivos compilados (dist)
-COPY --from=backend-builder /build/packages/backend/dist ./dist
-COPY --from=frontend-builder /build/packages/frontend/dist/meetwithfriends/frontend ./public/client
-
-# 4. Aseguramos que las dependencias compartidas estén accesibles
-COPY --from=backend-builder /build/packages/shared ./packages/shared
+# 3. COPIAMOS LOS DIST (Código compilado)
+COPY --from=builder /app/packages/backend/dist ./dist
+COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
 EXPOSE 3000
 
-# Usamos la ruta completa de node para evitar ambigüedades
+# Iniciamos la aplicación
 CMD ["dumb-init", "node", "dist/main.js"]

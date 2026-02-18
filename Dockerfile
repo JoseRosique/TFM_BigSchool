@@ -4,17 +4,16 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copiamos todo el monorepo para el build
+# Copiamos todo y lo instalamos TODO
 COPY . .
 RUN npm install --legacy-peer-deps
 
-# Construimos backend y frontend
+# Compilamos ambos
 RUN npm run build:backend
 RUN npm run build:frontend
 
-# Limpiamos dependencias de desarrollo para que la imagen final sea ligera
-# Pero lo hacemos aquí, en el builder, donde tenemos todo el contexto
-RUN npm prune --production --legacy-peer-deps
+# --- COMENTAMOS EL PRUNE PARA EVITAR QUE BORRE ZOD ---
+# RUN npm prune --production --legacy-peer-deps
 
 # =============================================================================
 # Etapa 2: Production
@@ -26,24 +25,23 @@ RUN apk add --no-cache dumb-init
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# 1. Copiamos TODA la carpeta node_modules ya filtrada por el prune
-# Esto incluye zod, pg, nestjs, etc., sin riesgo de que se borren
+# 1. Copiamos TODOS los node_modules del builder
+# Esto garantiza que 'zod', 'pg' y todos los demás estén ahí
 COPY --from=builder /app/node_modules ./node_modules
 
-# 2. Copiamos el código compilado del Backend
+# 2. Copiamos los dist del backend
 COPY --from=builder /app/packages/backend/dist ./dist
 
-# 3. Copiamos los package.json para que Node identifique los paquetes
+# 3. Copiamos archivos de configuración
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/packages/backend/package.json ./packages/backend/package.json
 
-# 4. Copiamos el shared (importante si no está inyectado en el bundle)
+# 4. Copiamos el shared
 COPY --from=builder /app/packages/shared ./packages/shared
 
-# 5. Copiamos el Frontend a la carpeta que configuramos en app.module
+# 5. Copiamos el frontend
 COPY --from=builder /app/packages/frontend/dist/meetwithfriends/frontend ./public/client
 
 EXPOSE 3000
 
-# Usamos dumb-init para gestionar correctamente los procesos en Docker
 CMD ["dumb-init", "node", "dist/main.js"]

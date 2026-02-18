@@ -8,15 +8,22 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VisibilityScope } from '@meetwithfriends/shared';
 import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
 import { Group } from '../../../../shared/models/group.model';
+import { CustomSelectComponent, SelectOption } from '../custom-select/custom-select.component';
 
 @Component({
   selector: 'app-create-slot-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DateOnlyPickerComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    DateOnlyPickerComponent,
+    CustomSelectComponent,
+  ],
   templateUrl: './create-slot-modal.component.html',
   styleUrl: './create-slot-modal.component.scss',
 })
@@ -37,7 +44,7 @@ export class CreateSlotModalComponent implements OnInit {
   submitAction = output<void>();
   dateChange = output<string | null>();
 
-  constructor() {
+  constructor(private translateService: TranslateService) {
     effect(() => {
       // Reactive track of form changes for internal state management
       this.formGroup();
@@ -146,6 +153,68 @@ export class CreateSlotModalComponent implements OnInit {
         groupIds: [],
       });
     }
+  }
+
+  /**
+   * Obtiene las opciones de timezone en formato SelectOption
+   */
+  getTimezoneOptions(): SelectOption[] {
+    return this.timezones().map((tz) => ({
+      value: tz.value,
+      label: tz.label,
+    }));
+  }
+
+  /**
+   * Obtiene las opciones de visibilidad en formato SelectOption con grupos
+   */
+  getVisibilityOptions(): SelectOption[] {
+    const options: SelectOption[] = [];
+
+    // Opciones básicas
+    options.push({
+      value: VisibilityScope.PRIVATE,
+      label: this.translateService.instant('CALENDAR_PAGE.VISIBILITY.PRIVATE'),
+    });
+
+    const friendsLabel = this.translateService.instant('CALENDAR_PAGE.VISIBILITY.FRIENDS');
+    const noGroupsHint = this.translateService.instant('CALENDAR_PAGE.FORM.NO_GROUPS_HINT');
+
+    options.push({
+      value: VisibilityScope.FRIENDS,
+      label: this.userGroups().length === 0 ? `${friendsLabel} (${noGroupsHint})` : friendsLabel,
+    });
+
+    // Grupos del usuario
+    if (this.userGroups().length > 0) {
+      const myGroupsLabel = this.translateService.instant('CALENDAR_PAGE.FORM.MY_GROUPS');
+      this.userGroups().forEach((group) => {
+        options.push({
+          value: `GROUP:${group.id}`,
+          label: group.name,
+          group: myGroupsLabel,
+        });
+      });
+    }
+
+    return options;
+  }
+
+  /**
+   * Maneja el cambio de timezone desde el custom select
+   */
+  onTimezoneChange(value: string, slotIndex: number): void {
+    const slot = this.getTimeSlot(slotIndex);
+    if (!slot) return;
+    slot.patchValue({ timezone: value });
+  }
+
+  /**
+   * Obtiene el valor de timezone para un slot específico
+   */
+  getTimezoneValue(slotIndex: number): string {
+    const slot = this.getTimeSlot(slotIndex);
+    return slot?.get('timezone')?.value || this.displayTimezone();
   }
 
   /**

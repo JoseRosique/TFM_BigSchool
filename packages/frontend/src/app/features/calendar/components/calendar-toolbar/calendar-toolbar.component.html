@@ -25,15 +25,31 @@
     <span class="calendar-month__label">{{ monthLabel() }}</span>
   </div>
   <div class="calendar-nav">
-    <button class="btn btn--ghost" type="button" (click)="goPrev()">
+    <button
+      class="btn btn--ghost"
+      type="button"
+      (click)="goPrev()"
+      [attr.aria-label]="'CALENDAR_PAGE.PREV_MONTH' | translate"
+    >
       <span class="material-symbols-outlined">chevron_left</span>
-      {{ "CALENDAR_PAGE.PREV_MONTH" | translate }}
+      <span class="btn-text">{{ "CALENDAR_PAGE.PREV_MONTH" | translate }}</span>
     </button>
-    <button class="btn btn--ghost" type="button" (click)="goToday()">
-      {{ "CALENDAR_PAGE.TODAY" | translate }}
+    <button
+      class="btn btn--ghost"
+      type="button"
+      (click)="goToday()"
+      [attr.aria-label]="'CALENDAR_PAGE.TODAY' | translate"
+    >
+      <span class="material-symbols-outlined">today</span>
+      <span class="btn-text">{{ "CALENDAR_PAGE.TODAY" | translate }}</span>
     </button>
-    <button class="btn btn--ghost" type="button" (click)="goNext()">
-      {{ "CALENDAR_PAGE.NEXT_MONTH" | translate }}
+    <button
+      class="btn btn--ghost"
+      type="button"
+      (click)="goNext()"
+      [attr.aria-label]="'CALENDAR_PAGE.NEXT_MONTH' | translate"
+    >
+      <span class="btn-text">{{ "CALENDAR_PAGE.NEXT_MONTH" | translate }}</span>
       <span class="material-symbols-outlined">chevron_right</span>
     </button>
   </div>

@@ -18,7 +18,8 @@
           </div>
           <div class="profile-info">
             <h3 class="profile-name">{{ user()!.name }}</h3>
-            <p class="profile-badge">{{ "PROFILE.PRO_MEMBER" | translate }}</p>
+            <!-- TODO: Add "Pro Member" badge or similar if user has a premium subscription -->
+            <!-- <p class="profile-badge">{{ "PROFILE.PRO_MEMBER" | translate }}</p> -->
           </div>
           <button type="button" class="btn btn--secondary" (click)="openAvatarModal()">
             {{ "PROFILE.SELECT_AVATAR" | translate }}

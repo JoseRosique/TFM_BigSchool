@@ -13,18 +13,30 @@
     </header>
     <div class="calendar-cell__indicators">
       @if (availableCount() > 0) {
-        <span class="indicator indicator--available">
-          {{ availableCount() }} {{ "CALENDAR_PAGE.INDICATORS.AVAILABLE" | translate }}
+        <span
+          class="indicator indicator--available"
+          [attr.aria-label]="availableCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.AVAILABLE' | translate)"
+        >
+          <span class="indicator__count">{{ availableCount() }}</span>
+          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.AVAILABLE" | translate }}</span>
         </span>
       }
       @if (confirmedCount() > 0) {
-        <span class="indicator indicator--confirmed">
-          {{ confirmedCount() }} {{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}
+        <span
+          class="indicator indicator--confirmed"
+          [attr.aria-label]="confirmedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.CONFIRMED' | translate)"
+        >
+          <span class="indicator__count">{{ confirmedCount() }}</span>
+          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}</span>
         </span>
       }
       @if (pendingCount() > 0) {
-        <span class="indicator indicator--pending">
-          {{ pendingCount() }} {{ "CALENDAR_PAGE.INDICATORS.PENDING" | translate }}
+        <span
+          class="indicator indicator--pending"
+          [attr.aria-label]="pendingCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.PENDING' | translate)"
+        >
+          <span class="indicator__count">{{ pendingCount() }}</span>
+          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.PENDING" | translate }}</span>
         </span>
       }
     </div>

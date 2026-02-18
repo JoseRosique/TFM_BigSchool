@@ -1,0 +1,183 @@
+.custom-select {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-select__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  padding: clamp(0.6rem, 2vw, 0.75rem) clamp(0.75rem, 2.5vw, 1rem);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  min-height: 44px;
+  text-align: left;
+
+  @media (min-width: 768px) {
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+    min-height: auto;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    background: var(--color-bg-elevated);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-overlay-primary-18);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--color-bg-surface);
+  }
+}
+
+.custom-select--open .custom-select__trigger {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-overlay-primary-18);
+}
+
+.custom-select__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-select__arrow {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: clamp(1.2rem, 3vw, 1.4rem);
+  transition: transform 0.2s ease;
+}
+
+.custom-select__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 240px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  box-shadow:
+    0 4px 12px var(--color-shadow-md),
+    0 2px 6px var(--color-shadow-sm);
+  z-index: 100;
+  animation: slideDown 0.15s ease-out;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+
+    &:hover {
+      background: var(--color-border-soft);
+    }
+  }
+
+  scrollbar-color: var(--color-border) transparent;
+  scrollbar-width: thin;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-select__group-label {
+  padding: clamp(0.5rem, 1.5vw, 0.6rem) clamp(0.75rem, 2.5vw, 1rem);
+  font-size: clamp(0.7rem, 1.8vw, 0.75rem);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.custom-select__option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  padding: clamp(0.6rem, 2vw, 0.75rem) clamp(0.75rem, 2.5vw, 1rem);
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    font-size: clamp(0.8rem, 2vw, 0.85rem);
+  }
+
+  &:hover,
+  &.custom-select__option--focused {
+    background: var(--color-overlay-primary-10);
+  }
+
+  &.custom-select__option--selected {
+    background: var(--color-overlay-primary-18);
+    color: var(--color-primary-strong);
+    font-weight: 600;
+  }
+
+  &:active {
+    background: var(--color-overlay-primary-25);
+  }
+}
+
+.custom-select__option-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-select__option-check {
+  flex-shrink: 0;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--color-primary-strong);
+}
+
+.custom-select--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}

@@ -4,8 +4,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
-  merge,
   of,
   Subject,
   switchMap,
@@ -47,9 +45,6 @@ export class GroupsPageComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly search$ = new Subject<string>();
-  private readonly memberSearch$ = new Subject<string>();
-  private readonly memberSearchRefresh$ = new Subject<void>();
-
   groups = computed(() => this.groupsService.groups());
   searchQuery = signal('');
   isLoading = signal(false);
@@ -72,6 +67,7 @@ export class GroupsPageComponent {
   originalMemberIds = signal<string[]>([]);
   availableFriends = signal<GroupMember[]>([]);
   memberSearchQuery = signal('');
+  private allFriendsCache = signal<GroupMember[] | null>(null);
 
   isConfirmDialogOpen = signal(false);
   groupToDelete = signal<Group | null>(null);
@@ -80,7 +76,6 @@ export class GroupsPageComponent {
   constructor() {
     this.loadGroups();
     this.bindSearch();
-    this.bindMemberSearch();
   }
 
   onSearch(query: string): void {
@@ -95,7 +90,8 @@ export class GroupsPageComponent {
     this.selectedMembers.set([]);
     this.originalMemberIds.set([]);
     this.isModalOpen.set(true);
-    this.loadFriendsForCreate('');
+    this.memberSearchQuery.set('');
+    this.loadFriendsForCreate('').pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   openEditModal(group: Group): void {
@@ -108,7 +104,8 @@ export class GroupsPageComponent {
     this.selectedMembers.set(group.members ?? []);
     this.originalMemberIds.set(group.members?.map((member) => member.id) ?? []);
     this.isModalOpen.set(true);
-    this.loadAvailableFriends(group.id, '');
+    this.memberSearchQuery.set('');
+    this.loadAvailableFriends(group.id, '').pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   closeModal(): void {
@@ -208,16 +205,19 @@ export class GroupsPageComponent {
     const exists = current.some((item) => item.id === member.id);
     if (exists) {
       this.selectedMembers.set(current.filter((item) => item.id !== member.id));
+      this.availableFriends.update((friends) =>
+        friends.some((friend) => friend.id === member.id) ? friends : [member, ...friends],
+      );
     } else {
       this.selectedMembers.set([...current, member]);
+      this.availableFriends.update((friends) =>
+        friends.filter((friend) => friend.id !== member.id),
+      );
     }
-
-    this.memberSearchRefresh$.next();
   }
 
   onMemberSearch(query: string): void {
     this.memberSearchQuery.set(query);
-    this.memberSearch$.next(query);
   }
 
   saveGroup(): void {
@@ -337,28 +337,7 @@ export class GroupsPageComponent {
       .subscribe();
   }
 
-  private bindMemberSearch(): void {
-    merge(this.memberSearch$, this.memberSearchRefresh$.pipe(map(() => this.memberSearchQuery())))
-      .pipe(
-        debounceTime(250),
-        switchMap((query) => {
-          const groupId = this.editingGroupId();
-          if (this.modalMode() === 'edit' && groupId) {
-            return this.loadAvailableFriends(groupId, query);
-          }
-          return this.loadFriendsForCreate(query);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
   private loadAvailableFriends(groupId: string, query: string) {
-    const trimmed = query.trim();
-    if (!trimmed) {
-      this.availableFriends.set([]);
-      return of([] as GroupMember[]);
-    }
     return this.groupsService.getAvailableFriends(groupId, query).pipe(
       tap((friends) => this.availableFriends.set(this.excludeSelected(friends))),
       catchError((error) => {
@@ -370,38 +349,44 @@ export class GroupsPageComponent {
   }
 
   private loadFriendsForCreate(query: string) {
-    const trimmed = query.trim();
-    if (!trimmed) {
-      this.availableFriends.set([]);
-      return of([] as Friend[]);
+    const cached = this.allFriendsCache();
+    if (cached) {
+      const filtered = this.filterFriendsList(cached, query);
+      this.availableFriends.set(this.excludeSelected(filtered));
+      return of(filtered);
     }
+
     return this.friendsService.getFriends().pipe(
       tap((friends) => {
-        const filtered = this.filterFriendsForCreate(friends, query);
+        const mapped = this.mapFriendsToMembers(friends);
+        this.allFriendsCache.set(mapped);
+        const filtered = this.filterFriendsList(mapped, query);
         this.availableFriends.set(this.excludeSelected(filtered));
       }),
       catchError((error) => {
         this.toastService.error(this.resolveErrorKey(error));
         this.availableFriends.set([]);
-        return of([] as Friend[]);
+        return of([] as GroupMember[]);
       }),
     );
   }
 
-  private filterFriendsForCreate(friends: Friend[], query: string): GroupMember[] {
-    const trimmed = query.trim().toLowerCase();
-    const mapped = friends.map((friend) => ({
+  private mapFriendsToMembers(friends: Friend[]): GroupMember[] {
+    return friends.map((friend) => ({
       id: friend.id,
       name: friend.name,
       username: friend.username,
       avatarUrl: friend.avatarUrl,
     }));
+  }
 
+  private filterFriendsList(friends: GroupMember[], query: string): GroupMember[] {
+    const trimmed = query.trim().toLowerCase();
     if (!trimmed) {
-      return mapped;
+      return friends;
     }
 
-    return mapped.filter(
+    return friends.filter(
       (friend) =>
         friend.name.toLowerCase().includes(trimmed) ||
         friend.username.toLowerCase().includes(trimmed),

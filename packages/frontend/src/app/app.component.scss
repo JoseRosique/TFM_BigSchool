@@ -4,6 +4,7 @@
   --mobile-bottom-nav-height: 64px;
   --mobile-bottom-nav-safe: env(safe-area-inset-bottom, 0px);
   --mobile-bottom-nav-offset: calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-safe));
+  --header-height: 72px;
 }
 
 .route-guard-loading {
@@ -52,6 +53,7 @@
   display: flex;
   min-height: 0;
   background: var(--color-bg-app);
+  padding-top: var(--header-height);
 }
 
 .app-shell__content {
@@ -80,6 +82,10 @@
 }
 
 @media (max-width: 768px) {
+  :host {
+    --header-height: 56px;
+  }
+
   .app-shell__content {
     padding: 1rem 1rem calc(1rem + var(--mobile-bottom-nav-offset));
   }

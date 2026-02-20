@@ -89,34 +89,54 @@
         </div>
       </div>
 
-      <div class="group-modal__search">
-        <span class="material-symbols-outlined">search</span>
-        <input
-          type="text"
-          [value]="searchQuery"
-          (input)="searchFriends.emit($any($event.target).value)"
-          [placeholder]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
-          [attr.aria-label]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
-        />
-      </div>
+      <div class="friend-select" #friendSelect>
+        <button
+          class="friend-select__trigger"
+          type="button"
+          (click)="toggleDropdown()"
+          [attr.aria-expanded]="isDropdownOpen"
+          aria-haspopup="listbox"
+        >
+          <span>
+            {{ "GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS" | translate }}
+          </span>
+          <span class="material-symbols-outlined">expand_more</span>
+        </button>
 
-      <div class="group-modal__available">
-        @if (availableFriends.length === 0) {
-          <div class="group-modal__empty">
-            <span class="material-symbols-outlined">person_off</span>
-            <p>{{ "GROUPS_MANAGEMENT.MODAL.NO_AVAILABLE" | translate }}</p>
-          </div>
-        } @else {
-          @for (friend of availableFriends; track friend.id) {
-            <button class="group-modal__friend" type="button" (click)="toggleMember.emit(friend)">
-              <img class="group-modal__friend-avatar" [src]="friend.avatarUrl" [alt]="friend.name" />
-              <div class="group-modal__friend-info">
-                <span>{{ friend.name }}</span>
-                <small>{{ friend.username }}</small>
+        @if (isDropdownOpen) {
+          <div class="friend-select__panel" role="listbox">
+            <div class="friend-select__search">
+              <span class="material-symbols-outlined">search</span>
+              <input
+                type="text"
+                [formControl]="searchControl"
+                [placeholder]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
+                [attr.aria-label]="'GROUPS_MANAGEMENT.MODAL.SEARCH_FRIENDS' | translate"
+              />
+            </div>
+
+            @if (filteredFriends$ | async; as filteredFriends) {
+              <div class="friend-select__options">
+                @if (filteredFriends.length === 0) {
+                  <div class="group-modal__empty">
+                    <span class="material-symbols-outlined">person_off</span>
+                    <p>{{ "GROUPS_MANAGEMENT.MODAL.NO_AVAILABLE" | translate }}</p>
+                  </div>
+                } @else {
+                  @for (friend of filteredFriends; track friend.id) {
+                    <button class="group-modal__friend" type="button" (click)="handleToggleMember(friend)">
+                      <img class="group-modal__friend-avatar" [src]="friend.avatarUrl" [alt]="friend.name" />
+                      <div class="group-modal__friend-info">
+                        <span>{{ friend.name }}</span>
+                        <small>{{ friend.username }}</small>
+                      </div>
+                      <span class="material-symbols-outlined">add_circle</span>
+                    </button>
+                  }
+                }
               </div>
-              <span class="material-symbols-outlined">add_circle</span>
-            </button>
-          }
+            }
+          </div>
         }
       </div>
     </div>

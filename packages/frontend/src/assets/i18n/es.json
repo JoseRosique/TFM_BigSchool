@@ -326,6 +326,7 @@
     "FORM": {
       "TITLE": "Abrir disponibilidad",
       "TITLE_EDIT": "Modificar disponibilidad",
+      "SLOT_DETAIL": "Detalles de la franja",
       "DATE": "Fecha",
       "START": "Hora inicio",
       "END": "Hora fin",
@@ -346,6 +347,8 @@
       "SUBMIT": "Crear franja",
       "SUBMIT_EDIT": "Actualizar franjas",
       "CANCEL": "Cancelar",
+      "RESERVE_SLOT": "Reservar franja",
+      "AVAILABILITY_OF": "Disponibilidad de:",
       "EMPTY_SLOTS": "No hay franjas definidas para este día.",
       "EMPTY_SLOTS_HINT": "Haz clic en + para añadir una.",
       "ERROR_END_BEFORE_START": "La hora fin debe ser posterior a la hora inicio",

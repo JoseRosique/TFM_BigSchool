@@ -192,6 +192,7 @@ export class CalendarFacade {
             ...slot,
             startDate: new Date(slot.start),
             endDate: new Date(slot.end),
+            user: (slot as any).user ?? (slot as any).owner ?? null,
           }));
         this.slots.set(items);
         this.isLoadingSlots.set(false);
@@ -231,7 +232,7 @@ export class CalendarFacade {
   }
 
   reserveSlot(slotId: string) {
-    return this.reservationsService.reserve({ slotId });
+    return this.reservationsService.reserveBySlotId(slotId);
   }
 
   cancelReservation(reservationId: string) {

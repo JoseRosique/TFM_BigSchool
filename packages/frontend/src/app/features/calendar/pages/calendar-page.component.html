@@ -24,7 +24,6 @@
           [formatTimeRange]="formatTimeRange"
           [isReadOnly]="isReadOnly()"
           (createForDay)="openCreateModalForDayKey($event)"
-          (openDayModal)="openDayModalForExplore($event)"
           (reserveSlot)="reserveSlot($event)"
           (editSlot)="openEditSlotModal($event)"
           (deleteSlot)="openDeleteModal($event)"
@@ -58,8 +57,15 @@
       [isDateLocked]="isDateLocked()"
       [isSubmitting]="isLoading() || isCreating()"
       [isEditMode]="isEditMode()"
+      [viewMode]="slotModalViewMode()"
+      [isFriendSlot]="slotModalViewMode() === 'FRIEND'"
+      [slotOwnerName]="getModalCreatorName()"
+      [creatorName]="getModalCreatorName()"
+      [canReserve]="canReserveSelectedSlot()"
+      [selectedSlotStatus]="selectedFriendSlot()?.status || null"
       (close)="closeCreateModal()"
-      (submitAction)="submitCreateSlot()"
+      (submitAction)="submitCreateSlot($event)"
+      (reserveAction)="reserveFriendSlotFromModal($event)"
       (dateChange)="updateSlotDate($event)"
     ></app-create-slot-modal>
   }
@@ -76,12 +82,4 @@
       (confirm)="confirmDeleteSlot()"
     ></app-confirm-dialog>
   }
-
-  <app-explore-slots-day-modal
-    [currentUserId]="currentUserId()"
-    [reservations]="reservations()"
-    [processingSlotId]="processingSlotId()"
-    (reserve)="reserveSlot($event)"
-    (cancelReservation)="cancelReservation($event)"
-  ></app-explore-slots-day-modal>
 </section>

@@ -15,6 +15,10 @@ export class ReservationsService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/reservations`;
 
+  reserveBySlotId(slotId: string): Observable<ReserveSlotDTO.Response> {
+    return this.http.post<ReserveSlotDTO.Response>(this.apiUrl, { slotId });
+  }
+
   reserve(input: ReserveSlotDTO.Request): Observable<ReserveSlotDTO.Response> {
     return this.http.post<ReserveSlotDTO.Response>(this.apiUrl, input);
   }

@@ -45,9 +45,12 @@ export class CalendarDayCellComponent {
     const day = this.day();
     if (!day) return;
 
-    // En modo read-only (explorar), abrir modal
+    // En modo read-only (explorar), abrir detalle directo de la primera franja de amigo
     if (this.isReadOnly()) {
-      this.openDayModal.emit(day.key);
+      const friendSlot = this.slots().find((slot) => slot.ownerId !== this.currentUserId());
+      if (friendSlot) {
+        this.editSlot.emit(friendSlot);
+      }
     } else {
       // En modo normal (mi disponibilidad), permitir crear
       this.createForDay.emit(day.key);

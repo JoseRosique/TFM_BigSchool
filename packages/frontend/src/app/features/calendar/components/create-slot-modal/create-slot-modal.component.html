@@ -4,8 +4,15 @@
     <div class="modal-header">
       <div>
         <h2 class="modal-title">
-          {{ (isEditMode() ? "CALENDAR_PAGE.FORM.TITLE_EDIT" : "CALENDAR_PAGE.FORM.TITLE") | translate }}
+          @if (isFriendSlot()) {
+            {{ "CALENDAR_PAGE.FORM.SLOT_DETAIL" | translate }}
+          } @else {
+            {{ (isEditMode() ? "CALENDAR_PAGE.FORM.TITLE_EDIT" : "CALENDAR_PAGE.FORM.TITLE") | translate }}
+          }
         </h2>
+        @if (isFriendSlot()) {
+          <p class="form-label">{{ getCreatorLabel() }}</p>
+        }
       </div>
       <button class="modal-close" type="button" (click)="onClose()">
         <span class="material-symbols-outlined">close</span>
@@ -20,7 +27,7 @@
           <app-date-only-picker
             [value]="formGroup().value.date || null"
             [timeZone]="displayTimezone()"
-            [readonly]="isDateLocked()"
+            [readonly]="isDateLocked() || isFriendMode()"
             (openChange)="onDateOpenChange($event)"
             (valueChange)="onDateChange($event)"
           ></app-date-only-picker>
@@ -31,15 +38,17 @@
       <div class="modal-section slots-section">
         <div class="slots-header">
           <span class="form-label">{{ "CALENDAR_PAGE.FORM.TIME_RANGES" | translate }}</span>
-          <button
-            type="button"
-            class="btn-add-slot"
-            (click)="addTimeSlot()"
-            [disabled]="isSubmitting()"
-            [attr.aria-label]="'CALENDAR_PAGE.FORM.ADD_SLOT_BTN' | translate"
-          >
-            <span class="material-symbols-outlined">add</span>
-          </button>
+          @if (!isFriendSlot()) {
+            <button
+              type="button"
+              class="btn-add-slot"
+              (click)="addTimeSlot()"
+              [disabled]="isSubmitting()"
+              [attr.aria-label]="'CALENDAR_PAGE.FORM.ADD_SLOT_BTN' | translate"
+            >
+              <span class="material-symbols-outlined">add</span>
+            </button>
+          }
         </div>
 
         <!-- Scrollable Container for Slot Cards -->
@@ -52,43 +61,64 @@
                   <div class="slot-time-group">
                     <div class="time-input-wrapper">
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.START" | translate }}</label>
-                      <input type="time" class="time-field" formControlName="startTime" [disabled]="isSubmitting()" />
+                      <input
+                        type="time"
+                        class="time-field"
+                        formControlName="startTime"
+                        [disabled]="isSubmitting() || isFriendSlot()"
+                      />
                     </div>
                     <div class="time-input-wrapper">
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.END" | translate }}</label>
-                      <input type="time" class="time-field" formControlName="endTime" [disabled]="isSubmitting()" />
+                      <input
+                        type="time"
+                        class="time-field"
+                        formControlName="endTime"
+                        [disabled]="isSubmitting() || isFriendSlot()"
+                      />
                     </div>
+                    @if (slot.hasError("invalidRange")) {
+                      <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_END_BEFORE_START" | translate }}</div>
+                    }
                   </div>
 
                   <!-- Row 2: Timezone and Visibility side by side -->
                   <div class="slot-config-row">
                     <div class="config-field">
                       <span class="config-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
-                      <app-custom-select
-                        [options]="getTimezoneOptions()"
-                        [value]="getTimezoneValue($index)"
-                        (valueChange)="onTimezoneChange($event, $index)"
-                        [disabled]="isSubmitting()"
-                        [placeholder]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
-                        [ariaLabel]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
-                      ></app-custom-select>
+                      @if (isFriendSlot()) {
+                        <p class="config-label">{{ getTimezoneValue($index) }}</p>
+                      } @else {
+                        <app-custom-select
+                          [options]="getTimezoneOptions()"
+                          [value]="getTimezoneValue($index)"
+                          (valueChange)="onTimezoneChange($event, $index)"
+                          [disabled]="isSubmitting()"
+                          [placeholder]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
+                          [ariaLabel]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
+                        ></app-custom-select>
+                      }
                     </div>
                     <div class="config-field">
                       <span class="config-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
-                      @if (isLoadingGroups()) {
-                        <div class="groups-loading">
-                          <span class="loading-spinner"></span>
-                          <span>{{ "CALENDAR_PAGE.FORM.LOADING_GROUPS" | translate }}</span>
-                        </div>
+                      @if (isFriendSlot()) {
+                        <p class="config-label">{{ getVisibilityLabel($index) }}</p>
                       } @else {
-                        <app-custom-select
-                          [options]="getVisibilityOptions()"
-                          [value]="getVisibilityValue($index)"
-                          (valueChange)="onVisibilityChange($event, $index)"
-                          [disabled]="isSubmitting()"
-                          [placeholder]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
-                          [ariaLabel]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
-                        ></app-custom-select>
+                        @if (isLoadingGroups()) {
+                          <div class="groups-loading">
+                            <span class="loading-spinner"></span>
+                            <span>{{ "CALENDAR_PAGE.FORM.LOADING_GROUPS" | translate }}</span>
+                          </div>
+                        } @else {
+                          <app-custom-select
+                            [options]="getVisibilityOptions()"
+                            [value]="getVisibilityValue($index)"
+                            (valueChange)="onVisibilityChange($event, $index)"
+                            [disabled]="isSubmitting()"
+                            [placeholder]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
+                            [ariaLabel]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
+                          ></app-custom-select>
+                        }
                       }
                     </div>
                   </div>
@@ -100,27 +130,24 @@
                       class="notes-textarea"
                       formControlName="notes"
                       rows="2"
-                      [disabled]="isSubmitting()"
+                      [disabled]="isSubmitting() || isFriendSlot()"
                       [placeholder]="'CALENDAR_PAGE.FORM.NOTES_PLACEHOLDER' | translate"
                     ></textarea>
                   </div>
-
-                  <!-- Error inline en la tarjeta -->
-                  @if (getTimeSlot($index)?.hasError("invalidTimeRange")) {
-                    <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_END_BEFORE_START" | translate }}</div>
-                  }
                 </div>
 
                 <!-- Delete button for slot -->
-                <button
-                  type="button"
-                  class="slot-card__delete"
-                  (click)="removeTimeSlot($index)"
-                  [disabled]="isSubmitting()"
-                  [attr.aria-label]="'CALENDAR_PAGE.FORM.DELETE_SLOT_BTN' | translate"
-                >
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
+                @if (!isFriendSlot()) {
+                  <button
+                    type="button"
+                    class="slot-card__delete"
+                    (click)="removeTimeSlot($index)"
+                    [disabled]="isSubmitting()"
+                    [attr.aria-label]="'CALENDAR_PAGE.FORM.DELETE_SLOT_BTN' | translate"
+                  >
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                }
               </div>
             }
           } @else {
@@ -128,13 +155,6 @@
               <span class="material-symbols-outlined">event_available</span>
               <p>{{ "CALENDAR_PAGE.FORM.EMPTY_SLOTS" | translate }}</p>
               <p class="hint">{{ "CALENDAR_PAGE.FORM.EMPTY_SLOTS_HINT" | translate }}</p>
-            </div>
-          }
-
-          <!-- Global validation error -->
-          @if (getTimeSlots().hasError("overlappingRanges")) {
-            <div class="slots-error-global">
-              {{ "CALENDAR_PAGE.FORM.ERROR_OVERLAPPING" | translate }}
             </div>
           }
         </div>
@@ -145,9 +165,20 @@
         <button class="btn-cancel" type="button" (click)="onClose()">
           {{ "CALENDAR_PAGE.FORM.CANCEL" | translate }}
         </button>
-        <button class="btn-save" type="submit" [disabled]="isSubmitting() || formGroup().invalid">
-          {{ (isEditMode() ? "CALENDAR_PAGE.FORM.SUBMIT_EDIT" : "CALENDAR_PAGE.FORM.SUBMIT") | translate }}
-        </button>
+        @if (isFriendSlot()) {
+          <button
+            class="btn-save"
+            type="button"
+            [disabled]="isSubmitting() || !canReserve() || selectedSlotStatus() !== 'available'"
+            (click)="onReserve(); $event.stopPropagation()"
+          >
+            {{ "CALENDAR_PAGE.FORM.RESERVE_SLOT" | translate }}
+          </button>
+        } @else {
+          <button class="btn-save" type="submit" [disabled]="isSubmitting() || formGroup().invalid">
+            {{ (isEditMode() ? "CALENDAR_PAGE.FORM.SUBMIT_EDIT" : "CALENDAR_PAGE.FORM.SUBMIT") | translate }}
+          </button>
+        }
       </div>
     </form>
   </div>

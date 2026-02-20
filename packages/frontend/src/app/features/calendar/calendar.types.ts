@@ -5,9 +5,19 @@ export interface TimeSlot {
   endTime: string; // HH:mm format
 }
 
+export interface CalendarSlotUser {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  name?: string;
+}
+
 export interface CalendarSlot extends Slot {
   startDate: Date; // Local date for display
   endDate: Date; // Local date for display
+  user?: CalendarSlotUser | null;
+  owner?: CalendarSlotUser | null;
 }
 
 export interface ReservationItem extends ListReservationsDTO.ResponseItem {

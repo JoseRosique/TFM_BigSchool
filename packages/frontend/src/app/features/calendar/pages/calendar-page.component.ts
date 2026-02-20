@@ -30,8 +30,21 @@ import { ReservationsPanelComponent } from '../components/reservations-panel/res
 import { LegendPanelComponent } from '../components/legend-panel/legend-panel.component';
 import { CreateSlotModalComponent } from '../components/create-slot-modal/create-slot-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { ExploreSlotsDayModalComponent } from '../components/explore-slots-day-modal/explore-slots-day-modal.component';
-import { UiModalService } from '../services/ui-modal.service';
+
+interface CreateSlotSubmitPayload {
+  date: string;
+  timeSlots: Array<{
+    id?: string;
+    start?: string;
+    end?: string;
+    startTime?: string;
+    endTime?: string;
+    timezone: string;
+    visibilityScope: VisibilityScope;
+    groupIds?: string[];
+    notes?: string;
+  }>;
+}
 
 @Component({
   selector: 'app-calendar-page',
@@ -47,7 +60,6 @@ import { UiModalService } from '../services/ui-modal.service';
     LegendPanelComponent,
     CreateSlotModalComponent,
     ConfirmDialogComponent,
-    ExploreSlotsDayModalComponent,
   ],
   templateUrl: './calendar-page.component.html',
   styleUrls: ['./calendar-page.component.scss'],
@@ -57,7 +69,6 @@ export class CalendarPageComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly translate = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
-  private readonly uiModalService = inject(UiModalService);
   private readonly groupsService = inject(GroupsService);
 
   readonly slotStatus = SlotStatus;
@@ -86,6 +97,8 @@ export class CalendarPageComponent implements OnInit {
   pendingDeleteSlot = signal<CalendarSlot | null>(null);
   editingSlot = signal<CalendarSlot | null>(null);
   isEditMode = signal(false);
+  slotModalViewMode = signal<'OWN' | 'FRIEND'>('OWN');
+  selectedFriendSlot = signal<CalendarSlot | null>(null);
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -212,6 +225,8 @@ export class CalendarPageComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    this.slotModalViewMode.set('OWN');
+    this.selectedFriendSlot.set(null);
     this.isEditMode.set(false);
     this.editingSlot.set(null);
     this.initializeSlotForm(formatDateInputValue(new Date()), []);
@@ -221,6 +236,8 @@ export class CalendarPageComponent implements OnInit {
   }
 
   openCreateModalForDayKey(dayKey: string): void {
+    this.slotModalViewMode.set('OWN');
+    this.selectedFriendSlot.set(null);
     // Load all slots for this day into the FormArray
     const slotsForDay = this.slotsByDay().get(dayKey) ?? [];
 
@@ -235,12 +252,14 @@ export class CalendarPageComponent implements OnInit {
     this.showCreateModal.set(true);
   }
 
-  openDayModalForExplore(dayKey: string): void {
-    const slotsForDay = this.slotsByDay().get(dayKey) ?? [];
-    this.uiModalService.openDayModal(dayKey, slotsForDay, dayKey);
-  }
-
   openEditSlotModal(slot: CalendarSlot): void {
+    if (slot.ownerId !== this.currentUserId()) {
+      this.openFriendSlotDetail(slot);
+      return;
+    }
+
+    this.slotModalViewMode.set('OWN');
+    this.selectedFriendSlot.set(null);
     this.isEditMode.set(true);
     this.editingSlot.set(slot);
     const dateKey =
@@ -279,9 +298,34 @@ export class CalendarPageComponent implements OnInit {
 
   closeCreateModal(): void {
     this.showCreateModal.set(false);
+    this.slotModalViewMode.set('OWN');
+    this.selectedFriendSlot.set(null);
     this.isEditMode.set(false);
     this.editingSlot.set(null);
     this.deletedSlotIds.set([]);
+  }
+
+  reserveFriendSlotFromModal(slotId: string): void {
+    if (!slotId || typeof slotId !== 'string') {
+      this.toastService.error('CALENDAR_PAGE.TOASTS.RESERVE_ERROR');
+      return;
+    }
+    if (this.processingSlotId()) return;
+    this.processingSlotId.set(slotId);
+    this.facade.reserveSlot(slotId).subscribe({
+      next: () => {
+        this.toastService.success('CALENDAR_PAGE.TOASTS.SLOT_RESERVED');
+        this.closeCreateModal();
+        this.facade.loadSlots();
+      },
+      error: () => {
+        this.toastService.error('CALENDAR_PAGE.TOASTS.RESERVE_ERROR');
+        this.processingSlotId.set(null);
+      },
+      complete: () => {
+        this.processingSlotId.set(null);
+      },
+    });
   }
 
   removeTimeSlotByIndex(index: number): void {
@@ -300,7 +344,7 @@ export class CalendarPageComponent implements OnInit {
     timeSlots.removeAt(index);
   }
 
-  submitCreateSlot(): void {
+  submitCreateSlot(payload?: CreateSlotSubmitPayload): void {
     // Prevent double submission with isLoading
     if (this.isLoading() || this.isCreating()) return;
     if (this.createSlotForm.invalid) {
@@ -308,16 +352,41 @@ export class CalendarPageComponent implements OnInit {
       return;
     }
 
-    const { date, timeSlots } = this.createSlotForm.value;
-    const timeSlotsArray =
-      (timeSlots as Array<{
+    const date = payload?.date ?? (this.createSlotForm.get('date')?.value as string);
+
+    const rawTimeSlots: Array<{
+      id?: string;
+      start?: string;
+      end?: string;
+      startTime?: string;
+      endTime?: string;
+      timezone: string;
+      visibilityScope: VisibilityScope;
+      groupIds?: string[];
+      notes?: string;
+    }> =
+      payload?.timeSlots ??
+      ((this.createSlotForm.get('timeSlots') as FormArray).getRawValue() as Array<{
         id?: string;
-        startTime: string;
-        endTime: string;
+        start?: string;
+        end?: string;
+        startTime?: string;
+        endTime?: string;
         timezone: string;
         visibilityScope: VisibilityScope;
+        groupIds?: string[];
         notes?: string;
-      }>) || [];
+      }>);
+
+    const timeSlotsArray = rawTimeSlots.map((slot) => ({
+      id: slot.id,
+      startTime: slot.startTime ?? slot.start ?? '',
+      endTime: slot.endTime ?? slot.end ?? '',
+      timezone: slot.timezone,
+      visibilityScope: slot.visibilityScope,
+      groupIds: Array.isArray(slot.groupIds) ? slot.groupIds : [],
+      notes: slot.notes,
+    }));
 
     // Validate all slots (only if there are slots)
     for (const slot of timeSlotsArray) {
@@ -358,6 +427,7 @@ export class CalendarPageComponent implements OnInit {
       endTime: string;
       timezone: string;
       visibilityScope: VisibilityScope;
+      groupIds?: string[];
       notes?: string;
     }>,
     date: string,
@@ -493,6 +563,10 @@ export class CalendarPageComponent implements OnInit {
   }
 
   reserveSlot(slot: CalendarSlot): void {
+    if (!slot?.id) {
+      this.toastService.error('CALENDAR_PAGE.TOASTS.RESERVE_ERROR');
+      return;
+    }
     if (this.processingSlotId()) return;
     this.processingSlotId.set(slot.id);
     this.facade.reserveSlot(slot.id).subscribe({
@@ -597,6 +671,27 @@ export class CalendarPageComponent implements OnInit {
     return `${formatter.format(start)} - ${formatter.format(end)}`;
   };
 
+  getModalCreatorName(): string {
+    const slot = this.selectedFriendSlot();
+    if (!slot) return '';
+
+    const userInfo = slot.user ?? slot.owner;
+    const firstName = userInfo?.firstName?.trim() || '';
+    const lastName = userInfo?.lastName?.trim() || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    if (fullName) return fullName;
+    if (userInfo?.name) return userInfo.name;
+    if (userInfo?.nickname) return userInfo.nickname;
+    return slot.ownerId;
+  }
+
+  canReserveSelectedSlot(): boolean {
+    const slot = this.selectedFriendSlot();
+    if (!slot) return false;
+    return slot.ownerId !== this.currentUserId() && slot.status === SlotStatus.AVAILABLE;
+  }
+
   private initializeSlotForm(dateValue: string, slots: CalendarSlot[]): void {
     const timeSlots = this.createSlotForm.get('timeSlots') as FormArray;
 
@@ -640,6 +735,19 @@ export class CalendarPageComponent implements OnInit {
     // Mark form as untouched and pristine
     this.createSlotForm.markAsUntouched();
     this.createSlotForm.markAsPristine();
+  }
+
+  private openFriendSlotDetail(slot: CalendarSlot): void {
+    const dateKey =
+      slot.startDate instanceof Date ? formatDateInputValue(slot.startDate) : slot.startDate;
+
+    this.slotModalViewMode.set('FRIEND');
+    this.selectedFriendSlot.set(slot);
+    this.isEditMode.set(false);
+    this.editingSlot.set(null);
+    this.initializeSlotForm(dateKey, [slot]);
+    this.isDateLocked.set(true);
+    this.showCreateModal.set(true);
   }
 
   private loadUserGroups(): void {

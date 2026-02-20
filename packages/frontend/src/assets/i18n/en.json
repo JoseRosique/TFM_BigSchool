@@ -326,6 +326,7 @@
     "FORM": {
       "TITLE": "Open availability",
       "TITLE_EDIT": "Modify availability",
+      "SLOT_DETAIL": "Slot details",
       "DATE": "Date",
       "START": "Start time",
       "END": "End time",
@@ -346,6 +347,8 @@
       "SUBMIT": "Create slot",
       "SUBMIT_EDIT": "Update slots",
       "CANCEL": "Cancel",
+      "RESERVE_SLOT": "Reserve slot",
+      "AVAILABILITY_OF": "Availability from:",
       "EMPTY_SLOTS": "No time ranges defined for this day.",
       "EMPTY_SLOTS_HINT": "Click + to add one.",
       "ERROR_END_BEFORE_START": "End time must be after start time",

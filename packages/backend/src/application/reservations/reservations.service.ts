@@ -38,7 +38,6 @@ export class ReservationsService {
       const slot = await slotRepo.findOne({
         where: { id: dto.slotId },
         lock: { mode: 'pessimistic_write' },
-        relations: ['owner'],
       });
 
       if (!slot) {

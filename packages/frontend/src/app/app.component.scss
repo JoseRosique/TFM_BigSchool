@@ -1,6 +1,9 @@
 :host {
   display: block;
   min-height: 100vh;
+  --mobile-bottom-nav-height: 64px;
+  --mobile-bottom-nav-safe: env(safe-area-inset-bottom, 0px);
+  --mobile-bottom-nav-offset: calc(var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-safe));
 }
 
 .route-guard-loading {
@@ -73,5 +76,11 @@
 
   .app-shell__content {
     padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-shell__content {
+    padding: 1rem 1rem calc(1rem + var(--mobile-bottom-nav-offset));
   }
 }

@@ -4,11 +4,12 @@ import {
   output,
   signal,
   effect,
-  HostListener,
   ElementRef,
   ChangeDetectionStrategy,
+  forwardRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface SelectOption {
   value: string;
@@ -23,23 +24,44 @@ export interface SelectOption {
   templateUrl: './custom-select.component.html',
   styleUrl: './custom-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CustomSelectComponent),
+      multi: true,
+    },
+  ],
 })
-export class CustomSelectComponent {
+export class CustomSelectComponent implements ControlValueAccessor {
   options = input.required<SelectOption[]>();
-  value = input<string>('');
-  disabled = input<boolean>(false);
+  disabled = signal<boolean>(false);
   placeholder = input<string>('Select an option');
   ariaLabel = input<string>('');
-
+  value = input<string>('');
   valueChange = output<string>();
+
+  private selectedValue = signal<string>('');
+  private isFormControlled = signal<boolean>(false);
 
   isOpen = signal<boolean>(false);
   focusedIndex = signal<number>(-1);
 
+  private onChange: (value: any) => void = () => {};
+  private onTouched: () => void = () => {};
+
   constructor(private elementRef: ElementRef) {
     effect(() => {
-      // Cuando el valor cambia, actualizar el índice enfocado
+      // Skip syncing if component is form-controlled (writeValue was called)
+      if (this.isFormControlled()) return;
+
       const currentValue = this.value();
+      if (currentValue !== this.selectedValue()) {
+        this.selectedValue.set(currentValue);
+      }
+    });
+
+    effect(() => {
+      const currentValue = this.selectedValue();
       const index = this.options().findIndex((opt) => opt.value === currentValue);
       if (index >= 0) {
         this.focusedIndex.set(index);
@@ -47,16 +69,21 @@ export class CustomSelectComponent {
     });
   }
 
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: MouseEvent): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.close();
-    }
+  writeValue(value: any): void {
+    this.isFormControlled.set(true);
+    this.selectedValue.set(value ?? '');
   }
 
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    this.close();
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled); // Corrected to use 'set' for mutable signal
   }
 
   toggle(): void {
@@ -75,12 +102,15 @@ export class CustomSelectComponent {
 
   selectOption(option: SelectOption): void {
     if (this.disabled()) return;
+    this.selectedValue.set(option.value);
     this.valueChange.emit(option.value);
-    this.close();
+    this.onChange(option.value);
+    this.onTouched();
+    this.close(); // Ensure 'close' is accessible
   }
 
   getSelectedLabel(): string {
-    const selectedOption = this.options().find((opt) => opt.value === this.value());
+    const selectedOption = this.options().find((opt) => opt.value === this.selectedValue());
     return selectedOption ? selectedOption.label : this.placeholder();
   }
 
@@ -91,7 +121,7 @@ export class CustomSelectComponent {
       case 'ArrowDown':
         event.preventDefault();
         if (!this.isOpen()) {
-          this.open();
+          this.open(); // Ensure 'open' is accessible
         } else {
           this.focusNext();
         }
@@ -99,7 +129,7 @@ export class CustomSelectComponent {
       case 'ArrowUp':
         event.preventDefault();
         if (!this.isOpen()) {
-          this.open();
+          this.open(); // Ensure 'open' is accessible
         } else {
           this.focusPrevious();
         }
@@ -108,7 +138,7 @@ export class CustomSelectComponent {
       case ' ':
         event.preventDefault();
         if (!this.isOpen()) {
-          this.open();
+          this.open(); // Ensure 'open' is accessible
         } else {
           const focused = this.focusedIndex();
           if (focused >= 0 && focused < this.options().length) {
@@ -144,7 +174,7 @@ export class CustomSelectComponent {
   }
 
   isOptionSelected(option: SelectOption): boolean {
-    return option.value === this.value();
+    return option.value === this.selectedValue();
   }
 
   onOptionMouseEnter(index: number): void {

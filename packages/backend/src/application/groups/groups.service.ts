@@ -45,13 +45,7 @@ export class GroupsService {
     const qb = this.groupRepository
       .createQueryBuilder('group')
       .leftJoinAndSelect('group.members', 'member')
-      .where(
-        new Brackets((subQb) => {
-          subQb.where('group.ownerId = :userId', { userId }).orWhere('member.id = :userId', {
-            userId,
-          });
-        }),
-      )
+      .where('group.ownerId = :userId', { userId })
       .distinct(true);
 
     if (search?.trim()) {
@@ -208,9 +202,7 @@ export class GroupsService {
       throw new NotFoundException('GROUP_NOT_FOUND');
     }
 
-    const isMember =
-      group.ownerId === userId || group.members.some((member) => member.id === userId);
-    if (!isMember) {
+    if (group.ownerId !== userId) {
       throw new ForbiddenException('FORBIDDEN');
     }
 

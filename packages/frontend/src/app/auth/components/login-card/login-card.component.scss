@@ -13,6 +13,25 @@
   }
 }
 
+.btn--login-primary {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(29, 78, 216, 0.35);
+  font-weight: 700;
+}
+
+.btn--login-primary:hover,
+.btn--login-primary:focus {
+  background: #1e40af;
+  box-shadow: 0 10px 26px rgba(30, 64, 175, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn--login-primary:active {
+  background: #1e3a8a;
+  transform: translateY(0);
+}
+
 .forgot-row {
   display: flex;
   justify-content: center;

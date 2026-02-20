@@ -101,4 +101,10 @@
   .navbar__brand {
     font-size: 1.1rem;
   }
+
+  .signup-page-bg > app-signup-card {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 1rem 1.5rem 1rem;
+  }
 }

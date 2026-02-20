@@ -2,7 +2,6 @@
 .lang-switcher {
   position: relative;
   display: inline-block;
-  margin-left: 1.2rem;
 }
 .lang-main-btn {
   align-items: center;
@@ -226,7 +225,7 @@
   color: var(--color-text-primary);
 }
 .btn--text {
-  background: var(--color-overlay-light-08);
+  background: var(--color-success);
   color: var(--color-brand-soft);
   font-weight: 700;
   border: 1.5px solid var(--color-overlay-accent-45);
@@ -307,10 +306,13 @@
 }
 
 .hero__subtitle {
-  color: var(--color-neutral-50);
+  color: var(--color-brand-deep);
   font-size: 1.18rem;
   line-height: 1.7;
   font-weight: 500;
+  background: linear-gradient(135deg, var(--color-accent-soft) 0%, var(--color-accent-soft-4) 100%);
+  border-radius: 16px;
+  padding: 12px;
 }
 
 // Feature bar
@@ -325,19 +327,30 @@
 .feature-bar__list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 2.2rem;
   list-style: none;
   margin: 0;
   padding: 0;
   color: var(--color-brand-deep);
   font-weight: 600;
+
+  @media (min-width: 700px) {
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+.feature-bar__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: 100%;
 }
 .feature-bar__icon {
   color: var(--color-primary);
   font-size: 1.25rem;
-  vertical-align: middle;
-  margin-right: 0.4rem;
+  line-height: 1.25rem;
+  flex: 0 0 1.25rem;
 }
 
 // Features grid
@@ -430,10 +443,37 @@
     gap: 0.7rem;
   }
   .navbar__right {
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.6rem;
+  }
+  .navbar__right .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .lang-switcher {
+    width: 100%;
+  }
+  .lang-main-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .hero {
+    padding: 2.5rem 1rem 2rem 1rem;
   }
   .hero__title {
     font-size: 2.1rem;
+  }
+  .hero__subtitle {
+    font-size: 1rem;
+  }
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero__actions .btn {
+    width: 100%;
   }
   .features__grid {
     grid-template-columns: 1fr;
@@ -441,5 +481,15 @@
   }
   .feature-card {
     padding: 1.3rem 0.7rem 1.1rem 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__title {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+  .feature-bar__list {
+    gap: 1rem;
   }
 }

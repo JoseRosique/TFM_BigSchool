@@ -104,4 +104,10 @@
   .navbar__brand {
     font-size: 1.1rem;
   }
+
+  .login-page-bg > app-login-card {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0 1rem 1.5rem 1rem;
+  }
 }

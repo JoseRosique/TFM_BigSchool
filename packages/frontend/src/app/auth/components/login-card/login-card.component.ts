@@ -3,6 +3,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
 import { LanguageService } from '../../../shared/services/language.service';
+import { GoogleAuthService } from '../../../shared/services/google-auth.service';
 import { LoginDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -19,6 +20,7 @@ export class LoginCardComponent implements OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
+  private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
@@ -204,6 +206,62 @@ export class LoginCardComponent implements OnDestroy {
   }
 
   socialLogin(provider: string) {
-    alert(this.translate.instant('LOGIN.SOCIAL.NOT_IMPLEMENTED', { provider }));
+    if (provider !== 'Google') {
+      alert(this.translate.instant('LOGIN.SOCIAL.NOT_IMPLEMENTED', { provider }));
+      return;
+    }
+
+    this.loading.set(true);
+    this.errors.set({});
+
+    // Inicializar y mostrar Google Sign-In
+    this.googleAuthService
+      .initializeGoogleSignIn(
+        // Callback de éxito
+        (response: LoginDTO.Response) => {
+          this.loading.set(false);
+          this.success.set(true);
+          this.authService.setTokens(response.accessToken, response.refreshToken);
+          if (response.language) {
+            this.languageService.setLang(response.language);
+          }
+          this.toastService.success(this.translate.instant('LOGIN.SUCCESS'));
+
+          // Cargar perfil y redirigir al dashboard
+          this.authService.getProfile().subscribe({
+            next: () => {
+              this.router.navigate(['/dashboard']);
+            },
+            error: () => {
+              this.authService.clearAccessToken();
+              const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
+              this.errors.set({ general: errorMsg });
+              this.loading.set(false);
+            },
+          });
+        },
+        // Callback de error
+        (error) => {
+          console.error('[LoginCardComponent] Google login error:', error);
+          this.loading.set(false);
+          let errorMsg = this.translate.instant('LOGIN.ERROR.GOOGLE_FAILED');
+          if (error?.error?.message) {
+            errorMsg = error.error.message;
+          }
+          this.errors.set({ general: errorMsg });
+          this.toastService.error(errorMsg);
+        },
+      )
+      .then(() => {
+        // SDK inicializado, mostrar One Tap
+        return this.googleAuthService.showOneTap();
+      })
+      .catch((error) => {
+        console.error('[LoginCardComponent] Google SDK initialization error:', error);
+        this.loading.set(false);
+        const errorMsg = this.translate.instant('LOGIN.ERROR.GOOGLE_SDK_FAILED');
+        this.errors.set({ general: errorMsg });
+        this.toastService.error(errorMsg);
+      });
   }
 }

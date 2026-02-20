@@ -33,6 +33,7 @@ import { LogoutDto } from './dto/logout.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 import { ChangePasswordUseCase } from './change-password.usecase';
 import { PasswordResetService } from './password-reset.service';
 import { EmailService } from '../../infrastructure/services/email.service';
@@ -60,6 +61,12 @@ export class AuthController {
   @Post('login')
   async login(@Body() input: LoginDto): Promise<LoginDTO.Response> {
     return this.authService.login(input);
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 60 } })
+  @Post('google')
+  async googleLogin(@Body() input: GoogleLoginDto): Promise<LoginDTO.Response> {
+    return this.authService.googleLogin(input.credential);
   }
 
   @Post('refresh')

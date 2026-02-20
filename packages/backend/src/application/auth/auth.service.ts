@@ -4,6 +4,7 @@ import { RegisterDTO, LoginDTO, RefreshTokenDTO } from '@meetwithfriends/shared'
 import { ConfigService } from '@nestjs/config';
 import { RegisterUserUseCase } from './register-user.usecase';
 import { LoginUserUseCase } from './login-user.usecase';
+import { GoogleLoginUseCase } from './google-login.usecase';
 import { TokenBlacklistService } from './token-blacklist.service';
 
 /**
@@ -18,6 +19,7 @@ export class AuthService {
     private configService: ConfigService,
     private registerUserUseCase: RegisterUserUseCase,
     private loginUserUseCase: LoginUserUseCase,
+    private googleLoginUseCase: GoogleLoginUseCase,
     private tokenBlacklist: TokenBlacklistService,
   ) {}
 
@@ -29,6 +31,10 @@ export class AuthService {
   async login(input: LoginDTO.Request): Promise<LoginDTO.Response> {
     // Llama al caso de uso de login seguro
     return this.loginUserUseCase.execute(input);
+  }
+  googleLogin(credential: string): Promise<LoginDTO.Response> {
+    // Llama al caso de uso de Google Sign-In
+    return this.googleLoginUseCase.execute(credential);
   }
 
   async refreshAccessToken(refreshToken: string): Promise<RefreshTokenDTO.Response> {

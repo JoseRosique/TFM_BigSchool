@@ -18,6 +18,7 @@ import { TypeOrmUserRepository } from '../../infrastructure/repositories/typeorm
 import { RegisterUserUseCase } from './register-user.usecase';
 import { LoginUserUseCase } from './login-user.usecase';
 import { ChangePasswordUseCase } from './change-password.usecase';
+import { GoogleLoginUseCase } from './google-login.usecase';
 import { TokenBlacklistService } from './token-blacklist.service';
 import { PasswordResetService } from './password-reset.service';
 import { EmailService } from '../../infrastructure/services/email.service';
@@ -47,6 +48,7 @@ import { TOKEN_STORE, InMemoryTokenStore } from './token-store';
     RegisterUserUseCase,
     LoginUserUseCase,
     ChangePasswordUseCase,
+    GoogleLoginUseCase,
     TokenBlacklistService,
     PasswordResetService,
     EmailService,

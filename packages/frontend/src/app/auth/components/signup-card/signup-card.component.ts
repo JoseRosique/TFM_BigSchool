@@ -5,6 +5,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 import { LanguageService } from '../../../shared/services/language.service';
 import { ThemeService } from '../../../shared/services/theme.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { GoogleAuthService } from '../../../shared/services/google-auth.service';
 import { RegisterDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -26,6 +27,7 @@ export class SignupCardComponent {
   private readonly languageService = inject(LanguageService);
   private readonly themeService = inject(ThemeService);
   private readonly toastService = inject(ToastService);
+  private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
@@ -213,7 +215,62 @@ export class SignupCardComponent {
   }
 
   socialSignup(provider: string) {
-    // Placeholder for social signup logic
-    alert(this.translate.instant('SIGNUP.SOCIAL.NOT_IMPLEMENTED', { provider }));
+    if (provider !== 'Google') {
+      alert(this.translate.instant('SIGNUP.SOCIAL.NOT_IMPLEMENTED', { provider }));
+      return;
+    }
+
+    this.loading.set(true);
+    this.errors.set({});
+
+    // Inicializar y mostrar Google Sign-In
+    this.googleAuthService
+      .initializeGoogleSignIn(
+        // Callback de éxito
+        (response) => {
+          this.authService.setTokens(response.accessToken, response.refreshToken);
+          this.languageService.setLang(response.language || 'es');
+          this.themeService.setTheme('dark');
+          this.toastService.success(this.translate.instant('SIGNUP.SUCCESS'));
+
+          // Cargar perfil y redirigir al dashboard
+          this.authService.getProfile().subscribe({
+            next: () => {
+              this.loading.set(false);
+              this.success.set(true);
+              this.router.navigate(['/dashboard']);
+            },
+            error: () => {
+              this.authService.clearAccessToken();
+              const errorMsg = this.translate.instant('SIGNUP.ERROR.UNKNOWN');
+              this.errors.set({ general: errorMsg });
+              this.loading.set(false);
+              this.success.set(false);
+            },
+          });
+        },
+        // Callback de error
+        (error) => {
+          console.error('[SignupCardComponent] Google signup error:', error);
+          this.loading.set(false);
+          let errorMsg = this.translate.instant('SIGNUP.ERROR.GOOGLE_FAILED');
+          if (error?.error?.message) {
+            errorMsg = error.error.message;
+          }
+          this.errors.set({ general: errorMsg });
+          this.toastService.error(errorMsg);
+        },
+      )
+      .then(() => {
+        // SDK inicializado, mostrar One Tap
+        return this.googleAuthService.showOneTap();
+      })
+      .catch((error) => {
+        console.error('[SignupCardComponent] Google SDK initialization error:', error);
+        this.loading.set(false);
+        const errorMsg = this.translate.instant('SIGNUP.ERROR.GOOGLE_SDK_FAILED');
+        this.errors.set({ general: errorMsg });
+        this.toastService.error(errorMsg);
+      });
   }
 }

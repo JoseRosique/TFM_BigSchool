@@ -1,12 +1,3 @@
-.env
-.env*
-!.env.example
-
-# Archivos de environment generados automáticamente (frontend Angular)
-packages/frontend/src/environments/environment.ts
-packages/frontend/src/environments/environment.development.ts
-packages/frontend/src/environments/environment.prod.ts
-
 node_modules/
 dist/
 .DS_Store
@@ -26,9 +17,9 @@ build/
 *.swp
 *.swo
 *.md
-.env*
-!.env.example
 .angular
 docker-compose.yml
 .github/
 playwright-report/
+*.env.*
+.env

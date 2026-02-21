@@ -17,23 +17,65 @@ async function bootstrap() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          // AÑADIDO: 'unsafe-inline' aquí es necesario para Angular
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
+          // Angular + Google Sign-In SDK
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://accounts.google.com',
+            'https://www.gstatic.com',
+            'https://apis.google.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            'https://kit.fontawesome.com',
+            'https://ka-f.fontawesome.com',
+          ],
+          imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
           frameAncestors: ["'none'"],
           scriptSrcAttr: ["'unsafe-inline'"],
-          // Para los iconos y estilos de Google
-          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-          // Para descargar las fuentes reales
-          fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
-          // Para las llamadas a la API y extensiones
-          connectSrc: ["'self'", corsOrigin, 'data:'],
+          // Google Fonts + Google Sign-In UI
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            'https://fonts.googleapis.com',
+            'https://accounts.google.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            'https://kit.fontawesome.com',
+            'https://ka-f.fontawesome.com',
+          ],
+          // Google Fonts
+          fontSrc: [
+            "'self'",
+            'data:',
+            'https://fonts.gstatic.com',
+            'https://fonts.googleapis.com',
+            'https://cdnjs.cloudflare.com',
+            'https://cdn.jsdelivr.net',
+            'https://kit.fontawesome.com',
+            'https://ka-f.fontawesome.com',
+          ],
+          // API calls + Google OAuth
+          connectSrc: [
+            "'self'",
+            corsOrigin,
+            'data:',
+            'https://accounts.google.com',
+            'https://www.gstatic.com',
+            'https://apis.google.com',
+            'https://www.googleapis.com',
+            'https://kit.fontawesome.com',
+            'https://ka-f.fontawesome.com',
+          ],
+          // Google Sign-In iframes
+          frameSrc: ["'self'", 'https://accounts.google.com', 'https://*.google.com'],
+          formAction: ["'self'", 'https://accounts.google.com'],
+          workerSrc: ["'self'", 'blob:'],
           upgradeInsecureRequests: [],
         },
       },
-      crossOriginEmbedderPolicy: false, // Necesario para que algunos navegadores no bloqueen recursos externos
+      crossOriginEmbedderPolicy: false,
       referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     }),
   );

@@ -76,7 +76,6 @@ export class GoogleAuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
   private readonly googleClientId = environment.googleClientId;
-  private readonly defaultButtonTheme: GoogleButtonTheme = 'outline';
   private readonly defaultButtonShape: GoogleButtonShape = 'circle';
 
   private sdkLoaded = false;
@@ -266,6 +265,27 @@ export class GoogleAuthService {
   }
 
   /**
+   * Detecta el tema actual de la app/sistema para el botón de Google.
+   */
+  private getCurrentGoogleButtonTheme(): GoogleButtonTheme {
+    const appTheme = document.documentElement.getAttribute('data-theme');
+
+    if (appTheme === 'dark') {
+      return 'filled_black';
+    }
+
+    if (appTheme === 'light') {
+      return 'filled_blue';
+    }
+
+    if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      return 'filled_black';
+    }
+
+    return 'outline';
+  }
+
+  /**
    * Renderiza el botón nativo de Google (GSI Branded Button)
    *
    * @param parent - Elemento HTML donde se renderizará el botón
@@ -293,7 +313,7 @@ export class GoogleAuthService {
       300;
     const safeRenderWidth = Math.max(220, detectedWidth - 4);
 
-    const theme = options.theme ?? this.defaultButtonTheme;
+    const theme = options.theme ?? this.getCurrentGoogleButtonTheme();
     const shape = options.shape ?? this.defaultButtonShape;
 
     // Configuración por defecto optimizada para UX

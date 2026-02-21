@@ -213,8 +213,8 @@ input[type='password']::placeholder {
  * --social-btn-margin-y: separación vertical entre botones
  */
 .social-button-container {
-  --auth-btn-height: 55px;
-  --google-auth-scale: 1.12;
+  --auth-btn-height: 52px;
+  --google-auth-scale: 1.05;
   --social-btn-margin-y: 0.2rem;
 
   display: block;
@@ -228,11 +228,23 @@ input[type='password']::placeholder {
   position: relative;
 }
 
-.social-button-container .btn--apple {
-  min-height: var(--auth-btn-height);
-  height: var(--auth-btn-height);
+.unified-social-button {
+  --btn-height: 52px;
+  --google-auth-scale: 1.05;
+  --social-btn-radius: 12px;
+  --social-btn-shadow: 0 4px 12px var(--color-shadow-brand-soft);
+  --social-btn-transition: all 0.3s ease;
+}
+
+.social-button-container .btn--apple,
+.unified-social-button .btn--apple {
+  min-height: var(--btn-height, var(--auth-btn-height));
+  height: var(--btn-height, var(--auth-btn-height));
   font-size: 1.08rem;
   padding: 0.85rem 1.5rem;
+  border-radius: var(--social-btn-radius, 12px);
+  box-shadow: var(--social-btn-shadow, none);
+  transition: var(--social-btn-transition, all 0.2s ease);
 }
 
 .custom-google-wrapper,
@@ -262,15 +274,20 @@ input[type='password']::placeholder {
   justify-content: center;
   width: 100%;
   min-width: 100%;
-  min-height: var(--auth-btn-height);
-  height: var(--auth-btn-height);
+  min-height: var(--btn-height, var(--auth-btn-height));
+  height: var(--btn-height, var(--auth-btn-height));
   overflow: hidden;
   background: #1a73e8;
-  border-radius: 16px;
-  transition: background-color 0.218s;
+  color: var(--color-text-primary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--social-btn-radius, 12px);
+  box-shadow: var(--social-btn-shadow, none);
+  transition: var(--social-btn-transition, all 0.3s ease);
   cursor: pointer;
+
   &:hover {
     background: #5893ee;
+    border-color: var(--color-border-strong);
   }
 }
 
@@ -284,7 +301,7 @@ input[type='password']::placeholder {
 .google-btn-wrapper iframe {
   width: 100% !important;
   max-width: 100%;
-  transform: scale(var(--google-auth-scale));
+  transform: scale(var(--google-auth-scale, 1.05));
   transform-origin: center;
 }
 

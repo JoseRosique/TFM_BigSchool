@@ -2,6 +2,7 @@ import {
   Component,
   signal,
   inject,
+  effect,
   OnDestroy,
   ViewChild,
   ElementRef,
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
 import { LanguageService } from '../../../shared/services/language.service';
 import { GoogleAuthService } from '../../../shared/services/google-auth.service';
+import { ThemeService } from '../../../shared/services/theme.service';
 import { LoginDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -33,6 +35,7 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
   private readonly googleAuthService = inject(GoogleAuthService);
+  private readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly ngZone = inject(NgZone);
@@ -53,6 +56,13 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
   private resizeObserver: ResizeObserver | null = null;
   private resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private lastRenderedWidth = 0;
+
+  constructor() {
+    effect(() => {
+      this.themeService.theme();
+      this.scheduleGoogleButtonRender();
+    });
+  }
 
   ngOnDestroy(): void {
     if (this.forgotAutoCloseTimer !== null) {
@@ -188,7 +198,6 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
     await this.ngZone.runOutsideAngular(() =>
       this.googleAuthService.renderButton(this.googleLoginBtn.nativeElement, {
         type: 'standard',
-        theme: 'filled_blue',
         size: 'large',
         text: 'signin_with',
         shape: 'rectangular',

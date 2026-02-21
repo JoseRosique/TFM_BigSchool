@@ -2,6 +2,7 @@ import {
   Component,
   signal,
   inject,
+  effect,
   ViewChild,
   ElementRef,
   AfterViewInit,
@@ -69,6 +70,13 @@ export class SignupCardComponent implements AfterViewInit, OnDestroy {
   private resizeObserver: ResizeObserver | null = null;
   private resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private lastRenderedWidth = 0;
+
+  constructor() {
+    effect(() => {
+      this.themeService.theme();
+      this.scheduleGoogleButtonRender();
+    });
+  }
 
   ngAfterViewInit(): void {
     this.initializeGoogleButton();
@@ -181,7 +189,6 @@ export class SignupCardComponent implements AfterViewInit, OnDestroy {
     await this.ngZone.runOutsideAngular(() =>
       this.googleAuthService.renderButton(this.googleSignupBtn.nativeElement, {
         type: 'standard',
-        theme: 'filled_blue',
         size: 'large',
         text: 'signup_with',
         shape: 'rectangular',

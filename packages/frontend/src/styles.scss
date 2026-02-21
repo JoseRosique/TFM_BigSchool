@@ -149,3 +149,13 @@ body {
   --color-border-soft: var(--color-neutral-700);
   --color-border-strong: var(--color-neutral-700);
 }
+
+.material-icons,
+.material-symbols-outlined,
+.fa,
+.fas,
+.far,
+.fab {
+  color: inherit;
+  line-height: 1;
+}

@@ -25,14 +25,18 @@ export class GoogleAuthService {
    * Maneja duplicados y timeouts
    */
   async loadSdk(): Promise<void> {
+    console.log('🔄 GoogleAuthService: Attempting to load Google SDK...');
+
     // Si el SDK ya está cargado
     if (typeof google !== 'undefined' && google?.accounts?.id) {
+      console.log('✅ GoogleAuthService: Google SDK already loaded');
       this.sdkReady$.next();
       return;
     }
 
     // Si ya se inició la carga, esperar
     if (this.sdkLoadStarted) {
+      console.log('⏳ GoogleAuthService: SDK load already in progress, waiting...');
       return firstValueFrom(this.sdkReady$);
     }
 
@@ -76,40 +80,54 @@ export class GoogleAuthService {
     script.defer = true;
     script.crossOrigin = 'anonymous';
 
+    console.log('🚀 GoogleAuthService: Creating and injecting Google SDK script');
+
     // Timeout de 10 segundos para carga del SDK
     const timeoutId = window.setTimeout(() => {
-      this.sdkReady$.error(
-        new Error('GOOGLE_SDK_LOAD_FAILED: timeout (10s) waiting for Google GSI SDK to load'),
+      const err = new Error(
+        'GOOGLE_SDK_LOAD_FAILED: timeout (10s) waiting for Google GSI SDK to load',
       );
+      console.error('⏱️ GoogleAuthService:', err.message);
+      this.sdkReady$.error(err);
     }, 10000);
 
     // Handler al cargar exitosamente
     script.onload = () => {
       window.clearTimeout(timeoutId);
+      console.log('✅ GoogleAuthService: Google SDK script loaded');
 
       // Verificar que el SDK esté disponible globalmente
       if (typeof google === 'undefined' || !google?.accounts?.id) {
-        this.sdkReady$.error(
-          new Error(
-            'GOOGLE_SDK_LOAD_FAILED: script loaded but window.google.accounts.id unavailable',
-          ),
+        const err = new Error(
+          'GOOGLE_SDK_LOAD_FAILED: script loaded but window.google.accounts.id unavailable',
         );
+        console.error('❌ GoogleAuthService:', err.message);
+        this.sdkReady$.error(err);
         return;
       }
 
+      console.log('🎉 GoogleAuthService: Google SDK ready');
       this.sdkReady$.next();
     };
 
     // Handler en caso de error
     script.onerror = () => {
       window.clearTimeout(timeoutId);
-      this.sdkReady$.error(
-        new Error('GOOGLE_SDK_LOAD_FAILED: network error or CSP directive blocked GSI script'),
+      const err = new Error(
+        'GOOGLE_SDK_LOAD_FAILED: network error or CSP directive blocked GSI script',
       );
+      console.error('❌ GoogleAuthService:', err.message);
+      console.warn('⚠️  Posibles causas:');
+      console.warn('   1. Content Security Policy (CSP) bloqueando el script');
+      console.warn('   2. Problemas de red o conectividad');
+      console.warn('   3. URL del SDK no accesible');
+      console.log('▶️  Solución: Verifica que el CSP permita https://accounts.google.com');
+      this.sdkReady$.error(err);
     };
 
     // Inyectar script en el head
     this.document.head.appendChild(script);
+    console.log('📄 GoogleAuthService: Google SDK script injected to DOM');
 
     // Retornar Promise basada en Observable
     return firstValueFrom(this.sdkReady$);
@@ -122,13 +140,24 @@ export class GoogleAuthService {
    * @param onCredential Callback que se ejecuta al recibir credencial
    */
   initialize(onCredential: (response: GoogleCredentialResponse) => void): void {
+    console.log('🔐 GoogleAuthService: Attempting to initialize with googleClientId...');
+
     if (!environment.googleClientId) {
-      throw new Error('GOOGLE_CLIENT_ID not configured in environment');
+      const err = new Error('GOOGLE_CLIENT_ID not configured in environment');
+      console.error('❌ GoogleAuthService:', err.message);
+      throw err;
     }
 
     if (typeof google === 'undefined' || !google?.accounts?.id) {
-      throw new Error('GOOGLE_SDK_NOT_READY: Google SDK not loaded or not available');
+      const err = new Error('GOOGLE_SDK_NOT_READY: Google SDK not loaded or not available');
+      console.error('❌ GoogleAuthService:', err.message);
+      throw err;
     }
+
+    console.log(
+      '✅ GoogleAuthService: Initializing with client_id:',
+      environment.googleClientId.substring(0, 20) + '...',
+    );
 
     google.accounts.id.initialize({
       client_id: environment.googleClientId,
@@ -136,6 +165,8 @@ export class GoogleAuthService {
       auto_select: false,
       cancel_on_tap_outside: true,
     });
+
+    console.log('✅ GoogleAuthService: Google Accounts ID initialized successfully');
   }
 
   /**

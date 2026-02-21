@@ -18,12 +18,8 @@
   <body>
     <app-root></app-root>
     <!-- 
-      webpage_content_reporter.js: Collects page metadata and text content for analytics/logging.
-      Sends data to: /api/analytics/events endpoint (fields: pageUrl, pageTitle, contentHash, timestamp, userAgent).
-      Privacy Notice: This script collects page content data. Ensure compliance with GDPR/privacy policies.
-      See: src/assets/webpage_content_reporter.js and privacy policy documentation.
-      TODO: Review and gate this script if analytics collection is not permitted in user's jurisdiction or privacy settings.
+      TODO: webpage_content_reporter.js was loading but file doesn't exist in assets/.
+      Remove this script tag, create the file, or gate it if analytics is not enabled.
     -->
-    <script type="module" src="assets/webpage_content_reporter.js"></script>
   </body>
 </html>

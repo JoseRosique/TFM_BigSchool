@@ -8,12 +8,9 @@ export interface UserRepository {
   /**
    * Atomic find-or-create operation for Google Sign-In
    * Prevents race conditions on concurrent logins with the same email
+   * Assigns the system default avatar (avatar-1.svg) on first registration
    */
-  findOrCreateGoogleUser(
-    email: string,
-    name: string,
-    avatarUrl?: string,
-  ): Promise<{ user: User; created: boolean }>;
+  findOrCreateGoogleUser(email: string, name: string): Promise<{ user: User; created: boolean }>;
 }
 
 export const USER_REPOSITORY = Symbol('USER_REPOSITORY');

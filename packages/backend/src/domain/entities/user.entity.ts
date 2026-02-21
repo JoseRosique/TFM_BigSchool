@@ -47,7 +47,13 @@ export class User {
   @Column({ type: 'boolean', default: false })
   twoFactorEnabled!: boolean;
 
-  @Column({ type: 'varchar', length: 255, nullable: true, name: 'avatar_url' })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    name: 'avatar_url',
+    default: '/assets/avatars/avatar-1.svg',
+  })
   avatarUrl?: string;
 
   @Column({ type: 'boolean', default: false, name: 'is_google_account' })

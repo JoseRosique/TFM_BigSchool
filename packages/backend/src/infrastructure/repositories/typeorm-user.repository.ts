@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
+import { DEFAULT_SOCIAL_AVATAR } from '@/domain/constants/avatars.constants';
 
 @Injectable()
 export class TypeOrmUserRepository implements UserRepository {
@@ -32,11 +33,11 @@ export class TypeOrmUserRepository implements UserRepository {
   /**
    * Atomic find-or-create operation for Google Sign-In
    * Uses database-level unique constraint to prevent race conditions
+   * Asigna avatar predeterminado del sistema en lugar de URL de Google
    */
   async findOrCreateGoogleUser(
     email: string,
     name: string,
-    avatarUrl?: string,
   ): Promise<{ user: User; created: boolean }> {
     // Try to find existing user first (optimistic read)
     const existingUser = await this.findByEmail(email);
@@ -79,6 +80,9 @@ export class TypeOrmUserRepository implements UserRepository {
       // Google accounts don't need password (passwordHash is nullable)
       const passwordHash = null;
 
+      // Asignar avatar predeterminado del sistema para nuevos usuarios sociales
+      const defaultAvatar = DEFAULT_SOCIAL_AVATAR;
+
       const newUser = queryRunner.manager.create(User, {
         email,
         passwordHash,
@@ -90,7 +94,7 @@ export class TypeOrmUserRepository implements UserRepository {
         emailNotifications: true,
         pushNotifications: true,
         twoFactorEnabled: false,
-        avatarUrl,
+        avatarUrl: defaultAvatar,
         isGoogleAccount: true,
       });
 

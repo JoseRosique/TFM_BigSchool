@@ -40,10 +40,10 @@ export class GoogleLoginUseCase {
 
     const email = payload.email!;
     const name = payload.name || payload.given_name || email.split('@')[0];
-    const avatarUrl = payload.picture || undefined;
 
     // 2. Buscar o crear usuario (operación atómica)
-    const { user } = await this.userRepository.findOrCreateGoogleUser(email, name, avatarUrl);
+    // NO usamos la URL de Google, el repositorio asignará un avatar predeterminado
+    const { user } = await this.userRepository.findOrCreateGoogleUser(email, name);
 
     // 3. Generar JWT de la aplicación
     return this.generateTokens(user);

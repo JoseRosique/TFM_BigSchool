@@ -101,8 +101,8 @@ export class ProfileComponent implements OnInit {
       location: [u?.location || ''],
       timezone: [u?.timezone || 'UTC'],
       emailNotifications: [u ? (u as any).emailNotifications : true],
-      pushNotifications: [u ? (u as any).pushNotifications : true],
-      twoFactorEnabled: [u ? (u as any).twoFactorEnabled : false],
+      pushNotifications: [{ value: false, disabled: true }],
+      twoFactorEnabled: [{ value: false, disabled: true }],
     });
   }
 

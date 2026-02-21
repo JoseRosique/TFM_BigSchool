@@ -222,6 +222,7 @@
     "EMAIL_NOTIFICATIONS_DESC": "Recibe solicitudes de reunión y actualizaciones por correo",
     "PUSH_NOTIFICATIONS": "Notificaciones Push",
     "PUSH_NOTIFICATIONS_DESC": "Obtén alertas instantáneas de nuevas solicitudes",
+    "COMING_SOON": "(Se desarrollara proximamente)",
     "SECURITY": "Seguridad",
     "PASSWORD": "Contraseña",
     "PASSWORD_CHANGED": "Último cambio hace {{timeAgo}}",

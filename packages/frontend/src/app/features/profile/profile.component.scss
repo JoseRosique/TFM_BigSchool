@@ -240,6 +240,12 @@
   color: var(--color-text-muted);
 }
 
+.preference-note {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
 /* Toggle Switch */
 .toggle {
   display: inline-block;
@@ -291,6 +297,10 @@
     background: var(--color-neutral-0);
     transition: transform 0.3s;
   }
+}
+
+.toggle--disabled {
+  cursor: not-allowed;
 }
 
 /* Security */

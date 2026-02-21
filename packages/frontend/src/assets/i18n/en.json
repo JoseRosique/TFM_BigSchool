@@ -192,6 +192,19 @@
         "PASSWORD_INVALID": "Invalid password.",
         "PASSWORD_MISMATCH": "Passwords do not match."
       }
+    },
+    "GOOGLE_SIGN_IN": {
+      "TITLE": "Sign In with Google",
+      "LOADING": "Loading Google Sign-In...",
+      "ERRORS": {
+        "NOT_CONFIGURED": "GOOGLE_CLIENT_ID is not configured in environment",
+        "SDK_NOT_READY": "Google SDK is not ready. Please try again.",
+        "SDK_LOAD_FAILED": "Failed to load Google SDK. Check your connection or contact support.",
+        "CONTAINER_NOT_FOUND": "Container for Google Sign-In not found.",
+        "TIMEOUT": "Timeout waiting for Google Sign-In to load.",
+        "CSP_BLOCKED": "Security policy blocked Google Sign-In.",
+        "NETWORK_ERROR": "Network error loading Google Sign-In."
+      }
     }
   },
   "ERRORS": {

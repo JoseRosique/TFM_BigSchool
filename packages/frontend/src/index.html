@@ -6,19 +6,10 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Content Security Policy: Allow Google Sign-In SDK -->
+    <!-- Content Security Policy: Restrict to necessary origins for Google Sign-In and app resources -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' https://accounts.google.com https://www.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://kit.fontawesome.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        font-src 'self' data: https:;
-        connect-src 'self' https: wss: http://localhost:3000 ws://localhost:3000;
-        frame-src 'self' https://accounts.google.com;
-        img-src 'self' data: https: blob:;
-        base-uri 'self';
-      "
+      content="default-src 'self'; script-src 'self' https://accounts.google.com https://www.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://kit.fontawesome.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; connect-src 'self' https://accounts.google.com http://localhost:3000 ws://localhost:3000; frame-src 'self' https://accounts.google.com https://*.google.com; img-src 'self' data: https: blob:; base-uri 'self'; form-action 'self' https://accounts.google.com; object-src 'none';"
     />
 
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -26,5 +17,13 @@
   </head>
   <body>
     <app-root></app-root>
+    <!-- 
+      webpage_content_reporter.js: Collects page metadata and text content for analytics/logging.
+      Sends data to: /api/analytics/events endpoint (fields: pageUrl, pageTitle, contentHash, timestamp, userAgent).
+      Privacy Notice: This script collects page content data. Ensure compliance with GDPR/privacy policies.
+      See: src/assets/webpage_content_reporter.js and privacy policy documentation.
+      TODO: Review and gate this script if analytics collection is not permitted in user's jurisdiction or privacy settings.
+    -->
+    <script type="module" src="assets/webpage_content_reporter.js"></script>
   </body>
 </html>

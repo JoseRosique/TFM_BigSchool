@@ -192,6 +192,19 @@
         "PASSWORD_INVALID": "Contraseña inválida.",
         "PASSWORD_MISMATCH": "Las contraseñas no coinciden."
       }
+    },
+    "GOOGLE_SIGN_IN": {
+      "TITLE": "Iniciar Sesión con Google",
+      "LOADING": "Cargando Google Sign-In...",
+      "ERRORS": {
+        "NOT_CONFIGURED": "GOOGLE_CLIENT_ID no está configurado en el entorno",
+        "SDK_NOT_READY": "El SDK de Google no está listo. Intenta de nuevo.",
+        "SDK_LOAD_FAILED": "No se pudo cargar el SDK de Google. Verifica tu conexión o contacta a soporte.",
+        "CONTAINER_NOT_FOUND": "No se encontró contenedor para Google Sign-In.",
+        "TIMEOUT": "El tiempo de espera para cargar Google Sign-In ha expirado.",
+        "CSP_BLOCKED": "La política de seguridad ha bloqueado Google Sign-In.",
+        "NETWORK_ERROR": "Error de red al cargar Google Sign-In."
+      }
     }
   },
   "ERRORS": {

@@ -1,0 +1,26 @@
+<div class="login-card">
+  <div class="login-card__header">
+    <h2>{{ "AUTH.GOOGLE_SIGN_IN.TITLE" | translate }}</h2>
+  </div>
+
+  <div class="login-card__content">
+    <!-- Contenedor donde se renderizará el botón de Google -->
+    <div #googleBtnHost class="google-signin-container"></div>
+
+    <!-- Mostrar mensaje de error si hay (usando i18n) -->
+    @if (gsiErrorKey()) {
+      <div class="error-message" role="alert">
+        <span class="error-icon">⚠️</span>
+        <p>{{ gsiErrorKey() | translate }}</p>
+      </div>
+    }
+
+    <!-- Indicador de carga -->
+    @if (isLoading()) {
+      <div class="loading-spinner">
+        <span class="spinner"></span>
+        <p>{{ "AUTH.GOOGLE_SIGN_IN.LOADING" | translate }}</p>
+      </div>
+    }
+  </div>
+</div>

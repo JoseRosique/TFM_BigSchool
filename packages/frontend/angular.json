@@ -58,10 +58,7 @@
           "options": {
             "liveReload": true,
             "watch": true,
-            "proxyConfig": "proxy.conf.json",
-            "headers": {
-              "Cross-Origin-Opener-Policy": "same-origin-allow-popups"
-            }
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {

@@ -1,6 +1,5 @@
-// Este archivo es autogenerado por scripts/set-env.ts
-// NO edites este archivo manualmente - los cambios se perderán
-// Para modificar valores, edita el archivo .env en la raíz del proyecto
+// Development environment configuration
+// Used by ng serve and development builds
 
 const environment = {
   production: false,

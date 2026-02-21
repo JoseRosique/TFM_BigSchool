@@ -229,7 +229,7 @@ export class GoogleAuthService {
         },
         auto_select: false,
         cancel_on_tap_outside: true,
-        ux_mode: 'popup', // popup es más robusto para re-intentos que redirect
+        ux_mode: 'redirect', // Redirect evita bloqueos de popup y COOP issues
       });
 
       console.log('✅ Google Sign-In inicializado correctamente');

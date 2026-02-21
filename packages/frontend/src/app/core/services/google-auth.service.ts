@@ -164,6 +164,7 @@ export class GoogleAuthService {
       callback: onCredential,
       auto_select: false,
       cancel_on_tap_outside: true,
+      ux_mode: 'redirect', // Redirect mode para evitar COOP y popup bloqueos
     });
 
     console.log('✅ GoogleAuthService: Google Accounts ID initialized successfully');

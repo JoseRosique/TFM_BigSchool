@@ -5,6 +5,21 @@
     <title>MeetWithFriends</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Content Security Policy: Allow Google Sign-In SDK -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://www.gstatic.com;
+        connect-src 'self' https://accounts.google.com http://localhost:3000;
+        frame-src 'self' https://accounts.google.com;
+        img-src 'self' data: https:;
+        style-src 'self' 'unsafe-inline';
+        font-src 'self' data:;
+      "
+    />
+
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="alternate icon" href="favicon.ico" />
   </head>

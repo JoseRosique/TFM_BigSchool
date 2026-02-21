@@ -36,11 +36,35 @@ if (envExists) {
 // Obtener el Client ID de Google (desde .env o environment)
 const googleClientId = process.env['GOOGLE_CLIENT_ID'] || '';
 
+// Detectar si estamos en entorno de producción
+const isProduction = process.env['NODE_ENV'] === 'production' || process.env['CI'] === 'true';
+
 if (!googleClientId) {
-  console.log(`${colors.red}❌ GOOGLE_CLIENT_ID no está configurado${colors.reset}`);
-  console.log(
-    `${colors.yellow}   La aplicación funcionará pero Google Sign-In no estará disponible${colors.reset}`,
-  );
+  const errorMsg = `❌ GOOGLE_CLIENT_ID no está configurado`;
+
+  if (isProduction) {
+    // En producción, FALLAR el build si falta la variable
+    console.error(`${colors.red}${errorMsg}${colors.reset}`);
+    console.error(
+      `${colors.red}▶️  BUILD DETENIDO: Configure GOOGLE_CLIENT_ID en las variables de entorno${colors.reset}`,
+    );
+    console.error(
+      `${colors.yellow}\nPasos para configurar en tu plataforma de despliegue:${colors.reset}`,
+    );
+    console.error(`${colors.blue}  Render:${colors.reset} Environment > Add Environment Variable`);
+    console.error(`${colors.blue}  Vercel:${colors.reset} Settings > Environment Variables`);
+    console.error(`${colors.blue}  Railway:${colors.reset} Variables > New Variable`);
+    console.error(
+      `${colors.blue}  GitHub Actions:${colors.reset} Settings > Secrets and variables > Actions\n`,
+    );
+    process.exit(1);
+  } else {
+    // En desarrollo, solo advertir
+    console.log(`${colors.red}${errorMsg}${colors.reset}`);
+    console.log(
+      `${colors.yellow}   La aplicación funcionará pero Google Sign-In no estará disponible${colors.reset}`,
+    );
+  }
 }
 
 // Template para el archivo environment.ts (producción)
@@ -48,11 +72,13 @@ const environmentProdTemplate = `// Este archivo es autogenerado por scripts/set
 // NO edites este archivo manualmente - los cambios se perderán
 // Para modificar valores, edita el archivo .env en la raíz del proyecto
 
-export const environment = {
+const environment = {
   production: true,
   apiUrl: '/api',
   googleClientId: ${JSON.stringify(googleClientId)},
 };
+
+export { environment };
 `;
 
 // Template para el archivo environment.development.ts
@@ -60,11 +86,13 @@ const environmentDevTemplate = `// Este archivo es autogenerado por scripts/set-
 // NO edites este archivo manualmente - los cambios se perderán
 // Para modificar valores, edita el archivo .env en la raíz del proyecto
 
-export const environment = {
+const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
   googleClientId: ${JSON.stringify(googleClientId)},
 };
+
+export { environment };
 `;
 
 // Template para el archivo environment.ts (usado en build)
@@ -72,11 +100,13 @@ const environmentBuildTemplate = `// Este archivo es autogenerado por scripts/se
 // NO edites este archivo manualmente - los cambios se perderán
 // Para modificar valores, edita el archivo .env en la raíz del proyecto
 
-export const environment = {
+const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
   googleClientId: ${JSON.stringify(googleClientId)},
 };
+
+export { environment };
 `;
 
 // Paths de los archivos a generar

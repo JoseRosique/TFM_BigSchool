@@ -88,6 +88,7 @@ export class GoogleAuthService {
 
   /**
    * Carga el SDK de Google Sign-In dinámicamente
+   * Incluye manejo de errores robusto para CSP y fallas de red
    */
   async loadGoogleSDK(): Promise<void> {
     if (this.sdkLoaded) {
@@ -112,6 +113,11 @@ export class GoogleAuthService {
 
       script.onerror = (error) => {
         console.error('❌ Failed to load Google SDK:', error);
+        console.error('⚠️  Posibles causas:');
+        console.error('   1. Content Security Policy (CSP) bloqueando el script');
+        console.error('   2. Problemas de red o conectividad');
+        console.error('   3. URL del SDK no accesible');
+        console.error('\n▶️  Solución: Verifica que el CSP permita https://accounts.google.com');
         this.sdkLoadPromise = null;
         reject(new Error('GOOGLE_SDK_LOAD_FAILED'));
       };

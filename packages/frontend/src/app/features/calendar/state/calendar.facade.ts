@@ -193,6 +193,11 @@ export class CalendarFacade {
             startDate: new Date(slot.start),
             endDate: new Date(slot.end),
             user: (slot as any).user ?? (slot as any).owner ?? null,
+            groupIds: Array.isArray((slot as any).groupIds)
+              ? (slot as any).groupIds
+              : Array.isArray((slot as any).groups)
+                ? (slot as any).groups.map((group: { id: string }) => group.id)
+                : [],
           }));
         this.slots.set(items);
         this.isLoadingSlots.set(false);

@@ -126,6 +126,10 @@
       "APPLE": "Registrarse con Apple",
       "NOT_IMPLEMENTED": "Registro con {{provider}} no implementado aún."
     },
+    "ERROR": {
+      "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo.",
+      "GOOGLE_FAILED": "No se pudo completar el registro con Google. Inténtalo de nuevo."
+    },
     "SUCCESS": "¡Cuenta creada con éxito! 🎉"
   },
   "LOGIN": {
@@ -148,7 +152,9 @@
       "PASSWORD": "La contraseña es obligatoria."
     },
     "ERROR": {
-      "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo."
+      "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo.",
+      "GOOGLE_FAILED": "No se pudo completar el inicio de sesión con Google. Inténtalo de nuevo.",
+      "GOOGLE_INIT_FAILED": "No se pudo inicializar Google Sign-In. Inténtalo de nuevo."
     },
     "SOCIAL": {
       "GOOGLE": "Iniciar sesión con Google",
@@ -210,6 +216,9 @@
   "ERRORS": {
     "TOO_MANY_REQUESTS": "Demasiadas solicitudes. Espera un momento e intenta de nuevo.",
     "SESSION_EXPIRED": "Tu sesión ha caducado. Inicia sesión de nuevo."
+  },
+  "TOASTS": {
+    "CLOSE_NOTIFICATION": "Cerrar notificación"
   },
   "PROFILE": {
     "TITLE": "Configuración de Perfil",

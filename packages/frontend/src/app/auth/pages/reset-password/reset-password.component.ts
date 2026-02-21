@@ -78,8 +78,7 @@ export class ResetPasswordComponent implements OnInit {
         next: () => {
           this.loading.set(false);
           this.success.set(true);
-          const successMsg = this.translate.instant('AUTH.RESET.SUCCESS_TOAST');
-          this.toastService.success(successMsg);
+          this.toastService.success('AUTH.RESET.SUCCESS_TOAST');
           const timeoutId = setTimeout(() => {
             this.router.navigate(['/auth/login']);
           }, 1500);
@@ -87,19 +86,21 @@ export class ResetPasswordComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           this.loading.set(false);
-          let errorMsg = this.translate.instant('AUTH.RESET.ERRORS.SUBMIT_FAILED');
+          let errorKey = 'AUTH.RESET.ERRORS.SUBMIT_FAILED';
           if (err.status === 400) {
             const errorCode = err.error?.message;
             if (errorCode === 'INVALID_RESET_TOKEN') {
-              errorMsg = this.translate.instant('AUTH.RESET.ERRORS.INVALID_TOKEN');
+              errorKey = 'AUTH.RESET.ERRORS.INVALID_TOKEN';
             } else if (errorCode === 'RESET_TOKEN_EXPIRED') {
-              errorMsg = this.translate.instant('AUTH.RESET.ERRORS.TOKEN_EXPIRED');
+              errorKey = 'AUTH.RESET.ERRORS.TOKEN_EXPIRED';
             } else if (errorCode === 'PASSWORD_MISMATCH') {
-              errorMsg = this.translate.instant('AUTH.RESET.ERRORS.PASSWORD_MISMATCH');
+              errorKey = 'AUTH.RESET.ERRORS.PASSWORD_MISMATCH';
             }
           }
+
+          const errorMsg = this.translate.instant(errorKey);
           this.error.set(errorMsg);
-          this.toastService.error(errorMsg);
+          this.toastService.error(errorKey);
           console.error('[ResetPasswordComponent] Reset error:', err);
         },
       });

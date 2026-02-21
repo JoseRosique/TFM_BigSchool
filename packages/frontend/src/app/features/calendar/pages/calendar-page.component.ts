@@ -446,6 +446,7 @@ export class CalendarPageComponent implements OnInit {
         end: end!.toISOString(),
         timezone: slot.timezone,
         visibilityScope: slot.visibilityScope,
+        groupIds: Array.isArray(slot.groupIds) ? slot.groupIds : [],
         notes: slot.notes || undefined,
       };
     });
@@ -461,6 +462,7 @@ export class CalendarPageComponent implements OnInit {
           end: end!.toISOString(),
           timezone: slot.timezone,
           visibilityScope: slot.visibilityScope,
+          groupIds: Array.isArray(slot.groupIds) ? slot.groupIds : [],
           notes: slot.notes || undefined,
         },
       };
@@ -705,6 +707,11 @@ export class CalendarPageComponent implements OnInit {
       for (const slot of slots) {
         const startDate = slot.start instanceof Date ? slot.start : new Date(slot.start);
         const endDate = slot.end instanceof Date ? slot.end : new Date(slot.end);
+        const slotGroupIds = Array.isArray((slot as any).groupIds)
+          ? ((slot as any).groupIds as string[])
+          : Array.isArray((slot as any).groups)
+            ? ((slot as any).groups as Array<{ id: string }>).map((group) => group.id)
+            : [];
 
         const startTimeFormatted = formatTimeInTimeZone(startDate, slot.timezone);
         const endTimeFormatted = formatTimeInTimeZone(endDate, slot.timezone);
@@ -714,12 +721,14 @@ export class CalendarPageComponent implements OnInit {
           slot.notes || '',
           slot.timezone,
           slot.visibilityScope,
+          slotGroupIds,
         );
         slotControl.patchValue({
           startTime: startTimeFormatted || '',
           endTime: endTimeFormatted || '',
           timezone: slot.timezone,
           visibilityScope: slot.visibilityScope,
+          groupIds: slotGroupIds,
           notes: slot.notes || '',
         });
         timeSlots.push(slotControl);

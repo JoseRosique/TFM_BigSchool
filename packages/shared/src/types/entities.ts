@@ -75,6 +75,7 @@ export interface Slot {
   end: Date; // UTC
   timezone: string; // IANA timezone
   visibilityScope: VisibilityScope;
+  groupIds?: string[];
   notes?: string;
   status: SlotStatus;
   createdAt: Date;
@@ -169,6 +170,7 @@ export namespace OpenSlotDTO {
     end: string; // ISO datetime
     timezone: string;
     visibilityScope: VisibilityScope;
+    groupIds?: string[];
     notes?: string;
   }
 

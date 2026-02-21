@@ -82,13 +82,11 @@
                     }
                   </div>
 
-                  <!-- Row 2: Timezone and Visibility side by side -->
-                  <div class="slot-config-row">
-                    <div class="config-field">
-                      <span class="config-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
-                      @if (isFriendSlot()) {
-                        <p class="config-label">{{ getTimezoneValue($index) }}</p>
-                      } @else {
+                  @if (!isFriendSlot()) {
+                    <!-- Row 2: Timezone and Visibility side by side (owner only) -->
+                    <div class="slot-config-row">
+                      <div class="config-field">
+                        <span class="config-label">{{ "CALENDAR_PAGE.FORM.TIMEZONE" | translate }}</span>
                         <app-custom-select
                           [options]="getTimezoneOptions()"
                           [value]="getTimezoneValue($index)"
@@ -97,13 +95,9 @@
                           [placeholder]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
                           [ariaLabel]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
                         ></app-custom-select>
-                      }
-                    </div>
-                    <div class="config-field">
-                      <span class="config-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
-                      @if (isFriendSlot()) {
-                        <p class="config-label">{{ getVisibilityLabel($index) }}</p>
-                      } @else {
+                      </div>
+                      <div class="config-field">
+                        <span class="config-label">{{ "CALENDAR_PAGE.FORM.VISIBILITY" | translate }}</span>
                         @if (isLoadingGroups()) {
                           <div class="groups-loading">
                             <span class="loading-spinner"></span>
@@ -119,21 +113,27 @@
                             [ariaLabel]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
                           ></app-custom-select>
                         }
+                      </div>
+                    </div>
+                  }
+
+                  @if (!isFriendSlot() || hasNotes($index)) {
+                    <!-- Row 3: Notes (for friend view only when content exists) -->
+                    <div class="slot-notes">
+                      <label class="notes-label">{{ "CALENDAR_PAGE.FORM.NOTES" | translate }}</label>
+                      @if (isFriendSlot()) {
+                        <p class="config-label">{{ getNotesValue($index) }}</p>
+                      } @else {
+                        <textarea
+                          class="notes-textarea"
+                          formControlName="notes"
+                          rows="2"
+                          [disabled]="isSubmitting()"
+                          [placeholder]="'CALENDAR_PAGE.FORM.NOTES_PLACEHOLDER' | translate"
+                        ></textarea>
                       }
                     </div>
-                  </div>
-
-                  <!-- Row 3: Notes -->
-                  <div class="slot-notes">
-                    <label class="notes-label">{{ "CALENDAR_PAGE.FORM.NOTES" | translate }}</label>
-                    <textarea
-                      class="notes-textarea"
-                      formControlName="notes"
-                      rows="2"
-                      [disabled]="isSubmitting() || isFriendSlot()"
-                      [placeholder]="'CALENDAR_PAGE.FORM.NOTES_PLACEHOLDER' | translate"
-                    ></textarea>
-                  </div>
+                  }
                 </div>
 
                 <!-- Delete button for slot -->

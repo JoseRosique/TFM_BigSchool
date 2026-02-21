@@ -157,7 +157,7 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
                 errorMsg = error.error.message;
               }
               this.errors.set({ general: errorMsg });
-              this.toastService.error(errorMsg);
+              this.toastService.error(this.translate.instant('LOGIN.ERROR.GOOGLE_FAILED'));
             });
           },
         ),
@@ -172,10 +172,7 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
           this.translate.instant('LOGIN.ERROR.GOOGLE_INIT_FAILED') ||
           'Error initializing Google Sign-In',
       });
-      this.toastService.error(
-        this.translate.instant('LOGIN.ERROR.GOOGLE_INIT_FAILED') ||
-          'Error initializing Google Sign-In',
-      );
+      this.toastService.error(this.translate.instant('LOGIN.ERROR.GOOGLE_INIT_FAILED'));
     }
   }
 
@@ -338,7 +335,7 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
         this.forgotLoading.set(false);
         // SECURITY: Always show the same message regardless of email existence
         const successMsg = this.translate.instant('LOGIN.FORGOT.SUCCESS_MESSAGE');
-        this.toastService.success(successMsg);
+        this.toastService.success(this.translate.instant('LOGIN.FORGOT.SUCCESS_MESSAGE'));
         this.forgotSuccess.set(true);
         this.forgotMessage.set(successMsg);
 
@@ -356,7 +353,7 @@ export class LoginCardComponent implements OnDestroy, AfterViewInit {
         // SECURITY: Show generic message for both validation errors and server errors
         console.error('[LoginCardComponent] Forgot password error:', err);
         const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
-        this.toastService.error(errorMsg);
+        this.toastService.error(this.translate.instant('LOGIN.ERROR.UNKNOWN'));
         this.forgotErrors.set({
           general: errorMsg,
         });

@@ -126,6 +126,10 @@
       "APPLE": "Sign up with Apple",
       "NOT_IMPLEMENTED": "Sign up with {{provider}} not implemented yet."
     },
+    "ERROR": {
+      "UNKNOWN": "An unknown error occurred. Please try again.",
+      "GOOGLE_FAILED": "Unable to complete sign up with Google. Please try again."
+    },
     "SUCCESS": "Account created successfully! 🎉"
   },
   "LOGIN": {
@@ -148,7 +152,9 @@
       "PASSWORD": "Password is required."
     },
     "ERROR": {
-      "UNKNOWN": "An unknown error occurred. Please try again."
+      "UNKNOWN": "An unknown error occurred. Please try again.",
+      "GOOGLE_FAILED": "Unable to complete sign in with Google. Please try again.",
+      "GOOGLE_INIT_FAILED": "Unable to initialize Google Sign-In. Please try again."
     },
     "SOCIAL": {
       "GOOGLE": "Sign in with Google",
@@ -210,6 +216,9 @@
   "ERRORS": {
     "TOO_MANY_REQUESTS": "Too many requests. Please wait and try again.",
     "SESSION_EXPIRED": "Your session has expired. Please sign in again."
+  },
+  "TOASTS": {
+    "CLOSE_NOTIFICATION": "Close notification"
   },
   "PROFILE": {
     "TITLE": "Profile Settings",

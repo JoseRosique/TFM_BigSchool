@@ -72,6 +72,24 @@ export class SlotsService {
     }
   }
 
+  private async resolveOwnedGroups(ownerId: string, groupIds: string[] = []): Promise<Group[]> {
+    if (groupIds.length === 0) {
+      return [];
+    }
+
+    const groups = await this.groupRepository.find({
+      where: { id: In(groupIds), ownerId },
+    });
+
+    if (groups.length !== groupIds.length) {
+      const foundIds = new Set(groups.map((group) => group.id));
+      const missingIds = groupIds.filter((id) => !foundIds.has(id));
+      throw new BadRequestException(`GROUP_NOT_FOUND_OR_NOT_OWNED: ${missingIds.join(', ')}`);
+    }
+
+    return groups;
+  }
+
   async create(ownerId: string, dto: CreateSlotDto): Promise<OpenSlotDTO.Response> {
     const start = new Date(dto.start);
     const end = new Date(dto.end);
@@ -87,18 +105,12 @@ export class SlotsService {
     // Validar timezone
     this.validateTimezone(dto.timezone);
 
-    // Validar que todos los groupIds pertenecen al dueño
-    let groups: Group[] = [];
-    if (dto.groupIds && dto.groupIds.length > 0) {
-      groups = await this.groupRepository.find({
-        where: { id: In(dto.groupIds), ownerId },
-      });
-      // Validar que se encontraron todos los grupos
-      if (groups.length !== dto.groupIds.length) {
-        const foundIds = new Set(groups.map((g) => g.id));
-        const missingIds = dto.groupIds.filter((id) => !foundIds.has(id));
-        throw new BadRequestException(`GROUP_NOT_FOUND_OR_NOT_OWNED: ${missingIds.join(', ')}`);
-      }
+    const effectiveGroupIds =
+      dto.visibilityScope === VisibilityScope.LIST ? (dto.groupIds ?? []) : [];
+    const groups = await this.resolveOwnedGroups(ownerId, effectiveGroupIds);
+
+    if (dto.visibilityScope === VisibilityScope.LIST && groups.length === 0) {
+      throw new BadRequestException('GROUP_REQUIRED_FOR_LIST_VISIBILITY');
     }
 
     const slot = this.slotRepository.create({
@@ -126,7 +138,10 @@ export class SlotsService {
   }
 
   async findOne(slotId: string, requesterId: string): Promise<Slot> {
-    const slot = await this.slotRepository.findOne({ where: { id: slotId } });
+    const slot = await this.slotRepository.findOne({
+      where: { id: slotId },
+      relations: ['groups'],
+    });
 
     if (!slot) {
       throw new NotFoundException('SLOT_NOT_FOUND');
@@ -255,19 +270,18 @@ export class SlotsService {
 
     // Manejar actualización de grupos
     if (dto.groupIds !== undefined) {
-      let groups: Group[] = [];
-      if (dto.groupIds.length > 0) {
-        groups = await this.groupRepository.find({
-          where: { id: In(dto.groupIds), ownerId },
-        });
-        // Validar que se encontraron todos los grupos
-        if (groups.length !== dto.groupIds.length) {
-          const foundIds = new Set(groups.map((g) => g.id));
-          const missingIds = dto.groupIds.filter((id) => !foundIds.has(id));
-          throw new BadRequestException(`GROUP_NOT_FOUND_OR_NOT_OWNED: ${missingIds.join(', ')}`);
-        }
-      }
+      const groups = await this.resolveOwnedGroups(ownerId, dto.groupIds);
       slot.groups = groups;
+    }
+
+    const effectiveScope = slot.visibilityScope;
+
+    if (effectiveScope === VisibilityScope.LIST && (!slot.groups || slot.groups.length === 0)) {
+      throw new BadRequestException('GROUP_REQUIRED_FOR_LIST_VISIBILITY');
+    }
+
+    if (effectiveScope !== VisibilityScope.LIST) {
+      slot.groups = [];
     }
 
     return this.slotRepository.save(slot);
@@ -295,6 +309,7 @@ export class SlotsService {
     const qb = this.slotRepository
       .createQueryBuilder('slot')
       .leftJoinAndSelect('slot.owner', 'owner')
+      .leftJoinAndSelect('slot.groups', 'groups')
       .where('slot.ownerId = :userId', { userId });
 
     if (query.from) {
@@ -349,21 +364,31 @@ export class SlotsService {
       .andWhere('slot.ownerId != :userId', { userId })
       .andWhere('slot.visibilityScope != :private', { private: VisibilityScope.PRIVATE });
 
-    // Condición compleja: el usuario debe estar en uno de los grupos de la franja
-    // O la franja debe ser AVAILABLE, O el usuario actual es quien la reservó
+    // Visibilidad efectiva:
+    // - FRIENDS: visible a amigos
+    // - LIST: visible solo si pertenece a alguno de los grupos del slot
+    // - Siempre visible si el usuario tiene una reserva activa en ese slot
     qb.andWhere(
       new Brackets((subQb) => {
         subQb
-          .where(
-            // El usuario pertenece a uno de los grupos de la franja
-            'EXISTS (SELECT 1 FROM slot_groups sg ' +
-              'INNER JOIN group_members gm ON sg.group_id = gm.group_id ' +
-              'WHERE sg.slot_id = slot.id AND gm.user_id = :userId)',
-            { userId },
-          )
-          .orWhere('slot.status = :available', { available: SlotStatus.AVAILABLE })
+          .where('slot.visibilityScope = :friendsScope', {
+            friendsScope: VisibilityScope.FRIENDS,
+          })
           .orWhere(
-            // El usuario actual tiene una reserva activa en esta franja
+            new Brackets((groupScopedQb) => {
+              groupScopedQb
+                .where('slot.visibilityScope = :listScope', {
+                  listScope: VisibilityScope.LIST,
+                })
+                .andWhere(
+                  'EXISTS (SELECT 1 FROM slot_groups sg ' +
+                    'INNER JOIN group_members gm ON sg.group_id = gm.group_id ' +
+                    'WHERE sg.slot_id = slot.id AND gm.user_id = :userId)',
+                  { userId },
+                );
+            }),
+          )
+          .orWhere(
             'EXISTS (SELECT 1 FROM reservations r ' +
               'WHERE r.slot_id = slot.id AND r.user_id = :userId AND r.status = :created)',
             { userId, created: ReservationStatus.CREATED },

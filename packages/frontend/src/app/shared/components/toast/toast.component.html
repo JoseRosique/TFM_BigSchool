@@ -22,7 +22,7 @@
         class="toast__close"
         type="button"
         (click)="toastService.remove(toast.id)"
-        [attr.aria-label]="'Close notification'"
+        [attr.aria-label]="'TOASTS.CLOSE_NOTIFICATION' | translate"
       >
         <span class="material-symbols-outlined">close</span>
       </button>

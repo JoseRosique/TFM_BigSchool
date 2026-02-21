@@ -125,7 +125,7 @@ export class SignupCardComponent implements AfterViewInit, OnDestroy {
             this.ngZone.run(() => {
               this.authService.setTokens(response.accessToken, response.refreshToken);
               this.languageService.setLang(response.language || 'es');
-              this.toastService.success(this.translate.instant('SIGNUP.SUCCESS'));
+              this.toastService.success('SIGNUP.SUCCESS');
 
               this.authService.getProfile().subscribe({
                 next: () => {
@@ -158,7 +158,7 @@ export class SignupCardComponent implements AfterViewInit, OnDestroy {
                 errorMsg = error.error.message;
               }
               this.errors.set({ general: errorMsg });
-              this.toastService.error(errorMsg);
+              this.toastService.error('SIGNUP.ERROR.GOOGLE_FAILED');
             });
           },
         ),

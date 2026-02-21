@@ -2,7 +2,6 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from '../services/toast.service';
 
@@ -17,7 +16,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authService = inject(AuthService);
   const router = inject(Router);
-  const translate = inject(TranslateService);
   const toastService = inject(ToastService);
   const token = authService.getAccessToken();
 
@@ -32,7 +30,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error) => {
       if (error?.status === 429) {
-        toastService.warning(translate.instant('ERRORS.TOO_MANY_REQUESTS'));
+        toastService.warning('ERRORS.TOO_MANY_REQUESTS');
       }
 
       const isRefreshRequest = req.url.includes('/auth/refresh');
@@ -53,7 +51,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           catchError((refreshError) => {
             if (refreshError?.status === 401) {
               authService.clearTokens();
-              toastService.info(translate.instant('ERRORS.SESSION_EXPIRED'));
+              toastService.info('ERRORS.SESSION_EXPIRED');
               router.navigate(['/auth/login']);
             }
             return throwError(() => refreshError);
@@ -63,7 +61,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error?.status === 401 && !isLoginRequest) {
         authService.clearTokens();
-        toastService.info(translate.instant('ERRORS.SESSION_EXPIRED'));
+        toastService.info('ERRORS.SESSION_EXPIRED');
         router.navigate(['/auth/login']);
       } else if (error?.status === 403) {
         router.navigate(['/access-denied']);

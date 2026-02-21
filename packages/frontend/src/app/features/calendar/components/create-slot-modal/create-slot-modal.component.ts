@@ -237,8 +237,7 @@ export class CreateSlotModalComponent implements OnInit {
     const groupIds = slot.get('groupIds')?.value || [];
 
     if (scope === VisibilityScope.LIST && groupIds.length > 0) {
-      // Si es LIST con un grupo, retornar GROUP:{id}
-      return `GROUP:${groupIds[0]}`;
+      return groupIds[0];
     }
 
     return scope || VisibilityScope.FRIENDS;
@@ -256,15 +255,17 @@ export class CreateSlotModalComponent implements OnInit {
     const slot = this.getTimeSlots().at(index);
     if (!slot) return;
 
-    if (value.startsWith('GROUP:')) {
-      // Extraer el groupId
-      const groupId = value.replace('GROUP:', '');
+    const isFixedScope =
+      value === VisibilityScope.PRIVATE ||
+      value === VisibilityScope.FRIENDS ||
+      value === VisibilityScope.LIST;
+
+    if (!isFixedScope) {
       slot.patchValue({
         visibilityScope: VisibilityScope.LIST,
-        groupIds: [groupId],
+        groupIds: [value],
       });
     } else {
-      // PRIVATE o FRIENDS
       slot.patchValue({
         visibilityScope: value as VisibilityScope,
         groupIds: [],
@@ -307,7 +308,7 @@ export class CreateSlotModalComponent implements OnInit {
       const myGroupsLabel = this.translateService.instant('CALENDAR_PAGE.FORM.MY_GROUPS');
       this.userGroups().forEach((group) => {
         options.push({
-          value: `GROUP:${group.id}`,
+          value: group.id,
           label: group.name,
           group: myGroupsLabel,
         });
@@ -359,8 +360,12 @@ export class CreateSlotModalComponent implements OnInit {
 
   getVisibilityLabel(slotIndex: number): string {
     const value = this.getVisibilityValue(slotIndex);
-    if (value.startsWith('GROUP:')) {
-      const groupId = value.replace('GROUP:', '');
+    if (
+      value !== VisibilityScope.PRIVATE &&
+      value !== VisibilityScope.FRIENDS &&
+      value !== VisibilityScope.LIST
+    ) {
+      const groupId = value;
       const group = this.userGroups().find((item) => item.id === groupId);
       return group?.name || groupId;
     }
@@ -378,6 +383,18 @@ export class CreateSlotModalComponent implements OnInit {
   getTimezoneValue(slotIndex: number): string {
     const slot = this.getTimeSlot(slotIndex);
     return slot?.get('timezone')?.value || this.displayTimezone();
+  }
+
+  hasNotes(slotIndex: number): boolean {
+    const slot = this.getTimeSlot(slotIndex);
+    const notes = slot?.get('notes')?.value;
+    return typeof notes === 'string' && notes.trim().length > 0;
+  }
+
+  getNotesValue(slotIndex: number): string {
+    const slot = this.getTimeSlot(slotIndex);
+    const notes = slot?.get('notes')?.value;
+    return typeof notes === 'string' ? notes.trim() : '';
   }
 
   /**

@@ -1,4 +1,13 @@
-import { Component, signal, inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  signal,
+  inject,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  NgZone,
+} from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -8,6 +17,7 @@ import { LoginDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../shared/services/toast.service';
+import { isValidEmail } from '../../../shared/utils/validation.utils';
 
 @Component({
   selector: 'app-login-card',
@@ -16,13 +26,16 @@ import { ToastService } from '../../../shared/services/toast.service';
   styleUrls: ['./login-card.component.scss'],
   templateUrl: './login-card.component.html',
 })
-export class LoginCardComponent implements OnDestroy {
+export class LoginCardComponent implements OnDestroy, AfterViewInit {
+  @ViewChild('googleLoginBtn', { static: false }) googleLoginBtn!: ElementRef<HTMLDivElement>;
+
   private readonly translate = inject(TranslateService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
   private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  private readonly ngZone = inject(NgZone);
 
   email = signal('');
   password = signal('');
@@ -37,20 +50,157 @@ export class LoginCardComponent implements OnDestroy {
   forgotMessage = signal('');
 
   private forgotAutoCloseTimer: ReturnType<typeof setTimeout> | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastRenderedWidth = 0;
 
   ngOnDestroy(): void {
     if (this.forgotAutoCloseTimer !== null) {
       clearTimeout(this.forgotAutoCloseTimer);
       this.forgotAutoCloseTimer = null;
     }
+
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+
+    if (this.resizeDebounceTimer !== null) {
+      clearTimeout(this.resizeDebounceTimer);
+      this.resizeDebounceTimer = null;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Inicializar Google Sign-In y renderizar botón nativo después de que la vista esté lista
+    this.initializeGoogleButton();
+
+    if (typeof ResizeObserver !== 'undefined' && this.googleLoginBtn?.nativeElement) {
+      this.ngZone.runOutsideAngular(() => {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.scheduleGoogleButtonRender();
+        });
+
+        if (this.googleLoginBtn.nativeElement.parentElement) {
+          this.resizeObserver.observe(this.googleLoginBtn.nativeElement.parentElement);
+        }
+      });
+    }
+  }
+
+  private scheduleGoogleButtonRender(): void {
+    if (this.resizeDebounceTimer !== null) {
+      clearTimeout(this.resizeDebounceTimer);
+    }
+
+    this.resizeDebounceTimer = setTimeout(() => {
+      this.resizeDebounceTimer = null;
+      void this.renderGoogleButton();
+    }, 200);
+  }
+
+  private async initializeGoogleButton(): Promise<void> {
+    try {
+      // Configurar callbacks para el flujo de autenticación
+      await this.ngZone.runOutsideAngular(async () =>
+        this.googleAuthService.initializeGoogleSignIn(
+          // Callback de éxito
+          (response: LoginDTO.Response) => {
+            this.ngZone.run(() => {
+              this.loading.set(false);
+              this.success.set(true);
+              this.authService.setTokens(response.accessToken, response.refreshToken);
+              if (response.language) {
+                this.languageService.setLang(response.language);
+              }
+              this.toastService.success(this.translate.instant('LOGIN.SUCCESS'));
+
+              // Cargar perfil y redirigir al dashboard
+              this.authService.getProfile().subscribe({
+                next: () => {
+                  this.router.navigate(['/dashboard']);
+                },
+                error: () => {
+                  this.authService.clearAccessToken();
+                  const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
+                  this.errors.set({ general: errorMsg });
+                  this.loading.set(false);
+                },
+              });
+            });
+          },
+          // Callback de error
+          (error) => {
+            this.ngZone.run(() => {
+              console.error('[LoginCardComponent] Google login error:', error);
+              this.loading.set(false);
+
+              // Si el usuario simplemente cerró el modal, no mostramos error
+              if (error?.userCancelled) {
+                console.log('ℹ️ Usuario cerró el modal de Google (no es un error)');
+                return;
+              }
+
+              // Error real: mostrar mensaje
+              let errorMsg = this.translate.instant('LOGIN.ERROR.GOOGLE_FAILED');
+              if (error?.error?.message) {
+                errorMsg = error.error.message;
+              }
+              this.errors.set({ general: errorMsg });
+              this.toastService.error(errorMsg);
+            });
+          },
+        ),
+      );
+
+      await this.renderGoogleButton();
+    } catch (error) {
+      console.error('[LoginCardComponent] Error al inicializar botón de Google:', error);
+      // Set error state and show fallback UI
+      this.errors.set({
+        general:
+          this.translate.instant('LOGIN.ERROR.GOOGLE_INIT_FAILED') ||
+          'Error initializing Google Sign-In',
+      });
+      this.toastService.error(
+        this.translate.instant('LOGIN.ERROR.GOOGLE_INIT_FAILED') ||
+          'Error initializing Google Sign-In',
+      );
+    }
+  }
+
+  private async renderGoogleButton(): Promise<void> {
+    if (!this.googleLoginBtn?.nativeElement) {
+      return;
+    }
+
+    const containerWidth =
+      this.googleLoginBtn.nativeElement.parentElement?.offsetWidth ||
+      this.googleLoginBtn.nativeElement.offsetWidth ||
+      0;
+
+    if (Math.abs(containerWidth - this.lastRenderedWidth) <= 5) {
+      return;
+    }
+
+    this.lastRenderedWidth = containerWidth;
+
+    await this.ngZone.runOutsideAngular(() =>
+      this.googleAuthService.renderButton(this.googleLoginBtn.nativeElement, {
+        type: 'standard',
+        theme: 'filled_blue',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'rectangular',
+      }),
+    );
   }
 
   validate() {
     const errors: { [key: string]: string } = {};
     const email = this.email();
     const password = this.password();
-    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
-      errors['email'] = this.translate.instant('LOGIN.VALIDATION.EMAIL');
+    if (!isValidEmail(email)) errors['email'] = this.translate.instant('LOGIN.VALIDATION.EMAIL');
     if (!password) errors['password'] = this.translate.instant('LOGIN.VALIDATION.PASSWORD');
     return errors;
   }
@@ -62,7 +212,7 @@ export class LoginCardComponent implements OnDestroy {
   private validateForgot() {
     const errors: { [key: string]: string } = {};
     const email = this.forgotEmail();
-    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    if (!isValidEmail(email)) {
       errors['email'] = this.translate.instant('LOGIN.VALIDATION.EMAIL');
     }
     return errors;
@@ -206,62 +356,11 @@ export class LoginCardComponent implements OnDestroy {
   }
 
   socialLogin(provider: string) {
-    if (provider !== 'Google') {
-      alert(this.translate.instant('LOGIN.SOCIAL.NOT_IMPLEMENTED', { provider }));
+    // Método mantenido solo para Apple (Google usa botón nativo)
+    if (provider !== 'Apple') {
       return;
     }
 
-    this.loading.set(true);
-    this.errors.set({});
-
-    // Inicializar y mostrar Google Sign-In
-    this.googleAuthService
-      .initializeGoogleSignIn(
-        // Callback de éxito
-        (response: LoginDTO.Response) => {
-          this.loading.set(false);
-          this.success.set(true);
-          this.authService.setTokens(response.accessToken, response.refreshToken);
-          if (response.language) {
-            this.languageService.setLang(response.language);
-          }
-          this.toastService.success(this.translate.instant('LOGIN.SUCCESS'));
-
-          // Cargar perfil y redirigir al dashboard
-          this.authService.getProfile().subscribe({
-            next: () => {
-              this.router.navigate(['/dashboard']);
-            },
-            error: () => {
-              this.authService.clearAccessToken();
-              const errorMsg = this.translate.instant('LOGIN.ERROR.UNKNOWN');
-              this.errors.set({ general: errorMsg });
-              this.loading.set(false);
-            },
-          });
-        },
-        // Callback de error
-        (error) => {
-          console.error('[LoginCardComponent] Google login error:', error);
-          this.loading.set(false);
-          let errorMsg = this.translate.instant('LOGIN.ERROR.GOOGLE_FAILED');
-          if (error?.error?.message) {
-            errorMsg = error.error.message;
-          }
-          this.errors.set({ general: errorMsg });
-          this.toastService.error(errorMsg);
-        },
-      )
-      .then(() => {
-        // SDK inicializado, mostrar One Tap
-        return this.googleAuthService.showOneTap();
-      })
-      .catch((error) => {
-        console.error('[LoginCardComponent] Google SDK initialization error:', error);
-        this.loading.set(false);
-        const errorMsg = this.translate.instant('LOGIN.ERROR.GOOGLE_SDK_FAILED');
-        this.errors.set({ general: errorMsg });
-        this.toastService.error(errorMsg);
-      });
+    alert(this.translate.instant('LOGIN.SOCIAL.NOT_IMPLEMENTED', { provider }));
   }
 }

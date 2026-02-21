@@ -1,4 +1,13 @@
-import { Component, signal, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+  NgZone,
+} from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -6,11 +15,16 @@ import { LanguageService } from '../../../shared/services/language.service';
 import { ThemeService } from '../../../shared/services/theme.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GoogleAuthService } from '../../../shared/services/google-auth.service';
-import { RegisterDTO } from '@meetwithfriends/shared';
+import { RegisterDTO, LoginDTO } from '@meetwithfriends/shared';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DateOnlyPickerComponent } from '../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
 import { formatDateInputValue } from '../../../shared/components/date-time-picker/date-time-utils';
+import {
+  isValidEmail,
+  isValidNickname,
+  isValidPassword,
+} from '../../../shared/utils/validation.utils';
 import { environment } from '../../../../environments/environment';
 import { timeout } from 'rxjs/operators';
 
@@ -21,7 +35,9 @@ import { timeout } from 'rxjs/operators';
   styleUrls: ['./signup-card.component.scss'],
   templateUrl: './signup-card.component.html',
 })
-export class SignupCardComponent {
+export class SignupCardComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('googleSignupBtn', { static: false }) googleSignupBtn!: ElementRef<HTMLDivElement>;
+
   private readonly translate = inject(TranslateService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
@@ -30,6 +46,7 @@ export class SignupCardComponent {
   private readonly googleAuthService = inject(GoogleAuthService);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
+  private readonly ngZone = inject(NgZone);
   private readonly apiUrl = environment.apiUrl;
   // Signals for form state
   name = signal('');
@@ -49,6 +66,128 @@ export class SignupCardComponent {
   success = signal(false);
   nicknameChecking = signal(false);
   nicknameAvailable = signal<boolean | null>(null);
+  private resizeObserver: ResizeObserver | null = null;
+  private resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastRenderedWidth = 0;
+
+  ngAfterViewInit(): void {
+    this.initializeGoogleButton();
+
+    if (typeof ResizeObserver !== 'undefined' && this.googleSignupBtn?.nativeElement) {
+      this.ngZone.runOutsideAngular(() => {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.scheduleGoogleButtonRender();
+        });
+
+        if (this.googleSignupBtn.nativeElement.parentElement) {
+          this.resizeObserver.observe(this.googleSignupBtn.nativeElement.parentElement);
+        }
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
+
+    if (this.resizeDebounceTimer !== null) {
+      clearTimeout(this.resizeDebounceTimer);
+      this.resizeDebounceTimer = null;
+    }
+  }
+
+  private scheduleGoogleButtonRender(): void {
+    if (this.resizeDebounceTimer !== null) {
+      clearTimeout(this.resizeDebounceTimer);
+    }
+
+    this.resizeDebounceTimer = setTimeout(() => {
+      this.resizeDebounceTimer = null;
+      void this.renderGoogleButton();
+    }, 200);
+  }
+
+  private async initializeGoogleButton(): Promise<void> {
+    try {
+      await this.ngZone.runOutsideAngular(async () =>
+        this.googleAuthService.initializeGoogleSignIn(
+          (response: LoginDTO.Response) => {
+            this.ngZone.run(() => {
+              this.authService.setTokens(response.accessToken, response.refreshToken);
+              this.languageService.setLang(response.language || 'es');
+              this.toastService.success(this.translate.instant('SIGNUP.SUCCESS'));
+
+              this.authService.getProfile().subscribe({
+                next: () => {
+                  this.loading.set(false);
+                  this.success.set(true);
+                  this.router.navigate(['/dashboard']);
+                },
+                error: () => {
+                  this.authService.clearAccessToken();
+                  const errorMsg = this.translate.instant('SIGNUP.ERROR.UNKNOWN');
+                  this.errors.set({ general: errorMsg });
+                  this.loading.set(false);
+                  this.success.set(false);
+                },
+              });
+            });
+          },
+          (error) => {
+            this.ngZone.run(() => {
+              console.error('[SignupCardComponent] Google signup error:', error);
+              this.loading.set(false);
+
+              if (error?.userCancelled) {
+                console.log('ℹ️ Usuario cerró el modal de Google (no es un error)');
+                return;
+              }
+
+              let errorMsg = this.translate.instant('SIGNUP.ERROR.GOOGLE_FAILED');
+              if (error?.error?.message) {
+                errorMsg = error.error.message;
+              }
+              this.errors.set({ general: errorMsg });
+              this.toastService.error(errorMsg);
+            });
+          },
+        ),
+      );
+
+      await this.renderGoogleButton();
+    } catch (error) {
+      console.error('[SignupCardComponent] Error al inicializar botón de Google:', error);
+    }
+  }
+
+  private async renderGoogleButton(): Promise<void> {
+    if (!this.googleSignupBtn?.nativeElement) {
+      return;
+    }
+
+    const containerWidth =
+      this.googleSignupBtn.nativeElement.parentElement?.offsetWidth ||
+      this.googleSignupBtn.nativeElement.offsetWidth ||
+      0;
+
+    if (Math.abs(containerWidth - this.lastRenderedWidth) <= 5) {
+      return;
+    }
+
+    this.lastRenderedWidth = containerWidth;
+
+    await this.ngZone.runOutsideAngular(() =>
+      this.googleAuthService.renderButton(this.googleSignupBtn.nativeElement, {
+        type: 'standard',
+        theme: 'filled_blue',
+        size: 'large',
+        text: 'signup_with',
+        shape: 'rectangular',
+      }),
+    );
+  }
 
   // Simple validators (replace with more robust ones as needed)
   validate() {
@@ -60,23 +199,18 @@ export class SignupCardComponent {
     const confirmPassword = this.confirmPassword();
 
     if (!name) errors['name'] = this.translate.instant('SIGNUP.VALIDATION.NAME');
-    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
-      errors['email'] = this.translate.instant('SIGNUP.VALIDATION.EMAIL');
+    if (!isValidEmail(email)) errors['email'] = this.translate.instant('SIGNUP.VALIDATION.EMAIL');
 
-    // Nickname short-circuit: required/length check first
+    // Nickname validation
     if (!nickname || nickname.length < 3 || nickname.length > 100) {
       errors['nickname'] = this.translate.instant('SIGNUP.VALIDATION.NICKNAME');
-    } else {
-      // Only check format if length is valid
-      if (!/^[a-zA-Z0-9_-]+$/.test(nickname)) {
-        errors['nickname'] = this.translate.instant('SIGNUP.VALIDATION.NICKNAME_FORMAT');
-      } else if (this.nicknameAvailable() === false) {
-        // Only check availability if format is valid
-        errors['nickname'] = this.translate.instant('SIGNUP.VALIDATION.NICKNAME_TAKEN');
-      }
+    } else if (!isValidNickname(nickname)) {
+      errors['nickname'] = this.translate.instant('SIGNUP.VALIDATION.NICKNAME_FORMAT');
+    } else if (this.nicknameAvailable() === false) {
+      errors['nickname'] = this.translate.instant('SIGNUP.VALIDATION.NICKNAME_TAKEN');
     }
 
-    if (!password || password.length < 8)
+    if (!isValidPassword(password))
       errors['password'] = this.translate.instant('SIGNUP.VALIDATION.PASSWORD');
     if (password !== confirmPassword)
       errors['confirmPassword'] = this.translate.instant('SIGNUP.VALIDATION.CONFIRM_PASSWORD');
@@ -94,7 +228,8 @@ export class SignupCardComponent {
 
   checkNicknameAvailability() {
     const nickname = this.nickname().trim().toLowerCase();
-    if (!nickname || nickname.length < 3 || !/^[a-zA-Z0-9_-]+$/.test(nickname)) {
+
+    if (!isValidNickname(nickname)) {
       this.nicknameAvailable.set(null);
       return;
     }
@@ -110,11 +245,9 @@ export class SignupCardComponent {
           this.errors.set(this.validate());
         },
         error: (err) => {
-          // Error de red: reset a null (no bloquea el formulario)
           console.warn('Verificación de nickname fallida:', err);
           this.nicknameChecking.set(false);
-          this.nicknameAvailable.set(null); // Permite envío a pesar del error de red
-          // No establece error - el backend manejará validación de duplicate nickname
+          this.nicknameAvailable.set(null);
         },
       });
   }
@@ -180,7 +313,6 @@ export class SignupCardComponent {
         this.success.set(true);
         this.authService.setTokens(response.accessToken, response.refreshToken);
         this.languageService.setLang(response.language || input.language || 'es');
-        this.themeService.setTheme('dark');
         this.toastService.success('SIGNUP.SUCCESS');
         this.authService.getProfile().subscribe({
           next: () => {
@@ -215,62 +347,10 @@ export class SignupCardComponent {
   }
 
   socialSignup(provider: string) {
-    if (provider !== 'Google') {
-      alert(this.translate.instant('SIGNUP.SOCIAL.NOT_IMPLEMENTED', { provider }));
+    if (provider !== 'Apple') {
       return;
     }
 
-    this.loading.set(true);
-    this.errors.set({});
-
-    // Inicializar y mostrar Google Sign-In
-    this.googleAuthService
-      .initializeGoogleSignIn(
-        // Callback de éxito
-        (response) => {
-          this.authService.setTokens(response.accessToken, response.refreshToken);
-          this.languageService.setLang(response.language || 'es');
-          this.themeService.setTheme('dark');
-          this.toastService.success(this.translate.instant('SIGNUP.SUCCESS'));
-
-          // Cargar perfil y redirigir al dashboard
-          this.authService.getProfile().subscribe({
-            next: () => {
-              this.loading.set(false);
-              this.success.set(true);
-              this.router.navigate(['/dashboard']);
-            },
-            error: () => {
-              this.authService.clearAccessToken();
-              const errorMsg = this.translate.instant('SIGNUP.ERROR.UNKNOWN');
-              this.errors.set({ general: errorMsg });
-              this.loading.set(false);
-              this.success.set(false);
-            },
-          });
-        },
-        // Callback de error
-        (error) => {
-          console.error('[SignupCardComponent] Google signup error:', error);
-          this.loading.set(false);
-          let errorMsg = this.translate.instant('SIGNUP.ERROR.GOOGLE_FAILED');
-          if (error?.error?.message) {
-            errorMsg = error.error.message;
-          }
-          this.errors.set({ general: errorMsg });
-          this.toastService.error(errorMsg);
-        },
-      )
-      .then(() => {
-        // SDK inicializado, mostrar One Tap
-        return this.googleAuthService.showOneTap();
-      })
-      .catch((error) => {
-        console.error('[SignupCardComponent] Google SDK initialization error:', error);
-        this.loading.set(false);
-        const errorMsg = this.translate.instant('SIGNUP.ERROR.GOOGLE_SDK_FAILED');
-        this.errors.set({ general: errorMsg });
-        this.toastService.error(errorMsg);
-      });
+    alert(this.translate.instant('SIGNUP.SOCIAL.NOT_IMPLEMENTED', { provider }));
   }
 }

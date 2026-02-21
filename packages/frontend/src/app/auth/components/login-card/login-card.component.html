@@ -99,22 +99,23 @@
       <span>{{ "LOGIN.DIVIDER" | translate }}</span>
     </div>
 
-    <button class="btn btn--google btn--block" type="button" (click)="socialLogin('Google')">
-      <img
-        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-        [attr.alt]="'LOGIN.SOCIAL.GOOGLE_ALT' | translate"
-        class="btn-icon"
-      />
-      {{ "LOGIN.SOCIAL.GOOGLE" | translate }}
-    </button>
-    <button class="btn btn--apple btn--block" type="button" (click)="socialLogin('Apple')">
-      <img
-        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
-        [attr.alt]="'LOGIN.SOCIAL.APPLE_ALT' | translate"
-        class="btn-icon"
-      />
-      {{ "LOGIN.SOCIAL.APPLE" | translate }}
-    </button>
+    <!-- Botón nativo de Google (renderizado por el SDK) -->
+    <div class="social-button-container custom-google-auth">
+      <div class="google-button-container">
+        <div #googleLoginBtn id="googleLoginBtn" class="google-btn-wrapper"></div>
+      </div>
+    </div>
+
+    <div class="social-button-container">
+      <button class="btn btn--apple btn--block" type="button" (click)="socialLogin('Apple')">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
+          [attr.alt]="'LOGIN.SOCIAL.APPLE_ALT' | translate"
+          class="btn-icon"
+        />
+        {{ "LOGIN.SOCIAL.APPLE" | translate }}
+      </button>
+    </div>
 
     @if (errors()["general"]) {
       <div class="input-error input-error--general">{{ errors()["general"] }}</div>

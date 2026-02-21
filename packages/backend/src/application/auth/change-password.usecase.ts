@@ -29,6 +29,11 @@ export class ChangePasswordUseCase {
       throw new NotFoundException('User not found');
     }
 
+    // Prevent password change for Google accounts
+    if (!user.passwordHash) {
+      throw new BadRequestException('PASSWORD_CHANGE_NOT_ALLOWED_SOCIAL_ACCOUNT');
+    }
+
     const valid = await bcrypt.compare(input.currentPassword, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('PASSWORD_INVALID_CURRENT');

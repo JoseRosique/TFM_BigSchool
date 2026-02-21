@@ -168,22 +168,23 @@
       <span>{{ "SIGNUP.DIVIDER" | translate }}</span>
     </div>
 
-    <button class="btn btn--google btn--block" type="button" (click)="socialSignup('Google')">
-      <img
-        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-        alt="Google"
-        class="btn-icon"
-      />
-      {{ "SIGNUP.SOCIAL.GOOGLE" | translate }}
-    </button>
-    <button class="btn btn--apple btn--block" type="button" (click)="socialSignup('Apple')">
-      <img
-        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
-        alt="Apple"
-        class="btn-icon"
-      />
-      {{ "SIGNUP.SOCIAL.APPLE" | translate }}
-    </button>
+    <!-- Botón nativo de Google (renderizado por el SDK) -->
+    <div class="social-button-container custom-google-auth">
+      <div class="google-button-container">
+        <div #googleSignupBtn id="googleSignupBtn" class="google-btn-wrapper"></div>
+      </div>
+    </div>
+
+    <div class="social-button-container">
+      <button class="btn btn--apple btn--block" type="button" (click)="socialSignup('Apple')">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
+          alt="Apple"
+          class="btn-icon"
+        />
+        {{ "SIGNUP.SOCIAL.APPLE" | translate }}
+      </button>
+    </div>
 
     @if (success()) {
       <div class="signup-success" role="status">{{ "SIGNUP.SUCCESS" | translate }}</div>

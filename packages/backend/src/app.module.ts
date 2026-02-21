@@ -12,6 +12,7 @@ import { GroupsModule } from './application/groups/groups.module';
 import { SlotsModule } from './application/slots/slots.module';
 import { ReservationsModule } from './application/reservations/reservations.module';
 import { NotificationsModule } from './application/notifications/notifications.module';
+import { ConfigController } from './application/config/config.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -44,6 +45,7 @@ import { join } from 'path';
     ReservationsModule,
     NotificationsModule,
   ],
+  controllers: [ConfigController],
   providers: [
     {
       provide: APP_GUARD,

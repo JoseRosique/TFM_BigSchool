@@ -4,8 +4,8 @@ import { RegisterDTO, LoginDTO, RefreshTokenDTO } from '@meetwithfriends/shared'
 import { ConfigService } from '@nestjs/config';
 import { RegisterUserUseCase } from './register-user.usecase';
 import { LoginUserUseCase } from './login-user.usecase';
-import { GoogleLoginUseCase } from './google-login.usecase';
 import { TokenBlacklistService } from './token-blacklist.service';
+import { GoogleLoginUseCase } from './google-login.usecase';
 
 /**
  * Auth Service - Application layer

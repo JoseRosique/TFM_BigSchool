@@ -21,12 +21,21 @@ export class LoginUserUseCase {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    // 2. Comparar password
+
+    // 2. Verificar que el usuario no sea una cuenta social sin password
+    if (!user.passwordHash) {
+      throw new UnauthorizedException(
+        'This account uses social login. Please sign in with Google.',
+      );
+    }
+
+    // 3. Comparar password
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    // 3. Generar JWTs seguros
+
+    // 4. Generar JWTs seguros
     const accessPayload = { sub: user.id, email: user.email, nickname: user.nickname };
     const accessToken = this.jwtService.sign(accessPayload, {
       secret: this.configService.getOrThrow<string>('JWT_SECRET'),
@@ -42,7 +51,7 @@ export class LoginUserUseCase {
       secret: this.configService.getOrThrow<string>('REFRESH_TOKEN_SECRET'),
       expiresIn: this.configService.getOrThrow<string>('REFRESH_TOKEN_EXPIRATION'),
     });
-    // 4. Retornar DTO según contrato compartido
+    // 5. Retornar DTO según contrato compartido
     return {
       userId: user.id,
       email: user.email,

@@ -84,6 +84,12 @@ export class PasswordResetService {
       throw new NotFoundException('User not found');
     }
 
+    // Prevent password reset for Google accounts
+    if (user.isGoogleAccount) {
+      await this.tokenStore.deleteToken(tokenHash);
+      throw new BadRequestException('PASSWORD_RESET_NOT_ALLOWED_SOCIAL_ACCOUNT');
+    }
+
     user.passwordHash = await bcrypt.hash(newPassword, 10);
     user.passwordChangedAt = new Date();
     await this.userRepository.save(user);

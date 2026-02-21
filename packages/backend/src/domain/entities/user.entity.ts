@@ -17,8 +17,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email!: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'password_hash' })
-  passwordHash!: string;
+  @Column({ type: 'varchar', length: 255, nullable: true, name: 'password_hash' })
+  passwordHash?: string;
 
   @Column({ type: 'varchar', length: 255 })
   name!: string;
@@ -49,6 +49,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 255, nullable: true, name: 'avatar_url' })
   avatarUrl?: string;
+
+  @Column({ type: 'boolean', default: false, name: 'is_google_account' })
+  isGoogleAccount!: boolean;
 
   @Column({ type: 'timestamp', nullable: true, name: 'password_changed_at' })
   passwordChangedAt?: Date;

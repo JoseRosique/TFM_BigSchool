@@ -80,6 +80,9 @@
                     @if (slot.hasError("invalidRange")) {
                       <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_END_BEFORE_START" | translate }}</div>
                     }
+                    @if (slot.hasError("overlapping")) {
+                      <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_OVERLAPPING_SLOTS" | translate }}</div>
+                    }
                   </div>
 
                   @if (!isFriendSlot()) {

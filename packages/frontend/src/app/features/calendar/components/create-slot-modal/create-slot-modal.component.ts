@@ -1,4 +1,4 @@
-import { Component, ViewChild, input, output, effect, OnInit } from '@angular/core';
+import { Component, ViewChild, input, output, effect, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -8,6 +8,7 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VisibilityScope, SlotStatus } from '@meetwithfriends/shared';
 import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
@@ -35,32 +36,59 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
 
   if (!start || !end) return null;
 
-  return end > start ? null : { invalidRange: true };
+  // Convert HH:mm format to minutes for accurate comparison
+  const [startHours, startMinutes] = start.split(':').map(Number);
+  const [endHours, endMinutes] = end.split(':').map(Number);
+
+  const startTotalMinutes = startHours * 60 + startMinutes;
+  const endTotalMinutes = endHours * 60 + endMinutes;
+
+  // End time must be strictly after start time
+  return endTotalMinutes > startTotalMinutes ? null : { invalidRange: true };
 }
 
 function overlappingValidator(array: AbstractControl): ValidationErrors | null {
   const slots = array.value;
 
+  // First: Clean up any existing "overlapping" errors from all slots
+  // This ensures we don't keep stale errors when slots are modified/removed
+  for (let i = 0; i < slots.length; i++) {
+    const group = (array as FormArray).at(i);
+    if (group && group.errors && 'overlapping' in group.errors) {
+      const updatedErrors = { ...group.errors };
+      delete updatedErrors['overlapping'];
+      // Set errors to null if no other errors exist, otherwise keep the remaining errors
+      const hasOtherErrors = Object.keys(updatedErrors).length > 0;
+      group.setErrors(hasOtherErrors ? updatedErrors : null);
+    }
+  }
+
+  // Second: Check for overlapping slots only if there are 2 or more slots
+  if (slots.length < 2) {
+    return null; // Cannot overlap with fewer than 2 slots
+  }
+
+  let hasOverlap = false;
   for (let i = 0; i < slots.length; i++) {
     for (let j = i + 1; j < slots.length; j++) {
       if (isOverlapping(slots[i], slots[j])) {
+        hasOverlap = true;
         const groupI = (array as FormArray).at(i);
         const groupJ = (array as FormArray).at(j);
 
-        // Merge overlapping error with existing errors
+        // Merge overlapping error with existing errors (preserve other errors like invalidRange)
         const errorsI = groupI.errors ? { ...groupI.errors } : {};
         const errorsJ = groupJ.errors ? { ...groupJ.errors } : {};
         errorsI['overlapping'] = true;
         errorsJ['overlapping'] = true;
 
-        groupI.setErrors(Object.keys(errorsI).length > 0 ? errorsI : null);
-        groupJ.setErrors(Object.keys(errorsJ).length > 0 ? errorsJ : null);
-        return { overlappingRanges: true };
+        groupI.setErrors(errorsI);
+        groupJ.setErrors(errorsJ);
       }
     }
   }
 
-  return null;
+  return hasOverlap ? { overlappingRanges: true } : null;
 }
 
 function isOverlapping(slot1: any, slot2: any): boolean {
@@ -118,7 +146,10 @@ export class CreateSlotModalComponent implements OnInit {
   reserveAction = output<string>();
   dateChange = output<string | null>();
 
-  constructor(private translateService: TranslateService) {
+  constructor(
+    private translateService: TranslateService,
+    private destroyRef: DestroyRef,
+  ) {
     effect(() => {
       // Reactive track of form changes for internal state management
       this.formGroup();
@@ -134,6 +165,16 @@ export class CreateSlotModalComponent implements OnInit {
     // Attach overlappingValidator to check for overlapping slots
     timeSlots.setValidators(overlappingValidator);
     timeSlots.updateValueAndValidity({ emitEvent: false });
+
+    // Set up validators for all existing FormGroups
+    for (let i = 0; i < timeSlots.length; i++) {
+      this.setupFormGroupValidator(timeSlots.at(i) as FormGroup, timeSlots);
+    }
+
+    // Re-validate overlapping slots whenever any time slot value changes
+    timeSlots.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      timeSlots.updateValueAndValidity({ emitEvent: false });
+    });
 
     if (this.isFriendSlot()) {
       this.formGroup().disable({ emitEvent: false });
@@ -161,6 +202,11 @@ export class CreateSlotModalComponent implements OnInit {
 
   onSubmit(): void {
     if (this.isFriendSlot()) {
+      return;
+    }
+
+    // Ensure form is valid before submitting
+    if (this.formGroup().invalid) {
       return;
     }
 
@@ -215,7 +261,18 @@ export class CreateSlotModalComponent implements OnInit {
       return;
     }
     // New slots don't have an ID, parent component tracks those in deletedSlotIds
-    this.getTimeSlots().push(this.createTimeSlotControl());
+    const timeSlots = this.getTimeSlots();
+
+    // Calculate the next available time slot to avoid overlaps
+    const nextSlot = this.getNextAvailableTimeSlot();
+
+    const newSlotControl = this.createTimeSlotControl(nextSlot.startTime, nextSlot.endTime);
+    timeSlots.push(newSlotControl);
+
+    // Set up validator for the newly added FormGroup
+    this.setupFormGroupValidator(newSlotControl, timeSlots);
+
+    timeSlots.updateValueAndValidity({ emitEvent: false });
   }
 
   removeTimeSlot(index: number): void {
@@ -224,6 +281,56 @@ export class CreateSlotModalComponent implements OnInit {
     }
     const slots = this.getTimeSlots();
     slots.removeAt(index);
+    slots.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Sets up real-time validation for a time slot FormGroup
+   * Ensures timeRangeValidator runs whenever startTime or endTime changes
+   * Manually sets errors like overlappingValidator does to ensure Angular detects them
+   */
+  private setupFormGroupValidator(formGroup: FormGroup, timeSlots: FormArray): void {
+    const validateTimeRange = () => {
+      const start = formGroup.get('startTime')?.value;
+      const end = formGroup.get('endTime')?.value;
+
+      if (!start || !end) return;
+
+      // Convert HH:mm format to minutes for accurate comparison
+      const [startHours, startMinutes] = start.split(':').map(Number);
+      const [endHours, endMinutes] = end.split(':').map(Number);
+
+      const startTotalMinutes = startHours * 60 + startMinutes;
+      const endTotalMinutes = endHours * 60 + endMinutes;
+
+      const isValid = endTotalMinutes > startTotalMinutes;
+
+      // Manually set errors like overlappingValidator does
+      if (!isValid) {
+        const currentErrors = formGroup.errors ? { ...formGroup.errors } : {};
+        currentErrors['invalidRange'] = true;
+        formGroup.setErrors(currentErrors);
+      } else {
+        // Remove invalidRange error if now valid
+        if (formGroup.errors && 'invalidRange' in formGroup.errors) {
+          const updatedErrors = { ...formGroup.errors };
+          delete updatedErrors['invalidRange'];
+          const hasOtherErrors = Object.keys(updatedErrors).length > 0;
+          formGroup.setErrors(hasOtherErrors ? updatedErrors : null);
+        }
+      }
+
+      // Also re-validate the entire FormArray (triggers overlappingValidator)
+      timeSlots.updateValueAndValidity({ emitEvent: false });
+    };
+
+    // Validate immediately with current values
+    validateTimeRange();
+
+    // Re-validate whenever time values change
+    formGroup.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      validateTimeRange();
+    });
   }
 
   /**
@@ -458,19 +565,65 @@ export class CreateSlotModalComponent implements OnInit {
   }
 
   /**
+   * Calcula el siguiente tramo horario disponible
+   * Analiza los tramos existentes y retorna un slot que no se solape
+   * Si hay tramos, usa la hora de fin del más tardío como hora de inicio del nuevo
+   * Si no hay tramos, usa la hora actual redondeada
+   */
+  private getNextAvailableTimeSlot(): { startTime: string; endTime: string } {
+    const timeSlots = this.getTimeSlots();
+    const slots = timeSlots.value;
+
+    // Si no hay slots o solo hay 1 slot vacío, usar el comportamiento por defecto
+    if (!slots || slots.length === 0) {
+      const startTime = this.getCurrentTimeRoundedTo15Min();
+      const endTime = this.getEndTimeFromStartTime(startTime);
+      return { startTime, endTime };
+    }
+
+    // Encontrar el slot con la hora de fin más tardía
+    let latestEndTime = '00:00';
+    for (const slot of slots) {
+      const endTime = slot.endTime || '00:00';
+      if (this.isTimeAfter(endTime, latestEndTime)) {
+        latestEndTime = endTime;
+      }
+    }
+
+    // El nuevo slot comienza cuando termina el último
+    const startTime = latestEndTime;
+    const endTime = this.getEndTimeFromStartTime(startTime);
+
+    return { startTime, endTime };
+  }
+
+  /**
+   * Compara si timeA es posterior a timeB en formato HH:mm
+   */
+  private isTimeAfter(timeA: string, timeB: string): boolean {
+    const [hoursA, minutesA] = timeA.split(':').map(Number);
+    const [hoursB, minutesB] = timeB.split(':').map(Number);
+
+    const totalMinutesA = hoursA * 60 + minutesA;
+    const totalMinutesB = hoursB * 60 + minutesB;
+
+    return totalMinutesA > totalMinutesB;
+  }
+
+  /**
    * Crea un nuevo control de formulario para un time slot
    * Inicializa timezone automáticamente con la zona del navegador
-   * Inicializa startTime con la hora actual redondeada a 15 minutos
-   * Inicializa endTime sumando 1 hora al startTime
+   * Si se pasan startTime y endTime, los usa como iniciales
+   * Si no, inicializa startTime con la hora actual redondeada a 15 minutos
    */
-  private createTimeSlotControl(): FormGroup {
-    const startTime = this.getCurrentTimeRoundedTo15Min();
-    const endTime = this.getEndTimeFromStartTime(startTime);
+  private createTimeSlotControl(startTime?: string, endTime?: string): FormGroup {
+    const initialStartTime = startTime || this.getCurrentTimeRoundedTo15Min();
+    const initialEndTime = endTime || this.getEndTimeFromStartTime(initialStartTime);
 
     return new FormGroup(
       {
-        startTime: new FormControl(startTime, Validators.required),
-        endTime: new FormControl(endTime, Validators.required),
+        startTime: new FormControl(initialStartTime, Validators.required),
+        endTime: new FormControl(initialEndTime, Validators.required),
         notes: new FormControl(''),
         // Faltaban estos controles para que patchValue funcione:
         timezone: new FormControl(this.detectUserTimezone()),

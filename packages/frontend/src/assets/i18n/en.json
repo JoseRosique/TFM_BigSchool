@@ -381,6 +381,7 @@
       "EMPTY_SLOTS": "No time ranges defined for this day.",
       "EMPTY_SLOTS_HINT": "Click + to add one.",
       "ERROR_END_BEFORE_START": "End time must be after start time",
+      "ERROR_OVERLAPPING_SLOTS": "This time slot overlaps with another",
       "ERROR_OVERLAPPING": "Time ranges cannot overlap",
       "RANGE_LABEL": "Range {{number}}"
     },

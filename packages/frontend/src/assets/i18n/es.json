@@ -301,6 +301,57 @@
     "MESSAGE": "No tienes permisos para ver este contenido.",
     "BACK_DASHBOARD": "Volver al panel"
   },
+  "DASHBOARD": {
+    "KICKER": "Tu espacio de encuentro",
+    "WELCOME": "Bienvenido, {{name}}",
+    "SUBTITLE": "Organiza planes memorables, coordina horarios sin fricción y convierte cada hueco libre en una nueva historia con tu gente.",
+    "PRIMARY_CTA": "Crear disponibilidad ahora",
+    "SECONDARY_CTA": "Gestionar mis amistades",
+    "INSIGHTS": {
+      "SPEED": {
+        "TITLE": "Planificación",
+        "VALUE": "En segundos",
+        "DESCRIPTION": "Publica tu disponibilidad y deja que tus amigos reserven al instante."
+      },
+      "FLEXIBILITY": {
+        "TITLE": "Flexibilidad",
+        "VALUE": "100% adaptable",
+        "DESCRIPTION": "Tus horarios, tus grupos y tu ritmo en una sola vista."
+      },
+      "CONNECTION": {
+        "TITLE": "Conexión",
+        "VALUE": "Siempre cerca",
+        "DESCRIPTION": "Mantén activas tus relaciones con planes simples y frecuentes."
+      }
+    },
+    "ACTIONS": {
+      "KICKER": "Acciones rápidas",
+      "TITLE": "Empieza por aquí",
+      "CALENDAR": {
+        "TITLE": "Activa tu calendario",
+        "DESCRIPTION": "Define tus huecos libres y permite reservas en menos de un minuto.",
+        "CTA": "Abrir calendario"
+      },
+      "FRIENDS": {
+        "TITLE": "Haz crecer tu red",
+        "DESCRIPTION": "Encuentra amigos, acepta solicitudes y construye tu círculo ideal.",
+        "CTA": "Ir a amigos"
+      },
+      "GROUPS": {
+        "TITLE": "Crea grupos inteligentes",
+        "DESCRIPTION": "Organiza tus contactos por contextos: trabajo, deporte o escapadas.",
+        "CTA": "Gestionar grupos"
+      }
+    },
+    "CHECKLIST": {
+      "KICKER": "Onboarding express",
+      "TITLE": "3 pasos para despegar",
+      "STEP_1": "Completa tu perfil para que tus amigos te encuentren al instante.",
+      "STEP_2": "Publica varias franjas de disponibilidad para esta semana.",
+      "STEP_3": "Invita a tus contactos y reserva vuestro próximo plan.",
+      "PROFILE_CTA": "Completar mi perfil"
+    }
+  },
   "DATE_PICKER": {
     "CLEAR": "Limpiar",
     "TODAY": "Hoy",

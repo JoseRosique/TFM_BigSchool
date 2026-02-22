@@ -301,6 +301,57 @@
     "MESSAGE": "You don't have permission to view this content.",
     "BACK_DASHBOARD": "Back to dashboard"
   },
+  "DASHBOARD": {
+    "KICKER": "Your meetup command center",
+    "WELCOME": "Welcome back, {{name}}",
+    "SUBTITLE": "Create memorable plans, coordinate schedules without friction, and turn every free slot into your next shared moment.",
+    "PRIMARY_CTA": "Create availability now",
+    "SECONDARY_CTA": "Manage my friends",
+    "INSIGHTS": {
+      "SPEED": {
+        "TITLE": "Planning",
+        "VALUE": "In seconds",
+        "DESCRIPTION": "Publish your availability and let friends reserve instantly."
+      },
+      "FLEXIBILITY": {
+        "TITLE": "Flexibility",
+        "VALUE": "100% adaptable",
+        "DESCRIPTION": "Your schedules, your groups, your pace in one place."
+      },
+      "CONNECTION": {
+        "TITLE": "Connection",
+        "VALUE": "Always close",
+        "DESCRIPTION": "Keep your relationships alive with simple, frequent plans."
+      }
+    },
+    "ACTIONS": {
+      "KICKER": "Quick actions",
+      "TITLE": "Start here",
+      "CALENDAR": {
+        "TITLE": "Activate your calendar",
+        "DESCRIPTION": "Set your free slots and allow reservations in under a minute.",
+        "CTA": "Open calendar"
+      },
+      "FRIENDS": {
+        "TITLE": "Grow your network",
+        "DESCRIPTION": "Find friends, accept requests, and build your ideal circle.",
+        "CTA": "Go to friends"
+      },
+      "GROUPS": {
+        "TITLE": "Create smart groups",
+        "DESCRIPTION": "Organize contacts by context: work, sports, or weekend escapes.",
+        "CTA": "Manage groups"
+      }
+    },
+    "CHECKLIST": {
+      "KICKER": "Express onboarding",
+      "TITLE": "3 steps to take off",
+      "STEP_1": "Complete your profile so friends can find you instantly.",
+      "STEP_2": "Publish several availability slots for this week.",
+      "STEP_3": "Invite your contacts and lock in your next plan.",
+      "PROFILE_CTA": "Complete my profile"
+    }
+  },
   "DATE_PICKER": {
     "CLEAR": "Clear",
     "TODAY": "Today",

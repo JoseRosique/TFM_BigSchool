@@ -28,7 +28,7 @@ export class CalendarDayCellComponent {
   moreCount = input<number>(0);
   availableCount = input<number>(0);
   confirmedCount = input<number>(0);
-  pendingCount = input<number>(0);
+  reservedCount = input<number>(0);
   slotStatus = input<typeof SlotStatus>(SlotStatus);
   currentUserId = input<string | null>(null);
   processingSlotId = input<string | null>(null);
@@ -62,6 +62,10 @@ export class CalendarDayCellComponent {
     const day = this.day();
     if (!day) return;
     this.createForDay.emit(day.key);
+  }
+
+  hasSlots(): boolean {
+    return this.slots().length > 0;
   }
 
   onReserve(slot: CalendarSlot): void {

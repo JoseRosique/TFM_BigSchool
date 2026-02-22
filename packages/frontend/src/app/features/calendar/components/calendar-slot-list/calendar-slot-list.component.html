@@ -1,10 +1,11 @@
 @for (slot of slots(); track slot.id) {
   <article
     class="month-slot"
+    [class.month-slot--clickable]="isOwner(slot) || isReadOnly()"
     [class.month-slot--available]="slot.status === slotStatus().AVAILABLE"
     [class.month-slot--reserved]="slot.status === slotStatus().RESERVED"
     [class.month-slot--canceled]="slot.status === slotStatus().CANCELED"
-    (click)="$event.stopPropagation()"
+    (click)="onSlotClick(slot, $event)"
   >
     <span class="month-slot__time">
       {{ formatSlotRange(slot) }}
@@ -20,7 +21,22 @@
       </button>
     } @else {
       @if (isOwner(slot)) {
-        <span class="month-slot__tag">{{ "CALENDAR_PAGE.MY_SLOT" | translate }}</span>
+        <button
+          class="month-slot__action"
+          [class.month-slot__action--edit]="slot.status !== slotStatus().RESERVED"
+          [class.month-slot__action--view]="slot.status === slotStatus().RESERVED"
+          type="button"
+          [title]="
+            slot.status === slotStatus().RESERVED
+              ? ('CALENDAR_PAGE.VIEW' | translate)
+              : ('CALENDAR_PAGE.EDIT_SLOT_SHORT' | translate)
+          "
+          (click)="onEdit(slot, $event)"
+        >
+          <span class="material-symbols-outlined">{{
+            slot.status === slotStatus().RESERVED ? "visibility" : "edit"
+          }}</span>
+        </button>
       } @else {
         @if (slot.status === slotStatus().AVAILABLE) {
           <button

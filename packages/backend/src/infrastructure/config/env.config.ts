@@ -20,6 +20,10 @@ const EnvSchema = z.object({
   SESSION_SECRET: z.string(),
   SESSION_TIMEOUT_MS: z.coerce.number().default(3600000),
 
+  // Google OAuth
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_IDS: z.string().optional(),
+
   // Email
   EMAIL_HOST: z.string(),
   EMAIL_PORT: z.coerce.number(),

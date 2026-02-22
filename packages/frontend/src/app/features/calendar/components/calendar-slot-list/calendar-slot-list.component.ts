@@ -47,6 +47,19 @@ export class CalendarSlotListComponent {
     this.deleteSlot.emit(slot);
   }
 
+  onSlotClick(slot: CalendarSlot, event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.isReadOnly()) {
+      this.editSlot.emit(slot);
+      return;
+    }
+
+    if (this.isOwner(slot)) {
+      this.editSlot.emit(slot);
+    }
+  }
+
   isOwner(slot: CalendarSlot): boolean {
     return slot.ownerId === this.currentUserId();
   }

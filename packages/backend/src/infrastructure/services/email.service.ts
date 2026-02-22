@@ -50,9 +50,40 @@ export class EmailService implements OnModuleInit {
   }
 
   async sendWelcomeEmail(email: string, name: string): Promise<void> {
+    const isGoogleUser = false;
+
+    console.log(
+      `[EmailService] Attempting welcome email (${isGoogleUser ? 'google' : 'local'}): ${email}`,
+    );
+    this.logConfig('sendWelcomeEmail');
+
+    await this.sendWelcomeEmailForUser({
+      email,
+      name,
+      isGoogleUser,
+      emailVerified: true,
+    });
+  }
+
+  async sendWelcomeEmailForUser(params: {
+    email: string;
+    name?: string;
+    isGoogleUser?: boolean;
+    emailVerified?: boolean;
+  }): Promise<void> {
+    const { email, name, isGoogleUser = false, emailVerified = false } = params;
+    const effectiveEmailVerified = isGoogleUser ? true : emailVerified;
+
+    if (!effectiveEmailVerified) {
+      console.log(`[EmailService] Skipping welcome email (email not verified): ${email}`);
+      return;
+    }
+
     const html = this.buildWelcomeHtml(name);
 
-    console.log('[EmailService] Sending welcome email:', email);
+    console.log(
+      `[EmailService] Attempting welcome email (${isGoogleUser ? 'google' : 'local'}): ${email}`,
+    );
     this.logConfig('sendWelcomeEmail');
     try {
       const info = await this.transporter.sendMail({
@@ -116,7 +147,7 @@ export class EmailService implements OnModuleInit {
     `;
   }
 
-  private buildWelcomeHtml(name: string): string {
+  private buildWelcomeHtml(name?: string): string {
     const safeName = name || 'amigo';
     return `
       <div style="font-family: Arial, sans-serif; color: #111; line-height: 1.6;">

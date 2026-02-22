@@ -347,9 +347,9 @@
     color: var(--color-warning-dark);
   }
 
-  .indicator--pending {
-    background: var(--color-overlay-secondary-22);
-    color: var(--color-info-dark);
+  .indicator--reserved {
+    background: var(--color-overlay-accent-30);
+    color: var(--color-warning-dark);
   }
 
   .calendar-cell__slots {
@@ -375,6 +375,10 @@
     border: 1px solid var(--color-border);
     padding: clamp(0.25rem, 1vw, 0.35rem) clamp(0.35rem, 1.2vw, 0.45rem);
     font-size: clamp(0.65rem, 1.5vw, 0.7rem);
+  }
+
+  .month-slot--clickable {
+    cursor: pointer;
   }
 
   .month-slot__time {
@@ -427,13 +431,17 @@
     }
   }
 
+  .month-slot__action--view {
+    background: var(--color-border-soft);
+    color: var(--color-text-primary);
+  }
+
   .month-slot--available {
     border-color: var(--color-overlay-primary-35);
   }
 
   .month-slot--reserved {
     border-color: var(--color-overlay-primary-18);
-    background: var(--color-overlay-light-92);
   }
 
   .month-slot--canceled {

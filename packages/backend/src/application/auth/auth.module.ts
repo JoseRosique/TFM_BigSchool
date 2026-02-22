@@ -25,6 +25,7 @@ import { UserRepository, USER_REPOSITORY } from './user.repository';
 import { TestUtilsController } from './test-utils.controller';
 import { TOKEN_STORE, InMemoryTokenStore } from './token-store';
 import { GoogleLoginUseCase } from './google-login.usecase';
+import { UserCreatedEmailSubscriber } from '../../infrastructure/subscribers/user-created-email.subscriber';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { GoogleLoginUseCase } from './google-login.usecase';
     TokenBlacklistService,
     PasswordResetService,
     EmailService,
+    UserCreatedEmailSubscriber,
     {
       provide: USER_REPOSITORY,
       useClass: TypeOrmUserRepository,

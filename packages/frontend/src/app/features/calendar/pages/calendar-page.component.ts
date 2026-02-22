@@ -27,6 +27,7 @@ import { CalendarHeroComponent } from '../components/calendar-hero/calendar-hero
 import { CalendarToolbarComponent } from '../components/calendar-toolbar/calendar-toolbar.component';
 import { CalendarMonthGridComponent } from '../components/calendar-month-grid/calendar-month-grid.component';
 import { ReservationsPanelComponent } from '../components/reservations-panel/reservations-panel.component';
+import { ReceivedReservationsComponent } from '../components/received-reservations-panel/received-reservations-panel.component';
 import { LegendPanelComponent } from '../components/legend-panel/legend-panel.component';
 import { CreateSlotModalComponent } from '../components/create-slot-modal/create-slot-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -57,6 +58,7 @@ interface CreateSlotSubmitPayload {
     CalendarToolbarComponent,
     CalendarMonthGridComponent,
     ReservationsPanelComponent,
+    ReceivedReservationsComponent,
     LegendPanelComponent,
     CreateSlotModalComponent,
     ConfirmDialogComponent,
@@ -80,8 +82,10 @@ export class CalendarPageComponent implements OnInit {
   viewDate = this.facade.viewDate;
   slots = this.facade.slots;
   reservations = this.facade.reservations;
+  receivedReservations = this.facade.receivedReservations;
   isLoadingSlots = this.facade.isLoadingSlots;
   isLoadingReservations = this.facade.isLoadingReservations;
+  isLoadingReceivedReservations = this.facade.isLoadingReceivedReservations;
   isCreating = signal(false);
   isLoading = signal(false);
   processingSlotId = signal<string | null>(null);
@@ -99,6 +103,7 @@ export class CalendarPageComponent implements OnInit {
   isEditMode = signal(false);
   slotModalViewMode = signal<'OWN' | 'FRIEND'>('OWN');
   selectedFriendSlot = signal<CalendarSlot | null>(null);
+  reservedByName = signal('');
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -201,6 +206,13 @@ export class CalendarPageComponent implements OnInit {
     this.facade.clearReservationsError();
   });
 
+  private readonly handleReceivedReservationLoadErrors = effect(() => {
+    const error = this.facade.receivedReservationsErrorKey();
+    if (!error) return;
+    this.toastService.error(error);
+    this.facade.clearReceivedReservationsError();
+  });
+
   private readonly handleProfileLoadErrors = effect(() => {
     const error = this.facade.profileErrorKey();
     if (!error) return;
@@ -227,6 +239,7 @@ export class CalendarPageComponent implements OnInit {
   openCreateModal(): void {
     this.slotModalViewMode.set('OWN');
     this.selectedFriendSlot.set(null);
+    this.reservedByName.set('');
     this.isEditMode.set(false);
     this.editingSlot.set(null);
     this.initializeSlotForm(formatDateInputValue(new Date()), []);
@@ -238,6 +251,7 @@ export class CalendarPageComponent implements OnInit {
   openCreateModalForDayKey(dayKey: string): void {
     this.slotModalViewMode.set('OWN');
     this.selectedFriendSlot.set(null);
+    this.reservedByName.set('');
     // Load all slots for this day into the FormArray
     const slotsForDay = this.slotsByDay().get(dayKey) ?? [];
 
@@ -258,8 +272,14 @@ export class CalendarPageComponent implements OnInit {
       return;
     }
 
+    if (slot.status === SlotStatus.RESERVED) {
+      this.openOwnerReservedDetail(slot);
+      return;
+    }
+
     this.slotModalViewMode.set('OWN');
     this.selectedFriendSlot.set(null);
+    this.reservedByName.set('');
     this.isEditMode.set(true);
     this.editingSlot.set(slot);
     const dateKey =
@@ -300,6 +320,7 @@ export class CalendarPageComponent implements OnInit {
     this.showCreateModal.set(false);
     this.slotModalViewMode.set('OWN');
     this.selectedFriendSlot.set(null);
+    this.reservedByName.set('');
     this.isEditMode.set(false);
     this.editingSlot.set(null);
     this.deletedSlotIds.set([]);
@@ -321,6 +342,31 @@ export class CalendarPageComponent implements OnInit {
       error: () => {
         this.toastService.error('CALENDAR_PAGE.TOASTS.RESERVE_ERROR');
         this.processingSlotId.set(null);
+      },
+      complete: () => {
+        this.processingSlotId.set(null);
+      },
+    });
+  }
+
+  cancelReservedSlotFromModal(slotId: string): void {
+    if (!slotId || typeof slotId !== 'string') {
+      this.toastService.error('CALENDAR_PAGE.TOASTS.SLOT_CANCEL_ERROR');
+      return;
+    }
+
+    if (this.processingSlotId()) return;
+    this.processingSlotId.set(slotId);
+
+    this.facade.updateSlot(slotId, { status: SlotStatus.CANCELED }).subscribe({
+      next: () => {
+        this.toastService.success('CALENDAR_PAGE.TOASTS.SLOT_CANCELED');
+        this.closeCreateModal();
+        this.facade.reloadAll();
+      },
+      error: () => {
+        this.processingSlotId.set(null);
+        this.toastService.error('CALENDAR_PAGE.TOASTS.SLOT_CANCEL_ERROR');
       },
       complete: () => {
         this.processingSlotId.set(null);
@@ -600,6 +646,35 @@ export class CalendarPageComponent implements OnInit {
     });
   }
 
+  openReceivedReservationDetail(reservation: ReservationItem): void {
+    const reservedSlot: CalendarSlot = {
+      id: reservation.slotId,
+      ownerId: reservation.slotOwnerId || '',
+      start: reservation.slotStart,
+      end: reservation.slotEnd,
+      timezone: reservation.slotTimezone,
+      visibilityScope: VisibilityScope.FRIENDS,
+      notes: reservation.slotNotes,
+      status: SlotStatus.RESERVED,
+      createdAt: reservation.createdAt,
+      updatedAt: reservation.createdAt,
+      startDate: reservation.startDate,
+      endDate: reservation.endDate,
+      user: {
+        id: reservation.slotOwnerId,
+        name: reservation.slotOwnerName,
+        nickname: reservation.slotOwnerNickname,
+      },
+      owner: {
+        id: reservation.slotOwnerId,
+        name: reservation.slotOwnerName,
+        nickname: reservation.slotOwnerNickname,
+      },
+    };
+
+    this.openOwnerReservedDetail(reservedSlot);
+  }
+
   openDeleteModal(slot: CalendarSlot): void {
     if (this.processingSlotId()) return;
     this.pendingDeleteSlot.set(slot);
@@ -651,8 +726,8 @@ export class CalendarPageComponent implements OnInit {
     return this.facade.confirmedCount(dayKey);
   }
 
-  pendingCount(dayKey: string): number {
-    return this.facade.pendingCount(dayKey);
+  reservedCount(dayKey: string): number {
+    return this.facade.reservedCount(dayKey);
   }
 
   statusKey(status: SlotStatus): string {
@@ -692,6 +767,13 @@ export class CalendarPageComponent implements OnInit {
     const slot = this.selectedFriendSlot();
     if (!slot) return false;
     return slot.ownerId !== this.currentUserId() && slot.status === SlotStatus.AVAILABLE;
+  }
+
+  canCancelReservedSelectedSlot(): boolean {
+    const slot = this.selectedFriendSlot();
+    if (!slot) return false;
+
+    return slot.ownerId === this.currentUserId() && slot.status === SlotStatus.RESERVED;
   }
 
   private initializeSlotForm(dateValue: string, slots: CalendarSlot[]): void {
@@ -752,11 +834,41 @@ export class CalendarPageComponent implements OnInit {
 
     this.slotModalViewMode.set('FRIEND');
     this.selectedFriendSlot.set(slot);
+    this.reservedByName.set('');
     this.isEditMode.set(false);
     this.editingSlot.set(null);
     this.initializeSlotForm(dateKey, [slot]);
     this.isDateLocked.set(true);
     this.showCreateModal.set(true);
+  }
+
+  private openOwnerReservedDetail(slot: CalendarSlot): void {
+    const dateKey =
+      slot.startDate instanceof Date ? formatDateInputValue(slot.startDate) : slot.startDate;
+
+    this.slotModalViewMode.set('FRIEND');
+    this.selectedFriendSlot.set(slot);
+    this.reservedByName.set('');
+    this.isEditMode.set(false);
+    this.editingSlot.set(null);
+    this.initializeSlotForm(dateKey, [slot]);
+    this.isDateLocked.set(true);
+    this.showCreateModal.set(true);
+
+    this.facade.getSlotDetail(slot.id).subscribe({
+      next: (detail) => {
+        const reservedBy = detail.reservedBy;
+        if (!reservedBy) {
+          this.reservedByName.set('');
+          return;
+        }
+
+        this.reservedByName.set(reservedBy.name || reservedBy.nickname || reservedBy.id);
+      },
+      error: () => {
+        this.reservedByName.set('');
+      },
+    });
   }
 
   private loadUserGroups(): void {

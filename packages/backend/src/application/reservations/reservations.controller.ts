@@ -1,8 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseEnumPipe,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ReserveSlotDTO } from '@meetwithfriends/shared';
 import { ReservationsService } from './reservations.service';
 import { ReserveSlotDto } from './dto/reserve-slot.dto';
+
+export enum ListReservationsType {
+  Mine = 'mine',
+  Received = 'received',
+}
 
 @Controller('reservations')
 @UseGuards(JwtAuthGuard)
@@ -18,8 +34,12 @@ export class ReservationsController {
   }
 
   @Get('me')
-  async listMine(@Request() req: any) {
-    return this.reservationsService.listMine(req.user.userId);
+  async listMine(
+    @Request() req: any,
+    @Query('type', new ParseEnumPipe(ListReservationsType, { optional: true }))
+    type?: ListReservationsType,
+  ) {
+    return this.reservationsService.listMine(req.user.userId, type);
   }
 
   @Get(':id')

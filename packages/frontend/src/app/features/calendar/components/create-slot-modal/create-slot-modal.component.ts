@@ -120,7 +120,9 @@ export class CreateSlotModalComponent implements OnInit {
   slotOwnerName = input<string>('');
   viewMode = input<'OWN' | 'FRIEND'>('OWN');
   creatorName = input<string>('');
+  reservedByName = input<string>('');
   canReserve = input<boolean>(false);
+  canCancelReservedSlot = input<boolean>(false);
   selectedSlotStatus = input<SlotStatus | null>(null);
 
   displayTimezone = input<string>('UTC');
@@ -144,6 +146,7 @@ export class CreateSlotModalComponent implements OnInit {
   close = output<void>();
   submitAction = output<CreateSlotModalPayload>();
   reserveAction = output<string>();
+  cancelReservedAction = output<string>();
   dateChange = output<string | null>();
 
   constructor(
@@ -457,6 +460,23 @@ export class CreateSlotModalComponent implements OnInit {
     this.reserveAction.emit(slotId);
   }
 
+  onCancelReservedSlot(): void {
+    if (
+      !this.canCancelReservedSlot() ||
+      this.isSubmitting() ||
+      this.selectedSlotStatus() !== SlotStatus.RESERVED
+    ) {
+      return;
+    }
+
+    const slotId = this.getTimeSlot(0)?.get('id')?.value;
+    if (!slotId || typeof slotId !== 'string') {
+      return;
+    }
+
+    this.cancelReservedAction.emit(slotId);
+  }
+
   isFriendMode(): boolean {
     return this.isFriendSlot() || this.viewMode() === 'FRIEND';
   }
@@ -465,6 +485,12 @@ export class CreateSlotModalComponent implements OnInit {
     const creator = (this.slotOwnerName() || this.creatorName()).trim();
     const label = this.translateService.instant('CALENDAR_PAGE.FORM.AVAILABILITY_OF');
     return creator ? `${label} ${creator}` : label;
+  }
+
+  getReservedByLabel(): string {
+    const reservedBy = this.reservedByName().trim();
+    const label = this.translateService.instant('CALENDAR_PAGE.FORM.RESERVED_BY');
+    return reservedBy ? `${label}: ${reservedBy}` : label;
   }
 
   getVisibilityLabel(slotIndex: number): string {

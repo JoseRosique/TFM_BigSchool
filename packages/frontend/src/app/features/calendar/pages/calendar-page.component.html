@@ -42,6 +42,13 @@
         (cancelReservation)="cancelReservation($event)"
       ></app-reservations-panel>
 
+      <app-received-reservations
+        [reservations]="receivedReservations()"
+        [isLoading]="isLoadingReceivedReservations()"
+        [formatTimeRange]="formatTimeRange"
+        (openDetail)="openReceivedReservationDetail($event)"
+      ></app-received-reservations>
+
       <app-legend-panel></app-legend-panel>
     </aside>
   </div>
@@ -61,11 +68,14 @@
       [isFriendSlot]="slotModalViewMode() === 'FRIEND'"
       [slotOwnerName]="getModalCreatorName()"
       [creatorName]="getModalCreatorName()"
+      [reservedByName]="reservedByName()"
       [canReserve]="canReserveSelectedSlot()"
+      [canCancelReservedSlot]="canCancelReservedSelectedSlot()"
       [selectedSlotStatus]="selectedFriendSlot()?.status || null"
       (close)="closeCreateModal()"
       (submitAction)="submitCreateSlot($event)"
       (reserveAction)="reserveFriendSlotFromModal($event)"
+      (cancelReservedAction)="cancelReservedSlotFromModal($event)"
       (dateChange)="updateSlotDate($event)"
     ></app-create-slot-modal>
   }

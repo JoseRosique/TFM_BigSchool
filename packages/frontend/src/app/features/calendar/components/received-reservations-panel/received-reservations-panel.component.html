@@ -1,0 +1,60 @@
+<section class="calendar-panel">
+  <header class="calendar-panel__header">
+    <div>
+      <p class="panel-kicker">{{ "CALENDAR_PAGE.RECEIVED_RESERVATIONS_KICKER" | translate }}</p>
+      <h2 class="panel-title">{{ "CALENDAR_PAGE.RECEIVED_RESERVATIONS_TITLE" | translate }}</h2>
+    </div>
+    <span class="panel-count">{{ orderedReservations().length }}</span>
+  </header>
+
+  @if (isLoading()) {
+    <div class="panel-loading">{{ "CALENDAR_PAGE.LOADING" | translate }}</div>
+  } @else {
+    @if (orderedReservations().length === 0) {
+      <p class="panel-empty">{{ "CALENDAR_PAGE.RECEIVED_RESERVATIONS_EMPTY" | translate }}</p>
+    } @else {
+      <div class="reservation-list">
+        @for (reservation of orderedReservations(); track reservation.id) {
+          <article
+            class="reservation-card reservation-card--clickable"
+            role="button"
+            tabindex="0"
+            (click)="onOpenDetail(reservation)"
+            (keydown.enter)="onOpenDetail(reservation)"
+            (keydown.space)="onOpenDetailFromKeyboard($event, reservation)"
+          >
+            <div class="reservation-card__time">
+              {{ formatTimeRange()(reservation.startDate, reservation.endDate, reservation.slotTimezone) }}
+            </div>
+
+            <div class="reservation-card__person">
+              <strong>{{ "CALENDAR_PAGE.BOOKED_BY" | translate }}:</strong>
+              <span class="reservation-card__person-value">
+                @if (reservation.reservedBy?.avatarUrl) {
+                  <img
+                    class="reservation-card__avatar"
+                    [src]="reservation.reservedBy?.avatarUrl"
+                    [alt]="reservedByFullName(reservation)"
+                  />
+                }
+                <span class="person-name">{{ reservedByFullName(reservation) }}</span>
+              </span>
+            </div>
+
+            <div class="reservation-card__date">
+              {{ formatDateLabel(reservation.startDate, reservation.slotTimezone) }}
+            </div>
+
+            <div class="reservation-card__meta">
+              <span class="chip">{{ reservation.slotTimezone }}</span>
+            </div>
+
+            @if (reservation.slotNotes) {
+              <p class="reservation-card__note">{{ reservation.slotNotes }}</p>
+            }
+          </article>
+        }
+      </div>
+    }
+  }
+</section>

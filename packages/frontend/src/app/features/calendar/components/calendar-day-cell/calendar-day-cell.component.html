@@ -30,13 +30,13 @@
           <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}</span>
         </span>
       }
-      @if (pendingCount() > 0) {
+      @if (reservedCount() > 0) {
         <span
-          class="indicator indicator--pending"
-          [attr.aria-label]="pendingCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.PENDING' | translate)"
+          class="indicator indicator--reserved"
+          [attr.aria-label]="reservedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.RESERVED' | translate)"
         >
-          <span class="indicator__count">{{ pendingCount() }}</span>
-          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.PENDING" | translate }}</span>
+          <span class="indicator__count">{{ reservedCount() }}</span>
+          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.RESERVED" | translate }}</span>
         </span>
       }
     </div>
@@ -54,26 +54,15 @@
         [isReadOnly]="isReadOnly()"
       ></app-calendar-slot-list>
     </div>
-    @if (!isReadOnly()) {
-      @if (availableCount() > 0) {
-        <button
-          class="calendar-cell__plus calendar-cell__plus--corner"
-          type="button"
-          [attr.aria-label]="'CALENDAR_PAGE.EDIT_AVAILABILITY' | translate"
-          (click)="onCreateClick($event)"
-        >
-          <span class="material-symbols-outlined">edit</span>
-        </button>
-      } @else {
-        <button
-          class="calendar-cell__plus"
-          type="button"
-          [attr.aria-label]="'CALENDAR_PAGE.ADD_AVAILABILITY' | translate"
-          (click)="onCreateClick($event)"
-        >
-          <span class="material-symbols-outlined">add</span>
-        </button>
-      }
+    @if (!isReadOnly() && !hasSlots()) {
+      <button
+        class="calendar-cell__plus"
+        type="button"
+        [attr.aria-label]="'CALENDAR_PAGE.ADD_AVAILABILITY' | translate"
+        (click)="onCreateClick($event)"
+      >
+        <span class="material-symbols-outlined">add</span>
+      </button>
     }
   </article>
 }

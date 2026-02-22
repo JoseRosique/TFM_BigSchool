@@ -336,6 +336,7 @@
     "CONFIRM_DELETE_CANCEL": "Cancel",
     "CANCEL_RESERVATION": "Cancel reservation",
     "MY_SLOT": "My slot",
+    "VIEW": "View",
     "UNAVAILABLE": "Unavailable",
     "NO_SLOTS": "No available slots",
     "CREATED_BY": "Created by",
@@ -347,6 +348,9 @@
     "RESERVATIONS_KICKER": "Bookings",
     "RESERVATIONS_TITLE": "My reservations",
     "RESERVATIONS_EMPTY": "No reservations yet.",
+    "RECEIVED_RESERVATIONS_KICKER": "Bookings",
+    "RECEIVED_RESERVATIONS_TITLE": "Received reservations",
+    "RECEIVED_RESERVATIONS_EMPTY": "You don't have reservations from your friends yet.",
     "BOOKED_WITH": "Booked with",
     "BOOKED_BY": "Booked by",
     "LEGEND_KICKER": "Legend",
@@ -377,6 +381,7 @@
       "SUBMIT_EDIT": "Update slots",
       "CANCEL": "Cancel",
       "RESERVE_SLOT": "Reserve slot",
+      "RESERVED_BY": "Reserved by",
       "AVAILABILITY_OF": "Availability from:",
       "EMPTY_SLOTS": "No time ranges defined for this day.",
       "EMPTY_SLOTS_HINT": "Click + to add one.",
@@ -402,7 +407,7 @@
     "INDICATORS": {
       "AVAILABLE": "available",
       "CONFIRMED": "confirmed",
-      "PENDING": "pending"
+      "RESERVED": "reserved"
     },
     "TOASTS": {
       "CREATED": "Availability opened.",

@@ -46,6 +46,8 @@ export interface User {
   email: string;
   nickname: string; // Public identifier (unique)
   name: string;
+  firstName?: string;
+  lastName?: string;
   timezone: string; // IANA timezone (e.g., 'Europe/Madrid')
   location?: string; // City/location preference
   language: string; // ISO 639-1 (e.g., 'es', 'en')
@@ -199,6 +201,19 @@ export namespace ReserveSlotDTO {
 }
 
 export namespace ListReservationsDTO {
+  export type QueryType = 'mine' | 'received';
+
+  export interface Query {
+    type?: QueryType;
+  }
+
+  export interface ReservedByInfo extends Pick<User, 'name' | 'nickname'> {
+    id: string | null;
+    avatarUrl?: string | null;
+    firstName?: string;
+    lastName?: string;
+  }
+
   export interface ResponseItem {
     id: string;
     slotId: string;
@@ -214,6 +229,8 @@ export namespace ListReservationsDTO {
     slotOwnerNickname: string;
     reserverName: string;
     reserverNickname: string;
+    slotNotes?: string;
+    reservedBy?: ReservedByInfo;
   }
 
   export interface Response {

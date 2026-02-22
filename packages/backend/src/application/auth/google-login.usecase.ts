@@ -13,6 +13,7 @@ import { LoginDTO } from '@meetwithfriends/shared';
 @Injectable()
 export class GoogleLoginUseCase {
   private googleClient: OAuth2Client;
+  private readonly allowedAudiences: string[];
 
   constructor(
     @Inject(USER_REPOSITORY)
@@ -20,11 +21,17 @@ export class GoogleLoginUseCase {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-    if (!clientId) {
-      console.warn('⚠️  GOOGLE_CLIENT_ID not configured. Google Sign-In will not work.');
-    }
+    const clientId = this.configService.getOrThrow<string>('GOOGLE_CLIENT_ID');
+    const additionalClientIds = this.configService
+      .get<string>('GOOGLE_CLIENT_IDS', '')
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    this.allowedAudiences = Array.from(new Set([clientId, ...additionalClientIds]));
     this.googleClient = new OAuth2Client(clientId);
+
+    console.log('[GoogleLoginUseCase] Allowed Google audiences:', this.allowedAudiences);
   }
 
   /**
@@ -54,10 +61,12 @@ export class GoogleLoginUseCase {
    * Maneja errores sin exponer stack traces
    */
   private async verifyGoogleToken(credential: string) {
+    const decodedPayload = this.decodeJwtPayload(credential);
+
     try {
       const ticket = await this.googleClient.verifyIdToken({
         idToken: credential,
-        audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
+        audience: this.allowedAudiences,
       });
       const payload = ticket.getPayload();
 
@@ -90,7 +99,27 @@ export class GoogleLoginUseCase {
         'Google token verification error:',
         error instanceof Error ? error.message : error,
       );
+      console.error('[GoogleLoginUseCase] Verification context:', {
+        tokenAud: decodedPayload?.aud,
+        tokenIss: decodedPayload?.iss,
+        allowedAudiences: this.allowedAudiences,
+      });
       throw new UnauthorizedException('INVALID_GOOGLE_TOKEN');
+    }
+  }
+
+  private decodeJwtPayload(token: string): Record<string, any> | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) {
+        return null;
+      }
+
+      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const json = Buffer.from(payload, 'base64').toString('utf-8');
+      return JSON.parse(json);
+    } catch {
+      return null;
     }
   }
 

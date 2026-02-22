@@ -37,5 +37,5 @@ export interface CalendarDayView {
   moreCount: number;
   availableCount: number;
   confirmedCount: number;
-  pendingCount: number;
+  reservedCount: number;
 }

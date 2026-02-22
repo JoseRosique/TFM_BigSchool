@@ -12,6 +12,9 @@
         </h2>
         @if (isFriendSlot()) {
           <p class="form-label">{{ getCreatorLabel() }}</p>
+          @if (selectedSlotStatus() === "reserved" && reservedByName()) {
+            <p class="form-label">{{ getReservedByLabel() }}</p>
+          }
         }
       </div>
       <button class="modal-close" type="button" (click)="onClose()">
@@ -169,14 +172,25 @@
           {{ "CALENDAR_PAGE.FORM.CANCEL" | translate }}
         </button>
         @if (isFriendSlot()) {
-          <button
-            class="btn-save"
-            type="button"
-            [disabled]="isSubmitting() || !canReserve() || selectedSlotStatus() !== 'available'"
-            (click)="onReserve(); $event.stopPropagation()"
-          >
-            {{ "CALENDAR_PAGE.FORM.RESERVE_SLOT" | translate }}
-          </button>
+          @if (canReserve() && selectedSlotStatus() === "available") {
+            <button
+              class="btn-save"
+              type="button"
+              [disabled]="isSubmitting()"
+              (click)="onReserve(); $event.stopPropagation()"
+            >
+              {{ "CALENDAR_PAGE.FORM.RESERVE_SLOT" | translate }}
+            </button>
+          } @else if (canCancelReservedSlot() && selectedSlotStatus() === "reserved") {
+            <button
+              class="btn-save btn-save--danger"
+              type="button"
+              [disabled]="isSubmitting()"
+              (click)="onCancelReservedSlot(); $event.stopPropagation()"
+            >
+              {{ "CALENDAR_PAGE.CANCEL_SLOT" | translate }}
+            </button>
+          }
         } @else {
           <button class="btn-save" type="submit" [disabled]="isSubmitting() || formGroup().invalid">
             {{ (isEditMode() ? "CALENDAR_PAGE.FORM.SUBMIT_EDIT" : "CALENDAR_PAGE.FORM.SUBMIT") | translate }}

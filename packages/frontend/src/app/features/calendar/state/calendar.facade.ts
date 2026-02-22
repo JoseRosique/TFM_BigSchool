@@ -1,4 +1,5 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { ListSlotsDTO, OpenSlotDTO, ReservationStatus, SlotStatus } from '@meetwithfriends/shared';
 import { AuthService } from '../../../shared/services/auth.service';
@@ -15,6 +16,7 @@ export class CalendarFacade {
   private readonly reservationsService = inject(ReservationsService);
   private readonly authService = inject(AuthService);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly maxItemsPerDay = 3;
 
@@ -22,14 +24,30 @@ export class CalendarFacade {
   viewDate = signal<Date>(this.getMonthStart(new Date()));
   slots = signal<CalendarSlot[]>([]);
   reservations = signal<ReservationItem[]>([]);
+  receivedReservations = signal<ReservationItem[]>([]);
   isLoadingSlots = signal(false);
   isLoadingReservations = signal(false);
+  isLoadingReceivedReservations = signal(false);
   displayTimezone = signal('UTC');
   currentUserId = signal<string | null>(null);
 
   slotsErrorKey = signal<string | null>(null);
   reservationsErrorKey = signal<string | null>(null);
+  receivedReservationsErrorKey = signal<string | null>(null);
   profileErrorKey = signal<string | null>(null);
+
+  constructor() {
+    // Suscribirse al Observable de actualizaciones de reservas
+    // Se ejecuta automáticamente cuando se crea/cancela una reserva
+    this.reservationsService.reservationUpdated$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        // Recargar reservas automáticamente tras una acción exitosa
+        // showLoadingIndicator = false para que la actualización sea silenciosa en el fondo
+        this.loadReservations(false);
+        this.loadReceivedReservations(false);
+      });
+  }
 
   monthLabel = computed(() => {
     const current = this.getMonthAnchor(this.viewDate());
@@ -84,7 +102,7 @@ export class CalendarFacade {
       moreCount: this.moreSlotsCount(day.key),
       availableCount: this.availableCount(day.key),
       confirmedCount: this.confirmedCount(day.key),
-      pendingCount: this.pendingCount(day.key),
+      reservedCount: this.reservedCount(day.key),
     })),
   );
 
@@ -143,6 +161,10 @@ export class CalendarFacade {
     this.reservationsErrorKey.set(null);
   }
 
+  clearReceivedReservationsError(): void {
+    this.receivedReservationsErrorKey.set(null);
+  }
+
   clearProfileError(): void {
     this.profileErrorKey.set(null);
   }
@@ -168,6 +190,7 @@ export class CalendarFacade {
   reloadAll(): void {
     this.loadSlots();
     this.loadReservations();
+    this.loadReceivedReservations();
   }
 
   loadSlots(): void {
@@ -209,9 +232,11 @@ export class CalendarFacade {
     });
   }
 
-  loadReservations(): void {
-    this.isLoadingReservations.set(true);
-    this.reservationsService.listMyReservations().subscribe({
+  loadReservations(showLoadingIndicator: boolean = true): void {
+    if (showLoadingIndicator) {
+      this.isLoadingReservations.set(true);
+    }
+    this.reservationsService.listReservations('mine').subscribe({
       next: (response) => {
         const items = response.items.map((reservation) => ({
           ...reservation,
@@ -228,11 +253,35 @@ export class CalendarFacade {
     });
   }
 
+  loadReceivedReservations(showLoadingIndicator: boolean = true): void {
+    this.receivedReservationsErrorKey.set(null);
+
+    if (showLoadingIndicator) {
+      this.isLoadingReceivedReservations.set(true);
+    }
+
+    this.reservationsService.listReservations('received').subscribe({
+      next: (response) => {
+        const items = response.items.map((reservation) => ({
+          ...reservation,
+          startDate: new Date(reservation.slotStart),
+          endDate: new Date(reservation.slotEnd),
+        }));
+        this.receivedReservations.set(items);
+        this.isLoadingReceivedReservations.set(false);
+      },
+      error: () => {
+        this.isLoadingReceivedReservations.set(false);
+        this.receivedReservationsErrorKey.set('CALENDAR_PAGE.TOASTS.LOAD_ERROR');
+      },
+    });
+  }
+
   createSlot(input: OpenSlotDTO.Request) {
     return this.slotsService.createSlot(input);
   }
 
-  updateSlot(slotId: string, input: Partial<OpenSlotDTO.Request>) {
+  updateSlot(slotId: string, input: Partial<OpenSlotDTO.Request> & { status?: SlotStatus }) {
     return this.slotsService.updateSlot(slotId, input);
   }
 
@@ -246,6 +295,10 @@ export class CalendarFacade {
 
   deleteSlot(slotId: string) {
     return this.slotsService.deleteSlot(slotId);
+  }
+
+  getSlotDetail(slotId: string) {
+    return this.slotsService.getSlotDetail(slotId);
   }
 
   slotsForDay(dayKey: string): CalendarSlot[] {
@@ -271,7 +324,7 @@ export class CalendarFacade {
       .length;
   }
 
-  pendingCount(dayKey: string): number {
+  reservedCount(dayKey: string): number {
     const userId = this.currentUserId();
     if (!userId) return 0;
     return this.slotsForDay(dayKey).filter(

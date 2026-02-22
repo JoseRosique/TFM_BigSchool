@@ -336,6 +336,7 @@
     "CONFIRM_DELETE_CANCEL": "Cancelar",
     "CANCEL_RESERVATION": "Cancelar reserva",
     "MY_SLOT": "Mi franja",
+    "VIEW": "Ver",
     "UNAVAILABLE": "No disponible",
     "NO_SLOTS": "Sin franjas disponibles",
     "CREATED_BY": "Creado por",
@@ -347,6 +348,9 @@
     "RESERVATIONS_KICKER": "Reservas",
     "RESERVATIONS_TITLE": "Mis reservas",
     "RESERVATIONS_EMPTY": "Aún no hay reservas.",
+    "RECEIVED_RESERVATIONS_KICKER": "Reservas",
+    "RECEIVED_RESERVATIONS_TITLE": "Reservas recibidas",
+    "RECEIVED_RESERVATIONS_EMPTY": "Aún no tienes reservas de tus amigos.",
     "BOOKED_WITH": "Quedada con",
     "BOOKED_BY": "Reservó",
     "LEGEND_KICKER": "Leyenda",
@@ -377,6 +381,7 @@
       "SUBMIT_EDIT": "Actualizar franjas",
       "CANCEL": "Cancelar",
       "RESERVE_SLOT": "Reservar franja",
+      "RESERVED_BY": "Reservado por",
       "AVAILABILITY_OF": "Disponibilidad de:",
       "EMPTY_SLOTS": "No hay franjas definidas para este día.",
       "EMPTY_SLOTS_HINT": "Haz clic en + para añadir una.",
@@ -402,7 +407,7 @@
     "INDICATORS": {
       "AVAILABLE": "disponible",
       "CONFIRMED": "confirmada",
-      "PENDING": "pendiente"
+      "RESERVED": "reservada"
     },
     "TOASTS": {
       "CREATED": "Disponibilidad abierta.",

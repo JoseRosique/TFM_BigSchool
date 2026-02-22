@@ -29,6 +29,10 @@ export class SlotsService {
     return this.http.get<Slot>(`${this.apiUrl}/${slotId}`);
   }
 
+  getSlotDetail(slotId: string): Observable<SlotDetailResponse> {
+    return this.http.get<SlotDetailResponse>(`${this.apiUrl}/${slotId}/detail`);
+  }
+
   getMyAvailability(query?: ListSlotsDTO.Query): Observable<ListSlotsDTO.Response> {
     return this.http.get<ListSlotsDTO.Response>(`${this.apiUrl}/my-availability`, {
       params: query as any,
@@ -60,3 +64,26 @@ type UpdateSlotPayload = Partial<OpenSlotDTO.Request> & {
   status?: SlotStatus;
   visibilityScope?: VisibilityScope;
 };
+
+export interface SlotDetailResponse {
+  id: string;
+  start: string;
+  end: string;
+  timezone: string;
+  status: SlotStatus;
+  visibilityScope: VisibilityScope;
+  notes?: string;
+  creator: {
+    id: string;
+    name: string;
+    nickname: string;
+    avatarUrl?: string;
+  };
+  isReserved: boolean;
+  reservedBy: {
+    id: string;
+    name: string;
+    nickname: string;
+    avatarUrl?: string;
+  } | null;
+}

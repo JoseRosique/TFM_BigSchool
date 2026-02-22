@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: meetwithfriends_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-meetwithfriends}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meetwithfriends
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  meetwithfriends:
+    driver: bridge

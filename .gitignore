@@ -18,8 +18,8 @@ build/
 *.swo
 *.md
 .angular
-docker-compose.yml
 .github/
 playwright-report/
 *.env.*
 .env
+!README.md

@@ -13,6 +13,7 @@ import { VisibilityScope, SlotStatus } from '@meetwithfriends/shared';
 import { DateOnlyPickerComponent } from '../../../../shared/components/date-time-picker/date-only-picker/date-only-picker.component';
 import { Group } from '../../../../shared/models/group.model';
 import { CustomSelectComponent, SelectOption } from '../custom-select/custom-select.component';
+import { CustomTimepickerComponent } from '../../../../shared/components/custom-timepicker/custom-timepicker.component';
 import { ValidatorFn, ValidationErrors } from '@angular/forms';
 
 interface CreateSlotModalPayload {
@@ -80,6 +81,7 @@ function isOverlapping(slot1: any, slot2: any): boolean {
     TranslateModule,
     DateOnlyPickerComponent,
     CustomSelectComponent,
+    CustomTimepickerComponent,
   ],
   templateUrl: './create-slot-modal.component.html',
   styleUrl: './create-slot-modal.component.scss',
@@ -398,6 +400,47 @@ export class CreateSlotModalComponent implements OnInit {
   }
 
   /**
+   * Redondea la hora actual al intervalo de 15 minutos más cercano
+   * Ej: 10:37 → 10:45, 10:43 → 10:45, 10:42 → 10:30
+   */
+  private getCurrentTimeRoundedTo15Min(): string {
+    const now = new Date();
+    let minutes = now.getMinutes();
+    const remainder = minutes % 15;
+
+    if (remainder !== 0) {
+      if (remainder < 8) {
+        // Redondear hacia atrás
+        minutes -= remainder;
+      } else {
+        // Redondear hacia adelante
+        minutes += 15 - remainder;
+      }
+    }
+
+    if (minutes >= 60) {
+      now.setHours(now.getHours() + 1);
+      minutes = 0;
+    }
+
+    now.setMinutes(minutes);
+    return this.formatTime(now);
+  }
+
+  /**
+   * Calcula la hora de fin sumando 1 hora a la hora de inicio
+   */
+  private getEndTimeFromStartTime(startTime: string): string {
+    const [hours, minutes] = startTime.split(':');
+    let hourNum = parseInt(hours, 10);
+    const minNum = parseInt(minutes, 10);
+
+    hourNum = (hourNum + 1) % 24; // Maneja el desbordamiento a media noche
+
+    return `${String(hourNum).padStart(2, '0')}:${String(minNum).padStart(2, '0')}`;
+  }
+
+  /**
    * Detecta automáticamente la zona horaria del navegador del usuario
    * Usa Intl API con fallback a UTC si falla
    */
@@ -417,12 +460,17 @@ export class CreateSlotModalComponent implements OnInit {
   /**
    * Crea un nuevo control de formulario para un time slot
    * Inicializa timezone automáticamente con la zona del navegador
+   * Inicializa startTime con la hora actual redondeada a 15 minutos
+   * Inicializa endTime sumando 1 hora al startTime
    */
   private createTimeSlotControl(): FormGroup {
+    const startTime = this.getCurrentTimeRoundedTo15Min();
+    const endTime = this.getEndTimeFromStartTime(startTime);
+
     return new FormGroup(
       {
-        startTime: new FormControl('', Validators.required),
-        endTime: new FormControl('', Validators.required),
+        startTime: new FormControl(startTime, Validators.required),
+        endTime: new FormControl(endTime, Validators.required),
         notes: new FormControl(''),
         // Faltaban estos controles para que patchValue funcione:
         timezone: new FormControl(this.detectUserTimezone()),

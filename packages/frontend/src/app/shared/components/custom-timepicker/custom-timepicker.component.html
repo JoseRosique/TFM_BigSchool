@@ -1,0 +1,58 @@
+<div class="timepicker-wrapper" (blur)="onBlur()" tabindex="0">
+  <div class="timepicker-display">
+    <button
+      type="button"
+      class="timepicker-trigger"
+      (click)="togglePanel()"
+      [disabled]="disabled"
+      [attr.aria-label]="ariaLabel"
+      [class.timepicker-trigger--open]="isOpen()"
+    >
+      <span class="timepicker-value">{{ displayValue() }}</span>
+      <span class="material-symbols-outlined timepicker-icon">schedule</span>
+    </button>
+  </div>
+
+  <div class="timepicker-panel" *ngIf="isOpen()">
+    <!-- Hours Column -->
+    <div class="time-column time-column--hours" #hoursContainer>
+      <div class="column-header">
+        <span class="column-title">{{ "COMMON.TIMEPICKER.HOURS" | translate }}</span>
+      </div>
+      <div class="time-options">
+        <button
+          *ngFor="let hour of hours"
+          type="button"
+          class="time-option"
+          [class.time-option--selected]="hour === currentHour()"
+          (click)="onHourSelect(hour)"
+        >
+          {{ hour }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Separator -->
+    <div class="column-separator">:</div>
+
+    <!-- Minutes Column -->
+    <div class="time-column time-column--minutes" #minutesContainer>
+      <div class="column-header">
+        <span class="column-title">{{ "COMMON.TIMEPICKER.MINUTES" | translate }}</span>
+      </div>
+      <div class="time-options">
+        <button
+          *ngFor="let minute of minutes"
+          type="button"
+          class="time-option"
+          [class.time-option--selected]="minute === currentMinute()"
+          (click)="onMinuteSelect(minute)"
+        >
+          {{ minute }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="timepicker-overlay" *ngIf="isOpen()" (click)="closePanel()"></div>
+</div>

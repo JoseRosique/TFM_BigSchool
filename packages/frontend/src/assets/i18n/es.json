@@ -4,6 +4,12 @@
     "LOGO_ARIA": "Logo de MeetWithFriends",
     "LOADING_CONTENT": "Cargando contenido"
   },
+  "COMMON": {
+    "TIMEPICKER": {
+      "HOURS": "Horas",
+      "MINUTES": "Minutos"
+    }
+  },
   "HEADER": {
     "WELCOME": "¡Hola, {{name}}!",
     "MY_PROFILE": "Mi Perfil",
@@ -403,6 +409,7 @@
       "UPDATED": "Franja actualizada correctamente.",
       "UPDATE_ERROR": "No se pudo actualizar la franja.",
       "RESERVED": "Reserva confirmada.",
+      "SLOT_RESERVED": "Franja reservada correctamente.",
       "RESERVE_ERROR": "No se pudo reservar la franja.",
       "RESERVATION_CANCELED": "Reserva cancelada.",
       "RESERVATION_CANCEL_ERROR": "No se pudo cancelar la reserva.",

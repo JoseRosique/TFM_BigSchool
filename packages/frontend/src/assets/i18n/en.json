@@ -4,6 +4,12 @@
     "LOGO_ARIA": "MeetWithFriends logo",
     "LOADING_CONTENT": "Loading content"
   },
+  "COMMON": {
+    "TIMEPICKER": {
+      "HOURS": "Hours",
+      "MINUTES": "Minutes"
+    }
+  },
   "HEADER": {
     "WELCOME": "Hey, {{name}}!",
     "MY_PROFILE": "My Profile",
@@ -403,6 +409,7 @@
       "UPDATED": "Slot updated successfully.",
       "UPDATE_ERROR": "Unable to update slot.",
       "RESERVED": "Reservation confirmed.",
+      "SLOT_RESERVED": "Slot reserved successfully.",
       "RESERVE_ERROR": "Unable to reserve slot.",
       "RESERVATION_CANCELED": "Reservation canceled.",
       "RESERVATION_CANCEL_ERROR": "Unable to cancel reservation.",

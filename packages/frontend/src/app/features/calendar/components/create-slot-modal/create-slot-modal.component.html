@@ -61,21 +61,21 @@
                   <div class="slot-time-group">
                     <div class="time-input-wrapper">
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.START" | translate }}</label>
-                      <input
-                        type="time"
-                        class="time-field"
+                      <app-custom-timepicker
                         formControlName="startTime"
                         [disabled]="isSubmitting() || isFriendSlot()"
-                      />
+                        [placeholder]="'CALENDAR_PAGE.FORM.START' | translate"
+                        [ariaLabel]="'CALENDAR_PAGE.FORM.START' | translate"
+                      ></app-custom-timepicker>
                     </div>
                     <div class="time-input-wrapper">
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.END" | translate }}</label>
-                      <input
-                        type="time"
-                        class="time-field"
+                      <app-custom-timepicker
                         formControlName="endTime"
                         [disabled]="isSubmitting() || isFriendSlot()"
-                      />
+                        [placeholder]="'CALENDAR_PAGE.FORM.END' | translate"
+                        [ariaLabel]="'CALENDAR_PAGE.FORM.END' | translate"
+                      ></app-custom-timepicker>
                     </div>
                     @if (slot.hasError("invalidRange")) {
                       <div class="slot-error">{{ "CALENDAR_PAGE.FORM.ERROR_END_BEFORE_START" | translate }}</div>

@@ -64,6 +64,14 @@ export class CalendarSlotListComponent {
     return slot.ownerId === this.currentUserId();
   }
 
+  visibleSlots(): CalendarSlot[] {
+    if (this.isReadOnly()) {
+      return this.slots();
+    }
+
+    return this.slots().filter((slot) => slot.status !== this.slotStatus().RESERVED);
+  }
+
   formatSlotRange(slot: CalendarSlot): string {
     return this.formatTimeRange()(slot.startDate, slot.endDate, slot.timezone);
   }

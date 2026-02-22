@@ -224,6 +224,41 @@
   }
 }
 
+.slot-card--locked {
+  border-color: var(--color-overlay-accent-30);
+
+  &:hover {
+    border-color: var(--color-overlay-accent-30);
+    background: var(--color-bg-elevated);
+  }
+}
+
+.slot-card__status {
+  position: absolute;
+  top: 6px;
+  right: clamp(0.75rem, 2vw, 1rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-warning-dark);
+  background: var(--color-overlay-accent-30);
+  border: 1px solid var(--color-overlay-accent-35);
+  border-radius: 999px;
+  padding: 0.18rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  .material-symbols-outlined {
+    font-size: 0.85rem;
+  }
+}
+
+.slot-card__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
 .slot-card__content {
   flex: 1;
   display: flex;

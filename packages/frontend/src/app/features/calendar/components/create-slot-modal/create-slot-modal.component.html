@@ -28,7 +28,7 @@
         <label class="form-field form-field--full">
           <span class="form-label">{{ "CALENDAR_PAGE.FORM.DATE" | translate }}</span>
           <app-date-only-picker
-            [value]="formGroup().value.date || null"
+            [value]="getDateValue()"
             [timeZone]="displayTimezone()"
             [readonly]="isDateLocked() || isFriendMode()"
             (openChange)="onDateOpenChange($event)"
@@ -58,15 +58,25 @@
         <div class="slots-scroll-container" formArrayName="timeSlots">
           @if (getTimeSlots().length > 0) {
             @for (slot of getTimeSlots().controls; track $index) {
-              <div class="slot-card" [formGroupName]="$index">
-                <div class="slot-card__content">
+              <div class="slot-card" [class.slot-card--locked]="isSlotLocked($index)" [formGroupName]="$index">
+                @if (!isFriendSlot() && isSlotLocked($index)) {
+                  <div class="slot-card__status" role="status">
+                    <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+                    <span>{{ "CALENDAR_PAGE.STATUS.RESERVED" | translate }}</span>
+                  </div>
+                }
+                <div
+                  class="slot-card__content"
+                  [attr.inert]="isSlotLocked($index) ? '' : null"
+                  [attr.aria-disabled]="isSlotLocked($index)"
+                >
                   <!-- Row 1: Time inputs -->
                   <div class="slot-time-group">
                     <div class="time-input-wrapper">
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.START" | translate }}</label>
                       <app-custom-timepicker
                         formControlName="startTime"
-                        [disabled]="isSubmitting() || isFriendSlot()"
+                        [disabled]="isSubmitting() || isFriendSlot() || isSlotLocked($index)"
                         [placeholder]="'CALENDAR_PAGE.FORM.START' | translate"
                         [ariaLabel]="'CALENDAR_PAGE.FORM.START' | translate"
                       ></app-custom-timepicker>
@@ -75,7 +85,7 @@
                       <label class="time-label">{{ "CALENDAR_PAGE.FORM.END" | translate }}</label>
                       <app-custom-timepicker
                         formControlName="endTime"
-                        [disabled]="isSubmitting() || isFriendSlot()"
+                        [disabled]="isSubmitting() || isFriendSlot() || isSlotLocked($index)"
                         [placeholder]="'CALENDAR_PAGE.FORM.END' | translate"
                         [ariaLabel]="'CALENDAR_PAGE.FORM.END' | translate"
                       ></app-custom-timepicker>
@@ -97,7 +107,7 @@
                           [options]="getTimezoneOptions()"
                           [value]="getTimezoneValue($index)"
                           (valueChange)="onTimezoneChange($event, $index)"
-                          [disabled]="isSubmitting()"
+                          [disabled]="isSubmitting() || isSlotLocked($index)"
                           [placeholder]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
                           [ariaLabel]="'CALENDAR_PAGE.FORM.TIMEZONE' | translate"
                         ></app-custom-select>
@@ -114,7 +124,7 @@
                             [options]="getVisibilityOptions()"
                             [value]="getVisibilityValue($index)"
                             (valueChange)="onVisibilityChange($event, $index)"
-                            [disabled]="isSubmitting()"
+                            [disabled]="isSubmitting() || isSlotLocked($index)"
                             [placeholder]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
                             [ariaLabel]="'CALENDAR_PAGE.FORM.VISIBILITY' | translate"
                           ></app-custom-select>
@@ -134,16 +144,21 @@
                           class="notes-textarea"
                           formControlName="notes"
                           rows="2"
-                          [disabled]="isSubmitting()"
+                          [disabled]="isSubmitting() || isSlotLocked($index)"
                           [placeholder]="'CALENDAR_PAGE.FORM.NOTES_PLACEHOLDER' | translate"
                         ></textarea>
                       }
                     </div>
                   }
+                  @if (!isFriendSlot() && isSlotLocked($index)) {
+                    <p class="slot-card__hint">
+                      {{ "CALENDAR_PAGE.FORM.LOCKED_SLOT_HINT" | translate }}
+                    </p>
+                  }
                 </div>
 
                 <!-- Delete button for slot -->
-                @if (!isFriendSlot()) {
+                @if (!isFriendSlot() && !isSlotLocked($index)) {
                   <button
                     type="button"
                     class="slot-card__delete"

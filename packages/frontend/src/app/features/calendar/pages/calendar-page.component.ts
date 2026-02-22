@@ -45,6 +45,8 @@ interface CreateSlotSubmitPayload {
     visibilityScope: VisibilityScope;
     groupIds?: string[];
     notes?: string;
+    status?: SlotStatus;
+    isLocked?: boolean;
   }>;
 }
 
@@ -145,6 +147,8 @@ export class CalendarPageComponent implements OnInit {
     timezone?: string,
     visibilityScope?: VisibilityScope,
     groupIds?: string[],
+    status?: SlotStatus,
+    isLocked?: boolean,
   ) {
     return this.fb.group({
       id: [id || null],
@@ -154,6 +158,8 @@ export class CalendarPageComponent implements OnInit {
       visibilityScope: [visibilityScope || VisibilityScope.FRIENDS, Validators.required],
       groupIds: [groupIds || []],
       notes: [notes || '', Validators.maxLength(500)],
+      status: [status || SlotStatus.AVAILABLE],
+      isLocked: [Boolean(isLocked)],
     });
   }
 
@@ -419,6 +425,8 @@ export class CalendarPageComponent implements OnInit {
       visibilityScope: VisibilityScope;
       groupIds?: string[];
       notes?: string;
+      status?: SlotStatus;
+      isLocked?: boolean;
     }> =
       payload?.timeSlots ??
       ((this.createSlotForm.get('timeSlots') as FormArray).getRawValue() as Array<{
@@ -431,6 +439,8 @@ export class CalendarPageComponent implements OnInit {
         visibilityScope: VisibilityScope;
         groupIds?: string[];
         notes?: string;
+        status?: SlotStatus;
+        isLocked?: boolean;
       }>);
 
     const timeSlotsArray = rawTimeSlots.map((slot) => ({
@@ -441,10 +451,15 @@ export class CalendarPageComponent implements OnInit {
       visibilityScope: slot.visibilityScope,
       groupIds: Array.isArray(slot.groupIds) ? slot.groupIds : [],
       notes: slot.notes,
+      status: slot.status,
+      isLocked: Boolean(slot.isLocked),
     }));
 
     // Validate all slots (only if there are slots)
     for (const slot of timeSlotsArray) {
+      if (slot.isLocked) {
+        continue;
+      }
       const start = combineDateAndTimeInTimeZone(date as string, slot.startTime, slot.timezone);
       const end = combineDateAndTimeInTimeZone(date as string, slot.endTime, slot.timezone);
       if (!start || !end || end <= start) {
@@ -484,12 +499,15 @@ export class CalendarPageComponent implements OnInit {
       visibilityScope: VisibilityScope;
       groupIds?: string[];
       notes?: string;
+      status?: SlotStatus;
+      isLocked?: boolean;
     }>,
     date: string,
   ): void {
     // Separate new slots (no id) from updates (has id)
-    const newSlots = timeSlotsArray.filter((s) => !s.id);
-    const updatedSlots = timeSlotsArray.filter((s) => s.id);
+    const editableSlots = timeSlotsArray.filter((slot) => !slot.isLocked);
+    const newSlots = editableSlots.filter((s) => !s.id);
+    const updatedSlots = editableSlots.filter((s) => s.id);
     const deletedIds = this.deletedSlotIds();
 
     // Build creation requests for new slots
@@ -868,6 +886,8 @@ export class CalendarPageComponent implements OnInit {
           slot.timezone,
           slot.visibilityScope,
           slotGroupIds,
+          slot.status,
+          slot.status === SlotStatus.RESERVED,
         );
         slotControl.patchValue({
           startTime: startTimeFormatted || '',
@@ -876,6 +896,8 @@ export class CalendarPageComponent implements OnInit {
           visibilityScope: slot.visibilityScope,
           groupIds: slotGroupIds,
           notes: slot.notes || '',
+          status: slot.status,
+          isLocked: slot.status === SlotStatus.RESERVED,
         });
         timeSlots.push(slotControl);
       }

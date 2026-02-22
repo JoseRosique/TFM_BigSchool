@@ -1,4 +1,4 @@
-@for (slot of slots(); track slot.id) {
+@for (slot of visibleSlots(); track slot.id) {
   <article
     class="month-slot"
     [class.month-slot--clickable]="isOwner(slot) || isReadOnly()"

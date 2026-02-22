@@ -27,6 +27,8 @@ interface CreateSlotModalPayload {
     visibilityScope: VisibilityScope;
     groupIds: string[];
     notes?: string;
+    status?: SlotStatus;
+    isLocked?: boolean;
   }>;
 }
 
@@ -227,6 +229,8 @@ export class CreateSlotModalComponent implements OnInit {
         visibilityScope: slot.visibilityScope as VisibilityScope,
         groupIds: Array.isArray(slot.groupIds) ? slot.groupIds : [],
         notes: slot.notes ?? '',
+        status: slot.status as SlotStatus | undefined,
+        isLocked: Boolean(slot.isLocked),
       })),
     };
 
@@ -244,6 +248,12 @@ export class CreateSlotModalComponent implements OnInit {
       return;
     }
     this.dateChange.emit(value);
+  }
+
+  getDateValue(): string | null {
+    const value = this.formGroup().get('date')?.value;
+    if (typeof value !== 'string') return null;
+    return value || null;
   }
 
   getTimeSlots(): FormArray {
@@ -282,6 +292,11 @@ export class CreateSlotModalComponent implements OnInit {
     if (this.isFriendSlot()) {
       return;
     }
+
+    if (this.isSlotLocked(index)) {
+      return;
+    }
+
     const slots = this.getTimeSlots();
     slots.removeAt(index);
     slots.updateValueAndValidity({ emitEvent: false });
@@ -360,7 +375,7 @@ export class CreateSlotModalComponent implements OnInit {
    * Parsea el valor y actualiza visibilityScope y groupIds apropiadamente
    */
   onVisibilityChange(value: string, index: number): void {
-    if (this.isFriendSlot()) {
+    if (this.isFriendSlot() || this.isSlotLocked(index)) {
       return;
     }
 
@@ -434,7 +449,7 @@ export class CreateSlotModalComponent implements OnInit {
    * Maneja el cambio de timezone desde el custom select
    */
   onTimezoneChange(value: string, index: number): void {
-    if (this.isFriendSlot()) {
+    if (this.isFriendSlot() || this.isSlotLocked(index)) {
       return;
     }
 
@@ -530,6 +545,22 @@ export class CreateSlotModalComponent implements OnInit {
     const slot = this.getTimeSlot(slotIndex);
     const notes = slot?.get('notes')?.value;
     return typeof notes === 'string' ? notes.trim() : '';
+  }
+
+  isSlotLocked(slotIndex: number): boolean {
+    if (this.isFriendSlot()) {
+      return true;
+    }
+
+    const slot = this.getTimeSlot(slotIndex);
+    if (!slot) return false;
+
+    const isLockedValue = slot.get('isLocked')?.value;
+    if (typeof isLockedValue === 'boolean') {
+      return isLockedValue;
+    }
+
+    return slot.get('status')?.value === SlotStatus.RESERVED;
   }
 
   /**
@@ -655,6 +686,8 @@ export class CreateSlotModalComponent implements OnInit {
         timezone: new FormControl(this.detectUserTimezone()),
         visibilityScope: new FormControl(VisibilityScope.FRIENDS),
         groupIds: new FormControl([]),
+        status: new FormControl(SlotStatus.AVAILABLE),
+        isLocked: new FormControl(false),
       },
       { validators: timeRangeValidator },
     );

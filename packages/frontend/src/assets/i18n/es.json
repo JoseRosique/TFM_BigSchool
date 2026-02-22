@@ -385,6 +385,7 @@
       "AVAILABILITY_OF": "Disponibilidad de:",
       "EMPTY_SLOTS": "No hay franjas definidas para este día.",
       "EMPTY_SLOTS_HINT": "Haz clic en + para añadir una.",
+      "LOCKED_SLOT_HINT": "Esta franja está reservada y no se puede modificar hasta que se cancele.",
       "ERROR_END_BEFORE_START": "La hora fin debe ser posterior a la hora inicio",
       "ERROR_OVERLAPPING_SLOTS": "Este tramo horario se solapa con otro",
       "ERROR_OVERLAPPING": "Los tramos horarios no pueden solaparse",

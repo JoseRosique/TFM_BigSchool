@@ -15,7 +15,7 @@ Aplicación full-stack para coordinar disponibilidad, reservas y planes entre am
 ### Enlaces requeridos
 - **Código (repo):** https://github.com/JoseRosique/TFM_BigSchool
 - **Despliegue:** https://meetwithfriends.onrender.com 
-- **Slides presentación:** https://github.com/JoseRosique/TFM_BigSchool/MeetWithFriends.pdf
+- **Slides presentación:** [https://github.com/JoseRosique/TFM_BigSchool/MeetWithFriends.pdf](https://github.com/JoseRosique/TFM_BigSchool/blob/main/MeetWithFriends.pdf)
 
 ---
 

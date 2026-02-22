@@ -447,7 +447,7 @@ Base URL: `/api`
 
 ## 14) Slides y defensa del TFM
 
-- **Slides públicas:** https://github.com/JoseRosique/TFM_BigSchool/MeetWithFriends.pdf
+- **Slides públicas:** [https://github.com/JoseRosique/TFM_BigSchool/MeetWithFriends.pdf](https://github.com/JoseRosique/TFM_BigSchool/blob/main/MeetWithFriends.pdf)
 
 ### Guion recomendado para la defensa
 1. Problema real y oportunidad.

@@ -409,6 +409,11 @@
       "CONFIRMED": "confirmada",
       "RESERVED": "reservada"
     },
+    "ACTIONS": {
+      "EDIT": "Editar",
+      "RESERVE": "Reservar",
+      "VIEW_DETAIL": "Ver detalle"
+    },
     "TOASTS": {
       "CREATED": "Disponibilidad abierta.",
       "CREATE_ERROR": "No se pudo crear la franja.",
@@ -427,6 +432,11 @@
       "LOAD_ERROR": "No se pudo cargar el calendario.",
       "INVALID_RANGE": "Revisa el rango de horas."
     }
+  },
+  "DAY_SLOTS_MODAL": {
+    "KICKER": "Selecciona una franja horaria",
+    "CLOSE": "Cerrar",
+    "EMPTY": "No hay franjas disponibles para este día."
   },
   "FRIENDS_PAGE": {
     "TITLE": "Gestión de Amigos",

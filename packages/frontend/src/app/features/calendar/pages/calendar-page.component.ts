@@ -30,6 +30,7 @@ import { ReservationsPanelComponent } from '../components/reservations-panel/res
 import { ReceivedReservationsComponent } from '../components/received-reservations-panel/received-reservations-panel.component';
 import { LegendPanelComponent } from '../components/legend-panel/legend-panel.component';
 import { CreateSlotModalComponent } from '../components/create-slot-modal/create-slot-modal.component';
+import { ExploreDaySlotsModalComponent } from '../components/explore-day-slots-modal/explore-day-slots-modal.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface CreateSlotSubmitPayload {
@@ -61,6 +62,7 @@ interface CreateSlotSubmitPayload {
     ReceivedReservationsComponent,
     LegendPanelComponent,
     CreateSlotModalComponent,
+    ExploreDaySlotsModalComponent,
     ConfirmDialogComponent,
   ],
   templateUrl: './calendar-page.component.html',
@@ -90,6 +92,7 @@ export class CalendarPageComponent implements OnInit {
   isLoading = signal(false);
   processingSlotId = signal<string | null>(null);
   showCreateModal = signal(false);
+  showExploreDaySlotsModal = signal(false);
   showDeleteModal = signal(false);
   isDateLocked = signal(false);
   displayTimezone = this.facade.displayTimezone;
@@ -103,7 +106,13 @@ export class CalendarPageComponent implements OnInit {
   isEditMode = signal(false);
   slotModalViewMode = signal<'OWN' | 'FRIEND'>('OWN');
   selectedFriendSlot = signal<CalendarSlot | null>(null);
+  exploreDaySlots = signal<CalendarSlot[]>([]);
+  exploreDayLabel = signal('');
   reservedByName = signal('');
+
+  showDayReservationsModal = signal(false);
+  dayReservations = signal<ReservationItem[]>([]);
+  dayReservationsLabel = signal('');
 
   timezones = [
     { value: 'UTC', label: 'UTC' },
@@ -730,6 +739,45 @@ export class CalendarPageComponent implements OnInit {
     return this.facade.reservedCount(dayKey);
   }
 
+  openExploreDaySlots(dayKey: string): void {
+    const slots = this.visibleSlotsForDay(dayKey)
+      .filter((slot) => slot.status === SlotStatus.AVAILABLE)
+      .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+    this.exploreDaySlots.set(slots);
+    this.exploreDayLabel.set(this.formatDayLabel(dayKey));
+    this.showExploreDaySlotsModal.set(true);
+  }
+
+  closeExploreDaySlotsModal(): void {
+    this.showExploreDaySlotsModal.set(false);
+    this.exploreDaySlots.set([]);
+    this.exploreDayLabel.set('');
+  }
+
+  selectExploreDaySlot(slot: CalendarSlot): void {
+    this.closeExploreDaySlotsModal();
+    this.openEditSlotModal(slot);
+  }
+
+  openDayReservations(dayKey: string): void {
+    const reservations = this.reservationsByDay().get(dayKey) ?? [];
+    this.dayReservations.set(reservations);
+    this.dayReservationsLabel.set(this.formatDayLabel(dayKey));
+    this.showDayReservationsModal.set(true);
+  }
+
+  closeDayReservationsModal(): void {
+    this.showDayReservationsModal.set(false);
+    this.dayReservations.set([]);
+    this.dayReservationsLabel.set('');
+  }
+
+  selectDayReservation(reservation: ReservationItem): void {
+    this.closeDayReservationsModal();
+    this.openReceivedReservationDetail(reservation);
+  }
+
   statusKey(status: SlotStatus): string {
     return `CALENDAR_PAGE.STATUS.${status.toUpperCase()}`;
   }
@@ -774,6 +822,22 @@ export class CalendarPageComponent implements OnInit {
     if (!slot) return false;
 
     return slot.ownerId === this.currentUserId() && slot.status === SlotStatus.RESERVED;
+  }
+
+  private formatDayLabel(dayKey: string): string {
+    const locale = this.translate.currentLang || 'en';
+    const [year, month, day] = dayKey.split('-').map((part) => Number(part));
+    const safeDate =
+      Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)
+        ? new Date(year, month - 1, day)
+        : new Date(dayKey);
+
+    return new Intl.DateTimeFormat(locale, {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    }).format(safeDate);
   }
 
   private initializeSlotForm(dateValue: string, slots: CalendarSlot[]): void {

@@ -1,0 +1,38 @@
+<div class="explore-day-slots-modal__overlay" (click)="onOverlayClick()">
+  <section class="explore-day-slots-modal" (click)="onModalClick($event)">
+    <header class="explore-day-slots-modal__header">
+      <div>
+        <p class="explore-day-slots-modal__kicker">{{ "DAY_SLOTS_MODAL.KICKER" | translate }}</p>
+        <h2 class="explore-day-slots-modal__title">{{ dayLabel() }}</h2>
+      </div>
+      <button class="explore-day-slots-modal__close" type="button" aria-label="Close" (click)="onClose()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <div class="explore-day-slots-modal__list" role="list">
+      @if (slots().length > 0) {
+        @for (slot of slots(); track slot.id) {
+          <button class="slot-option" type="button" role="listitem" (click)="onSelectSlot(slot)">
+            <span class="slot-option__avatar">
+              @if (getHostAvatar(slot); as avatarUrl) {
+                <img [src]="avatarUrl" [alt]="getHostName(slot)" />
+              } @else {
+                <span>{{ getHostInitials(slot) }}</span>
+              }
+            </span>
+            <span class="slot-option__content">
+              <span class="slot-option__time">
+                {{ formatTimeRange()(slot.startDate, slot.endDate, slot.timezone) }}
+              </span>
+              <span class="slot-option__host">{{ getHostName(slot) }}</span>
+            </span>
+            <span class="material-symbols-outlined slot-option__icon">chevron_right</span>
+          </button>
+        }
+      } @else {
+        <p class="explore-day-slots-modal__empty">{{ "DAY_SLOTS_MODAL.EMPTY" | translate }}</p>
+      }
+    </div>
+  </section>
+</div>

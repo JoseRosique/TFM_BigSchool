@@ -1,59 +1,70 @@
 @if (day(); as day) {
   <article
-    class="calendar-cell calendar-cell--clickable"
+    class="calendar-cell"
+    [class.calendar-cell--clickable]="!isReadOnly() || hasExploreAvailability()"
     [class.calendar-cell--outside]="!day.isCurrentMonth"
     [class.calendar-cell--today]="day.isToday"
     (click)="onCellClick()"
     (keydown.enter)="onCellClick()"
     (keydown.space)="onCellClick()"
-    tabindex="0"
+    [attr.tabindex]="!isReadOnly() || hasExploreAvailability() ? 0 : -1"
   >
     <header class="calendar-cell__header">
       <span class="calendar-cell__number">{{ day.number }}</span>
     </header>
-    <div class="calendar-cell__indicators">
-      @if (availableCount() > 0) {
-        <span
-          class="indicator indicator--available"
-          [attr.aria-label]="availableCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.AVAILABLE' | translate)"
-        >
-          <span class="indicator__count">{{ availableCount() }}</span>
-          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.AVAILABLE" | translate }}</span>
-        </span>
-      }
-      @if (confirmedCount() > 0) {
-        <span
-          class="indicator indicator--confirmed"
-          [attr.aria-label]="confirmedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.CONFIRMED' | translate)"
-        >
-          <span class="indicator__count">{{ confirmedCount() }}</span>
-          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}</span>
-        </span>
-      }
-      @if (reservedCount() > 0) {
-        <span
-          class="indicator indicator--reserved"
-          [attr.aria-label]="reservedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.RESERVED' | translate)"
-        >
-          <span class="indicator__count">{{ reservedCount() }}</span>
-          <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.RESERVED" | translate }}</span>
-        </span>
-      }
-    </div>
-    <div class="calendar-cell__slots">
-      <app-calendar-slot-list
-        [slots]="slots()"
-        [moreCount]="moreCount()"
-        [slotStatus]="slotStatus()"
-        [currentUserId]="currentUserId()"
-        [processingSlotId]="processingSlotId()"
-        [formatTimeRange]="formatTimeRange()"
-        (reserveSlot)="onReserve($event)"
-        (editSlot)="onEdit($event)"
-        (deleteSlot)="onDelete($event)"
-        [isReadOnly]="isReadOnly()"
-      ></app-calendar-slot-list>
-    </div>
+    @if (!isReadOnly()) {
+      <div class="calendar-cell__indicators">
+        @if (availableCount() > 0) {
+          <span
+            class="indicator indicator--available"
+            [attr.aria-label]="availableCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.AVAILABLE' | translate)"
+          >
+            <span class="indicator__count">{{ availableCount() }}</span>
+            <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.AVAILABLE" | translate }}</span>
+          </span>
+        }
+        @if (confirmedCount() > 0) {
+          <span
+            class="indicator indicator--confirmed"
+            [attr.aria-label]="confirmedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.CONFIRMED' | translate)"
+          >
+            <span class="indicator__count">{{ confirmedCount() }}</span>
+            <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.CONFIRMED" | translate }}</span>
+          </span>
+        }
+        @if (reservedCount() > 0) {
+          <span
+            class="indicator indicator--reserved"
+            [attr.aria-label]="reservedCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.RESERVED' | translate)"
+          >
+            <span class="indicator__count">{{ reservedCount() }}</span>
+            <span class="indicator__label">{{ "CALENDAR_PAGE.INDICATORS.RESERVED" | translate }}</span>
+          </span>
+        }
+      </div>
+      <div class="calendar-cell__slots">
+        <app-calendar-slot-list
+          [slots]="slots()"
+          [moreCount]="moreCount()"
+          [slotStatus]="slotStatus()"
+          [currentUserId]="currentUserId()"
+          [processingSlotId]="processingSlotId()"
+          [formatTimeRange]="formatTimeRange()"
+          (reserveSlot)="onReserve($event)"
+          (editSlot)="onEdit($event)"
+          (deleteSlot)="onDelete($event)"
+          [isReadOnly]="isReadOnly()"
+        ></app-calendar-slot-list>
+      </div>
+    } @else if (hasExploreAvailability()) {
+      <div
+        class="calendar-cell__explore-summary"
+        [attr.aria-label]="availableCount() + ' ' + ('CALENDAR_PAGE.INDICATORS.AVAILABLE' | translate)"
+      >
+        <span class="material-symbols-outlined calendar-cell__explore-icon">groups</span>
+        <span>{{ availableCount() }}</span>
+      </div>
+    }
     @if (!isReadOnly() && !hasSlots()) {
       <button
         class="calendar-cell__plus"

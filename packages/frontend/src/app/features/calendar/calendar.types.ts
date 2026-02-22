@@ -11,6 +11,10 @@ export interface CalendarSlotUser {
   lastName?: string;
   nickname?: string;
   name?: string;
+  avatarUrl?: string;
+  avatar?: string;
+  profilePicture?: string;
+  imageUrl?: string;
 }
 
 export interface CalendarSlot extends Slot {

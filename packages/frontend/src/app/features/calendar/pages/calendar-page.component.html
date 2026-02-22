@@ -24,6 +24,9 @@
           [formatTimeRange]="formatTimeRange"
           [isReadOnly]="isReadOnly()"
           (createForDay)="openCreateModalForDayKey($event)"
+          (openDayModal)="openExploreDaySlots($event)"
+          (openReservationsModal)="openDayReservations($event)"
+          (selectReservation)="selectDayReservation($event)"
           (reserveSlot)="reserveSlot($event)"
           (editSlot)="openEditSlotModal($event)"
           (deleteSlot)="openDeleteModal($event)"
@@ -79,6 +82,15 @@
       (dateChange)="updateSlotDate($event)"
     ></app-create-slot-modal>
   }
+
+  <app-explore-day-slots-modal
+    *ngIf="showExploreDaySlotsModal()"
+    [slots]="exploreDaySlots()"
+    [dayLabel]="exploreDayLabel()"
+    [formatTimeRange]="formatTimeRange"
+    (close)="closeExploreDaySlotsModal()"
+    (selectSlot)="selectExploreDaySlot($event)"
+  ></app-explore-day-slots-modal>
 
   @if (showDeleteModal()) {
     <app-confirm-dialog

@@ -409,6 +409,11 @@
       "CONFIRMED": "confirmed",
       "RESERVED": "reserved"
     },
+    "ACTIONS": {
+      "EDIT": "Edit",
+      "RESERVE": "Reserve",
+      "VIEW_DETAIL": "View detail"
+    },
     "TOASTS": {
       "CREATED": "Availability opened.",
       "CREATE_ERROR": "Unable to create slot.",
@@ -427,6 +432,11 @@
       "LOAD_ERROR": "Unable to load calendar.",
       "INVALID_RANGE": "Check the time range."
     }
+  },
+  "DAY_SLOTS_MODAL": {
+    "KICKER": "Select a time slot",
+    "CLOSE": "Close",
+    "EMPTY": "No slots available for this day."
   },
   "FRIENDS_PAGE": {
     "TITLE": "Friends Management",

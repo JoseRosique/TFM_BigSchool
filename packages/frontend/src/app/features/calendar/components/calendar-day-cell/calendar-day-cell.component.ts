@@ -45,11 +45,10 @@ export class CalendarDayCellComponent {
     const day = this.day();
     if (!day) return;
 
-    // En modo read-only (explorar), abrir detalle directo de la primera franja de amigo
+    // En modo read-only (explorar), abrir selector de franjas del día
     if (this.isReadOnly()) {
-      const friendSlot = this.slots().find((slot) => slot.ownerId !== this.currentUserId());
-      if (friendSlot) {
-        this.editSlot.emit(friendSlot);
+      if (this.availableCount() > 0) {
+        this.openDayModal.emit(day.key);
       }
     } else {
       // En modo normal (mi disponibilidad), permitir crear
@@ -66,6 +65,10 @@ export class CalendarDayCellComponent {
 
   hasSlots(): boolean {
     return this.slots().length > 0;
+  }
+
+  hasExploreAvailability(): boolean {
+    return this.isReadOnly() && this.availableCount() > 0;
   }
 
   onReserve(slot: CalendarSlot): void {

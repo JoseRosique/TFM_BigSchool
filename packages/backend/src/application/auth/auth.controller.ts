@@ -77,8 +77,18 @@ export class AuthController {
   @Throttle({ default: { limit: 3, ttl: 60 } })
   @Post('forgot-password')
   async forgotPassword(@Body() input: ForgotPasswordDto): Promise<{ message: string }> {
-    await this.passwordResetService.requestPasswordReset(input.email);
-    return { message: 'RESET_EMAIL_SENT' };
+    try {
+      console.log('[AuthController] Forgot password request for email:', input.email);
+      await this.passwordResetService.requestPasswordReset(input.email);
+      console.log('[AuthController] Password reset email sent');
+      return { message: 'RESET_EMAIL_SENT' };
+    } catch (error) {
+      console.error(
+        '[AuthController] Error sending password reset email:',
+        error instanceof Error ? error.message : error,
+      );
+      throw error;
+    }
   }
 
   @Get('test-email')
@@ -106,7 +116,7 @@ export class AuthController {
   async getProfile(@Request() req: any): Promise<Omit<User, 'passwordHash'>> {
     const user = await this.userRepository.findById(req.user.userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('USER_NOT_FOUND');
     }
     const { passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
@@ -163,7 +173,7 @@ export class AuthController {
   ): Promise<{ language: string }> {
     const user = await this.userRepository.findById(req.user.userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('USER_NOT_FOUND');
     }
     user.language = dto.language;
     await this.userRepository.save(user);
@@ -178,7 +188,7 @@ export class AuthController {
   ): Promise<Omit<User, 'passwordHash'>> {
     const user = await this.userRepository.findById(req.user.userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('USER_NOT_FOUND');
     }
 
     // Validate nickname uniqueness if being changed

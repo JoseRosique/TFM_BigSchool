@@ -134,7 +134,9 @@
     },
     "ERROR": {
       "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo.",
-      "GOOGLE_FAILED": "No se pudo completar el registro con Google. Inténtalo de nuevo."
+      "GOOGLE_FAILED": "No se pudo completar el registro con Google. Inténtalo de nuevo.",
+      "EMAIL_ALREADY_EXISTS": "Este email ya está registrado. Intenta iniciar sesión o usa otro email.",
+      "NICKNAME_ALREADY_EXISTS": "Este nombre de usuario ya está en uso. Por favor, elige otro."
     },
     "SUCCESS": "¡Cuenta creada con éxito! 🎉"
   },
@@ -160,7 +162,9 @@
     "ERROR": {
       "UNKNOWN": "Ha ocurrido un error desconocido. Inténtalo de nuevo.",
       "GOOGLE_FAILED": "No se pudo completar el inicio de sesión con Google. Inténtalo de nuevo.",
-      "GOOGLE_INIT_FAILED": "No se pudo inicializar Google Sign-In. Inténtalo de nuevo."
+      "GOOGLE_INIT_FAILED": "No se pudo inicializar Google Sign-In. Inténtalo de nuevo.",
+      "INVALID_CREDENTIALS": "Credenciales inválidas. Verifica tu email y contraseña.",
+      "ACCOUNT_SOCIAL_LOGIN_ONLY": "Esta cuenta usa inicio de sesión social. Por favor, inicia sesión con Google."
     },
     "SOCIAL": {
       "GOOGLE": "Iniciar sesión con Google",
@@ -202,7 +206,9 @@
         "TOKEN_EXPIRED": "El token ha expirado. Por favor, solicita un nuevo enlace de recuperación.",
         "SUBMIT_FAILED": "No se pudo restablecer la contraseña.",
         "PASSWORD_INVALID": "Contraseña inválida.",
-        "PASSWORD_MISMATCH": "Las contraseñas no coinciden."
+        "PASSWORD_MISMATCH": "Las contraseñas no coinciden.",
+        "TOKEN_REVOKED": "El token ha sido revocado. Solicita un nuevo enlace de recuperación.",
+        "INVALID_TOKEN_MISSING_IAT": "El token no es válido. Solicita un nuevo enlace de recuperación."
       }
     },
     "GOOGLE_SIGN_IN": {
@@ -221,7 +227,8 @@
   },
   "ERRORS": {
     "TOO_MANY_REQUESTS": "Demasiadas solicitudes. Espera un momento e intenta de nuevo.",
-    "SESSION_EXPIRED": "Tu sesión ha caducado. Inicia sesión de nuevo."
+    "SESSION_EXPIRED": "Tu sesión ha caducado. Inicia sesión de nuevo.",
+    "USER_NOT_FOUND": "Usuario no encontrado."
   },
   "TOASTS": {
     "CLOSE_NOTIFICATION": "Cerrar notificación"

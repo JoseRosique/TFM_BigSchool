@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer, { Transporter } from 'nodemailer';
 
@@ -34,10 +34,9 @@ export class EmailService implements OnModuleInit {
       // This prevents network timeouts in restricted environments like Render
       this.verifySmtpConnectionAsync();
     } catch (error) {
-      console.error(
-        '[EmailService] Initialization failed:',
-        error instanceof Error ? error.message : error,
-      );
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error('[EmailService] Initialization failed:', errorMsg);
+      // If env vars are missing, this is critical - fail fast
       throw error;
     }
   }
@@ -58,8 +57,8 @@ export class EmailService implements OnModuleInit {
 
   private assertInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error(
-        '[EmailService] EmailService is not initialized. Check that onModuleInit completed successfully.',
+      throw new InternalServerErrorException(
+        '[EmailService] Email service is not initialized. Check that environment variables are properly configured.',
       );
     }
   }

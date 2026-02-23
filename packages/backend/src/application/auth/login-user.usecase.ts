@@ -19,20 +19,18 @@ export class LoginUserUseCase {
     // 1. Buscar usuario por email
     const user: User | null = await this.userRepository.findByEmail(input.email);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('INVALID_CREDENTIALS');
     }
 
     // 2. Verificar que el usuario no sea una cuenta social sin password
     if (!user.passwordHash) {
-      throw new UnauthorizedException(
-        'This account uses social login. Please sign in with Google.',
-      );
+      throw new UnauthorizedException('ACCOUNT_SOCIAL_LOGIN_ONLY');
     }
 
     // 3. Comparar password
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('INVALID_CREDENTIALS');
     }
 
     // 4. Generar JWTs seguros

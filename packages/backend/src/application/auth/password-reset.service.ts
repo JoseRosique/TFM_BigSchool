@@ -35,6 +35,7 @@ export class PasswordResetService {
       } else {
         if (attempt.count >= this.maxAttempts) {
           // Rate limit exceeded - silently return
+          console.log('[PasswordResetService] Rate limit exceeded for:', normalizedEmail);
           return;
         }
         attempt.count++;
@@ -52,17 +53,30 @@ export class PasswordResetService {
       }
     }
 
-    const user = await this.userRepository.findByEmail(normalizedEmail);
-    if (!user) {
-      return;
+    try {
+      const user = await this.userRepository.findByEmail(normalizedEmail);
+      if (!user) {
+        console.log('[PasswordResetService] User not found for email:', normalizedEmail);
+        return;
+      }
+
+      const token = randomBytes(32).toString('hex');
+      const tokenHash = createHash('sha256').update(token).digest('hex');
+      const expiresAt = Date.now() + this.tokenTtlMs;
+
+      console.log('[PasswordResetService] Creating reset token for user:', user.id);
+      await this.tokenStore.setToken(tokenHash, { userId: user.id, expiresAt }, this.tokenTtlMs);
+
+      console.log('[PasswordResetService] Sending password reset email to:', normalizedEmail);
+      await this.emailService.sendPasswordReset(user.email, token);
+      console.log('[PasswordResetService] Password reset email sent successfully');
+    } catch (error) {
+      console.error(
+        '[PasswordResetService] Error during password reset request:',
+        error instanceof Error ? error.message : error,
+      );
+      throw error;
     }
-
-    const token = randomBytes(32).toString('hex');
-    const tokenHash = createHash('sha256').update(token).digest('hex');
-    const expiresAt = Date.now() + this.tokenTtlMs;
-
-    await this.tokenStore.setToken(tokenHash, { userId: user.id, expiresAt }, this.tokenTtlMs);
-    await this.emailService.sendPasswordReset(user.email, token);
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
@@ -81,7 +95,7 @@ export class PasswordResetService {
     const user = await this.userRepository.findById(record.userId);
     if (!user) {
       await this.tokenStore.deleteToken(tokenHash);
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('USER_NOT_FOUND');
     }
 
     // Prevent password reset for Google accounts

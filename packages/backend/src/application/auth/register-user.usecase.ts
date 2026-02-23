@@ -20,12 +20,12 @@ export class RegisterUserUseCase {
     // 2. Verificar que el usuario no existe
     const existing = await this.userRepository.findByEmail(input.email);
     if (existing) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException('EMAIL_ALREADY_EXISTS');
     }
     // 3. Verificar que el nickname no existe
     const existingNickname = await this.userRepository.findByNickname(input.nickname);
     if (existingNickname) {
-      throw new ConflictException('Nickname already exists');
+      throw new ConflictException('NICKNAME_ALREADY_EXISTS');
     }
     // 4. Hash password
     const passwordHash = await bcrypt.hash(input.password, 10);

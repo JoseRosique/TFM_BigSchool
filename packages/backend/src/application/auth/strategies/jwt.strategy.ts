@@ -29,22 +29,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Validar si el token está en el blacklist
     if (token && this.tokenBlacklist.isBlacklisted(token)) {
-      throw new UnauthorizedException('Token has been revoked');
+      throw new UnauthorizedException('TOKEN_REVOKED');
     }
 
     const user = await this.userRepository.findById(payload.sub);
     if (!user) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('INVALID_TOKEN');
     }
     if (typeof payload.iat !== 'number') {
-      throw new UnauthorizedException('Invalid token: missing iat');
+      throw new UnauthorizedException('INVALID_TOKEN_MISSING_IAT');
     }
     const issuedAt = payload.iat;
     const changedAtSec = user.passwordChangedAt
       ? Math.floor(user.passwordChangedAt.getTime() / 1000)
       : 0;
     if (changedAtSec && changedAtSec > issuedAt) {
-      throw new UnauthorizedException('Token expired');
+      throw new UnauthorizedException('TOKEN_EXPIRED');
     }
     return { userId: user.id, email: user.email, nickname: user.nickname };
   }

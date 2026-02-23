@@ -71,9 +71,11 @@ export class PasswordResetService {
       await this.emailService.sendPasswordReset(user.email, token);
       console.log('[PasswordResetService] Password reset email sent successfully');
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.error('[PasswordResetService] Error during password reset request:', errorMsg);
       console.error(
-        '[PasswordResetService] Error during password reset request:',
-        error instanceof Error ? error.message : error,
+        '[PasswordResetService] Stack:',
+        error instanceof Error ? error.stack : 'no stack',
       );
       throw error;
     }

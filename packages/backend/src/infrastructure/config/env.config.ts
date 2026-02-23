@@ -25,10 +25,7 @@ const EnvSchema = z.object({
   GOOGLE_CLIENT_IDS: z.string().optional(),
 
   // Email
-  EMAIL_HOST: z.string(),
-  EMAIL_PORT: z.coerce.number(),
-  EMAIL_USER: z.string(),
-  EMAIL_PASS: z.string(),
+  SENDGRID_API_KEY: z.string(),
   EMAIL_FROM: z.string(),
   FRONTEND_URL: z.string().default('http://localhost:4200'),
 

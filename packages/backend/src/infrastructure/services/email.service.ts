@@ -55,9 +55,22 @@ export class EmailService implements OnModuleInit {
     try {
       const msg = {
         to: email,
-        from: this.fromAddress,
-        subject: 'Recupera tu password - MeetWithFriends',
+        from: {
+          email: this.fromAddress,
+          name: 'MeetWithFriends',
+        },
+        replyTo: this.fromAddress,
+        subject: 'Recupera tu contraseña de MeetWithFriends',
         html,
+        text: `Recupera tu contraseña\n\nHemos recibido una solicitud para resetear la contraseña de tu cuenta.\n\nHaz clic en este enlace para crear una nueva contraseña:\n${resetUrl}\n\nEste enlace expirará en 1 hora. Si no solicitaste este cambio, puedes ignorar este email.\n\n© ${new Date().getFullYear()} MeetWithFriends`,
+        trackingSettings: {
+          clickTracking: {
+            enable: false,
+          },
+          openTracking: {
+            enable: false,
+          },
+        },
       };
 
       const response = await sgMail.send(msg);
@@ -104,9 +117,22 @@ export class EmailService implements OnModuleInit {
     try {
       const msg = {
         to: email,
-        from: this.fromAddress,
-        subject: 'Bienvenido a MeetWithFriends',
+        from: {
+          email: this.fromAddress,
+          name: 'MeetWithFriends',
+        },
+        replyTo: this.fromAddress,
+        subject: '¡Bienvenido a MeetWithFriends!',
         html,
+        text: `¡Bienvenido, ${name || 'amigo'}!\n\nGracias por unirte a MeetWithFriends. Ya puedes empezar a crear y compartir tus slots.\n\nNos alegra tenerte aquí.\n\n© ${new Date().getFullYear()} MeetWithFriends`,
+        trackingSettings: {
+          clickTracking: {
+            enable: false,
+          },
+          openTracking: {
+            enable: false,
+          },
+        },
       };
 
       const response = await sgMail.send(msg);
@@ -136,9 +162,25 @@ export class EmailService implements OnModuleInit {
     try {
       const msg = {
         to: email,
-        from: this.fromAddress,
-        subject: 'Test Email - MeetWithFriends',
+        from: {
+          email: this.fromAddress,
+          name: 'MeetWithFriends',
+        },
+        replyTo: this.fromAddress,
+        subject: 'Email de prueba - MeetWithFriends',
         html: this.buildTestHtml(),
+        text:
+          'Email de prueba\n\nSi ves este correo, SendGrid funciona correctamente.\n\n© ' +
+          new Date().getFullYear() +
+          ' MeetWithFriends',
+        trackingSettings: {
+          clickTracking: {
+            enable: false,
+          },
+          openTracking: {
+            enable: false,
+          },
+        },
       };
 
       const response = await sgMail.send(msg);
@@ -163,25 +205,91 @@ export class EmailService implements OnModuleInit {
 
   private buildPasswordResetHtml(resetUrl: string): string {
     return `
-      <div style="font-family: Arial, sans-serif; color: #111; line-height: 1.6;">
-        <h2 style="margin: 0 0 12px;">Recupera tu password</h2>
-        <p style="margin: 0 0 20px;">Haz click en el boton para crear un nuevo password.</p>
-        <a href="${resetUrl}" style="display: inline-block; padding: 12px 20px; background: #0d6efd; color: #fff; text-decoration: none; border-radius: 6px;">
-          Resetear password
-        </a>
-        <p style="margin: 20px 0 0; font-size: 12px; color: #666;">Si no solicitaste esto, puedes ignorar este email.</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 20px; background-color: #f5f5f5; font-family: Arial, sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="background-color: #0d6efd; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">MeetWithFriends</h1>
+          </div>
+          <div style="padding: 30px;">
+            <h2 style="color: #111; margin: 0 0 16px; font-size: 20px;">Recupera tu contraseña</h2>
+            <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">
+              Hemos recibido una solicitud para resetear la contraseña de tu cuenta. 
+              Haz clic en el botón de abajo para crear una nueva contraseña.
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" style="display: inline-block; padding: 14px 32px; background-color: #0d6efd; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+                Resetear Contraseña
+              </a>
+            </div>
+            <p style="color: #777; margin: 24px 0 0; font-size: 14px; line-height: 1.6;">
+              Este enlace expirará en 1 hora por seguridad. Si no solicitaste este cambio, 
+              puedes ignorar este email de forma segura.
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">
+            <p style="color: #999; margin: 0; font-size: 12px; line-height: 1.4;">
+              Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
+              <a href="${resetUrl}" style="color: #0d6efd; word-break: break-all;">${resetUrl}</a>
+            </p>
+          </div>
+          <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+            <p style="color: #666; margin: 0; font-size: 12px;">
+              © ${new Date().getFullYear()} MeetWithFriends. Todos los derechos reservados.
+            </p>
+            <p style="color: #999; margin: 8px 0 0; font-size: 11px;">
+              Este es un correo automático, por favor no respondas a este mensaje.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
     `;
   }
 
   private buildWelcomeHtml(name?: string): string {
     const safeName = name || 'amigo';
     return `
-      <div style="font-family: Arial, sans-serif; color: #111; line-height: 1.6;">
-        <h2 style="margin: 0 0 12px;">Bienvenido, ${safeName}!</h2>
-        <p style="margin: 0 0 20px;">Gracias por unirte a MeetWithFriends. Ya puedes empezar a crear y compartir tus slots.</p>
-        <p style="margin: 0; font-size: 12px; color: #666;">Nos alegra tenerte aqui.</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 20px; background-color: #f5f5f5; font-family: Arial, sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div style="background-color: #0d6efd; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">MeetWithFriends</h1>
+          </div>
+          <div style="padding: 30px;">
+            <h2 style="color: #111; margin: 0 0 16px; font-size: 20px;">¡Bienvenido, ${safeName}!</h2>
+            <p style="color: #555; margin: 0 0 20px; line-height: 1.6;">
+              Gracias por unirte a MeetWithFriends. Estamos emocionados de tenerte con nosotros.
+            </p>
+            <p style="color: #555; margin: 0 0 20px; line-height: 1.6;">
+              Ya puedes empezar a crear y compartir tus slots de disponibilidad con tus amigos.
+            </p>
+            <div style="background-color: #f8f9fa; padding: 16px; border-left: 4px solid #0d6efd; margin: 20px 0;">
+              <p style="color: #666; margin: 0; font-size: 14px; line-height: 1.4;">
+                💡 <strong>Tip:</strong> Completa tu perfil para que tus amigos puedan encontrarte fácilmente.
+              </p>
+            </div>
+          </div>
+          <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+            <p style="color: #666; margin: 0; font-size: 12px;">
+              © ${new Date().getFullYear()} MeetWithFriends. Todos los derechos reservados.
+            </p>
+            <p style="color: #999; margin: 8px 0 0; font-size: 11px;">
+              Este es un correo automático, por favor no respondas a este mensaje.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
     `;
   }
 

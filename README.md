@@ -233,10 +233,17 @@ MeetWithFriends/
 - Docker para empaquetado reproducible.
 - Compose para entorno local de datos.
 - Guías de despliegue y operación.
+- **Email service** con SendGrid API (migrado desde SMTP por restricciones de plataforma).
 
 **Cómo se evidencia**
 - `Dockerfile`
 - `docker-compose.yml`
+- `packages/backend/src/infrastructure/services/email.service.ts` (SendGrid API implementation)
+
+**Decisión técnica: SMTP → SendGrid**
+- **Problema:** Render (hosting gratuito) bloquea conexiones SMTP salientes (puertos 587/465) causando timeouts en recuperación de contraseña.
+- **Solución:** Migración a SendGrid API que usa HTTP en lugar de SMTP.
+- **Trade-off:** Los emails pueden llegar a spam sin dominio personalizado autenticado. Ver sección de despliegue para detalles.
 
 ### Módulo 8 — Calidad y testing
 **Qué se aplicó**
@@ -295,8 +302,10 @@ Variables mínimas backend (obligatorias):
 - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 - `JWT_SECRET`, `REFRESH_TOKEN_SECRET`, `SESSION_SECRET`
 - `GOOGLE_CLIENT_ID`
-- `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_FROM`
+- `SENDGRID_API_KEY`, `EMAIL_FROM` (email service migrado a SendGrid API)
 - `CORS_ORIGIN`, `FRONTEND_URL`
+
+> **⚠️ Nota sobre emails:** El sistema de recuperación de contraseña usa SendGrid API. Los emails pueden llegar a la carpeta de **spam/promociones** según el proveedor de email del usuario. Para evaluación, **revisar spam folder** si no llega el email de reset.
 
 ### 6. Compilar shared y backend
 ```bash
@@ -442,6 +451,13 @@ Base URL: `/api`
 - **URL actual de referencia:** https://meetwithfriends.onrender.com
 - **Nota para evaluación (importante):** al estar desplegada en un servidor gratuito, si no hay actividad durante ~15 minutos la instancia entra en reposo. En ese caso, la primera petición puede tardar aproximadamente entre 2 y 3 minutos mientras el servicio vuelve a iniciarse.
 - Backend y frontend se empaquetan mediante `Dockerfile` multi-stage.
+
+### Email Service (SendGrid)
+- **Funcionalidad:** Recuperación de contraseña (`POST /api/auth/forgot-password`)
+- **Proveedor:** SendGrid API (migrado desde SMTP por restricciones de Render)
+- **⚠️ Advertencia evaluadores:** Los emails de "recuperar contraseña" pueden llegar a **carpeta de spam/promociones** dependiendo del proveedor de email. Esto es normal con sender verificado de Gmail (`meetwithfriends.info@gmail.com`) sin dominio propio autenticado.
+- **Solución producción:** Requiere dominio personalizado con registros SPF/DKIM/DMARC configurados en SendGrid.
+- **Para testing:** Revisar spam/promociones si el email no llega a inbox.
 
 ---
 

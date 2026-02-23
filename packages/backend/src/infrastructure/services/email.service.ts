@@ -27,18 +27,32 @@ export class EmailService implements OnModuleInit {
       this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
 
       this.transporter = this.createTransporter();
-
-      console.log('[EmailService] Verifying SMTP connection...');
-      this.logConfig('verify');
-      await this.transporter.verify();
-      console.log('[EmailService] SMTP connection verified.');
       this.isInitialized = true;
+      console.log('[EmailService] Configuration loaded successfully.');
+
+      // Verify SMTP connection in background (non-blocking)
+      // This prevents network timeouts in restricted environments like Render
+      this.verifySmtpConnectionAsync();
     } catch (error) {
       console.error(
         '[EmailService] Initialization failed:',
         error instanceof Error ? error.message : error,
       );
       throw error;
+    }
+  }
+
+  private async verifySmtpConnectionAsync(): Promise<void> {
+    try {
+      console.log('[EmailService] Verifying SMTP connection (async)...');
+      this.logConfig('verify');
+      await this.transporter.verify();
+      console.log('[EmailService] SMTP connection verified.');
+    } catch (error) {
+      console.warn(
+        '[EmailService] SMTP verification warning (emails may still work):',
+        error instanceof Error ? error.message : error,
+      );
     }
   }
 

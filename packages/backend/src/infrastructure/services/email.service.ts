@@ -4,32 +4,54 @@ import nodemailer, { Transporter } from 'nodemailer';
 
 @Injectable()
 export class EmailService implements OnModuleInit {
-  private transporter: Transporter;
-  private fromAddress: string;
-  private frontendUrl: string;
+  private transporter!: Transporter;
+  private fromAddress!: string;
+  private frontendUrl!: string;
   private smtpHost!: string;
   private smtpPort!: number;
   private smtpUser!: string;
   private smtpPass!: string;
+  private isInitialized = false;
 
-  constructor(private readonly configService: ConfigService) {
-    this.transporter = this.createTransporter();
-    this.fromAddress = this.configService.getOrThrow<string>('EMAIL_FROM');
-    this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit(): Promise<void> {
-    console.log('[EmailService] Verifying SMTP connection...');
-    this.logConfig('verify');
+    console.log('[EmailService] Initializing...');
     try {
+      // Load configuration
+      this.smtpHost = this.configService.getOrThrow<string>('EMAIL_HOST');
+      this.smtpPort = this.configService.getOrThrow<number>('EMAIL_PORT');
+      this.smtpUser = this.configService.getOrThrow<string>('EMAIL_USER');
+      this.smtpPass = this.configService.getOrThrow<string>('EMAIL_PASS');
+      this.fromAddress = this.configService.getOrThrow<string>('EMAIL_FROM');
+      this.frontendUrl = this.configService.getOrThrow<string>('FRONTEND_URL');
+
+      this.transporter = this.createTransporter();
+
+      console.log('[EmailService] Verifying SMTP connection...');
+      this.logConfig('verify');
       await this.transporter.verify();
       console.log('[EmailService] SMTP connection verified.');
+      this.isInitialized = true;
     } catch (error) {
-      console.error('[EmailService] SMTP verification failed:', error);
+      console.error(
+        '[EmailService] Initialization failed:',
+        error instanceof Error ? error.message : error,
+      );
+      throw error;
+    }
+  }
+
+  private assertInitialized(): void {
+    if (!this.isInitialized) {
+      throw new Error(
+        '[EmailService] EmailService is not initialized. Check that onModuleInit completed successfully.',
+      );
     }
   }
 
   async sendPasswordReset(email: string, token: string): Promise<void> {
+    this.assertInitialized();
     const resetUrl = `${this.frontendUrl}/auth/reset-password?token=${encodeURIComponent(token)}`;
     const html = this.buildPasswordResetHtml(resetUrl);
 
@@ -71,6 +93,7 @@ export class EmailService implements OnModuleInit {
     isGoogleUser?: boolean;
     emailVerified?: boolean;
   }): Promise<void> {
+    this.assertInitialized();
     const { email, name, isGoogleUser = false, emailVerified = false } = params;
     const effectiveEmailVerified = isGoogleUser ? true : emailVerified;
 
@@ -100,6 +123,7 @@ export class EmailService implements OnModuleInit {
   }
 
   async sendTestEmail(email: string): Promise<void> {
+    this.assertInitialized();
     console.log('[EmailService] Sending test email:', email);
     this.logConfig('sendTestEmail');
     try {

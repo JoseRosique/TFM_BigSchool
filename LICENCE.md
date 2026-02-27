@@ -32,7 +32,7 @@ All rights not expressly granted herein are reserved exclusively by José Antoni
 
 7. GOVERNING LAW
 
-This Agreement shall be governed by and construed in accordance with the laws of [Your Country], without regard to conflict of law principles.
+This Agreement shall be governed by and construed in accordance with the laws of the Kingdom of Spain, without regard to conflict of law principles.
 
 8. CONTACT
 
